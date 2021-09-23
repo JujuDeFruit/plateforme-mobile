@@ -1,17 +1,19 @@
 package com.mobile.sharedwallet
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
+import com.mobile.sharedwallet.fragment.LoginFragment
+
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val store = Firebase.firestore;
-
         /** Exemple */
-        /*
+
+        /*val store = Firebase.firestore;
+
         // Create a new user with a first and last name
         val testDoc = hashMapOf(
                 "first" to "Ada",
@@ -27,9 +29,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener { _ ->
                     println("Error adding document")
-                }
-        */
+                }*/
 
         setContentView(R.layout.activity_main)
+
+        //val fragmentID : Int = if (LoginFragment.uID != null) R.id.homeFragment else R.id.loginFragment;
+        findNavController(R.id.navigation).navigate(R.id.homeFragment)
     }
 }
