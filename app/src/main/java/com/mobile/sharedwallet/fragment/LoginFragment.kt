@@ -11,17 +11,25 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.models.User
 
 class LoginFragment: Fragment() {
 
     private lateinit var mAuth: FirebaseAuth
 
     companion object {
-        var uID : String
-            get() = this.uID
-            set(value) { this.uID = value }
+        var currentUser : User = User()
+            get() {
+                if (field.isEmpty()) {
+                    field = User()
+                }
+                return field
+            }
+            set(value: User) { field = value }
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -43,9 +51,23 @@ class LoginFragment: Fragment() {
         mAuth = Firebase.auth;
         mAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                findNavController().navigate(R.id.homeFragment)
-                uID = it.user?.uid.toString()
-                Toast.makeText(activity, "OK", Toast.LENGTH_SHORT).show();
+                Firebase
+                    .firestore
+                    .collection("users")
+                    .whereEqualTo("uid", it.user?.uid)
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        for (document in documents) {
+                            // Cast firebase user to kotlin user model
+                            currentUser = document.toObject<User>()
+                        }
+                        // Redirect to home fragment after authentication
+                        findNavController().navigate(R.id.homeFragment)
+                    }
+                    .addOnFailureListener{ _ ->
+                        Toast.makeText(activity, "An error occured. PLease retry.", Toast.LENGTH_SHORT).show();
+                    }
             }
             .addOnFailureListener {
                 Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
