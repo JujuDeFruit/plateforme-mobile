@@ -32,22 +32,17 @@ class LoginFragment: Fragment() {
             set(value: User) { field = value }
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.login_fragment, container, false)
-
         view.findViewById<Button>(R.id.login).setOnClickListener{
             login()
         }
-
         return view;
     }
 
     fun login() {
         val email = view?.findViewById<EditText>(R.id.email)?.text.toString()
         val password = view?.findViewById<EditText>(R.id.password)?.text.toString()
-
         mAuth = Firebase.auth;
         mAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
