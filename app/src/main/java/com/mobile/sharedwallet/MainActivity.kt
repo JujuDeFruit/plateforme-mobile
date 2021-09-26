@@ -36,4 +36,6 @@ class MainActivity : AppCompatActivity() {
         //val fragmentID : Int = if (LoginFragment.uID != null) R.id.homeFragment else R.id.loginFragment;
         findNavController(R.id.navigation).navigate(R.id.loginFragment)
     }
+
+
 }
