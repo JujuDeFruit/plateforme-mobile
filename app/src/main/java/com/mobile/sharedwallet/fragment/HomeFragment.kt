@@ -32,7 +32,15 @@ class HomeFragment: Fragment() {
             openDialog()
         }
 
+        view.findViewById<FloatingActionButton>(R.id.RefreshButton).setOnClickListener{
+            loadCagnotteList()
+        }
+
         return view
+    }
+
+    private fun loadCagnotteList() {
+        TODO("Not yet implemented")
     }
 
     fun openDialog(){
