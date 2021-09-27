@@ -14,7 +14,9 @@ import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.R
 import android.view.Gravity
 import androidx.core.view.setPadding
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mobile.sharedwallet.MainActivity
 
 
 class HomeFragment: Fragment() {
@@ -32,7 +34,6 @@ class HomeFragment: Fragment() {
 
         return view
     }
-
 
     fun openDialog(){
         val builder: AlertDialog.Builder = android.app.AlertDialog.Builder(activity)
@@ -57,16 +58,29 @@ class HomeFragment: Fragment() {
     fun CreateButtonClick(inputtext : String? ) {
         println("Test reussi------------------------------")
         var Liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
-        var tv_dynamic = TextView(activity)
-        tv_dynamic.setPadding(90,50,80,50)
-        tv_dynamic.layoutParams = ActionBar.LayoutParams(
+        var NewTextView = TextView(activity)
+        NewTextView.setPadding(90,50,80,50)
+        NewTextView.layoutParams = ActionBar.LayoutParams(
             ActionBar.LayoutParams.WRAP_CONTENT,
             ActionBar.LayoutParams.MATCH_PARENT
         )
-        tv_dynamic.setTextColor(Color.BLACK)
-        tv_dynamic.textSize = 25f
-        tv_dynamic.text = inputtext
-        Liste?.addView(tv_dynamic)
+        NewTextView.setTextColor(Color.BLACK)
+        NewTextView.textSize = 25f
+        NewTextView.text = inputtext
+        NewTextView.id = inputtext.hashCode()
+        NewTextView.isClickable = true
+        NewTextView.setOnClickListener{
+            LoadCagnottePage(inputtext)
+        }
+        Liste?.addView(NewTextView)
+    }
+
+    fun LoadCagnottePage(inputtext : String?){
+        if (inputtext != null) {
+            (activity as MainActivity).setCagnotteToLoad(inputtext)
+            findNavController().navigate(R.id.cagnotteFragment)
+        }
+
     }
 
 }
