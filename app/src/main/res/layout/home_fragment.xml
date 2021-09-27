@@ -9,59 +9,48 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/CreateButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:text="Créer" />
-
-            <Button
-                android:id="@+id/JoinButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:text="Rejoindre" />
-
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="536dp"
+            tools:ignore="SpeakableTextPresentCheck">
 
             <LinearLayout
                 android:id="@+id/ListCagnotte"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textViewTest"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:layout_margin="10dp"
-                    android:clickable="true"
-                    android:text="Depense"
-                    android:textColor="#302626"
-                    android:textSize="20sp" />
             </LinearLayout>
         </ScrollView>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="66dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/CreateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="180dp"
+                android:layout_marginRight="100dp"
+                android:clickable="true"
+                app:srcCompat="@android:drawable/ic_input_add"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:srcCompat="?attr/actionModePasteDrawable"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
