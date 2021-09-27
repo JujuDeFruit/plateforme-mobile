@@ -34,6 +34,10 @@ class HomeFragment: Fragment() {
             openDialog()
         }
 
+        view.findViewById<FloatingActionButton>(R.id.RefreshButton).setOnClickListener{
+            loadCagnotteList()
+        }
+
         return view
     }
 
@@ -62,7 +66,7 @@ class HomeFragment: Fragment() {
             }
     }
 
-    private fun openDialog() {
+    private fun openDialog(){
         val builder: AlertDialog.Builder = android.app.AlertDialog.Builder(activity)
         builder.setTitle("Nom du groupe")
         // Set up the input
