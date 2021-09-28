@@ -12,4 +12,14 @@ data class User(
     fun isEmpty() : Boolean {
         return uid == "" && firstName == "" && lastName == "" && email == "" && !validEmail
     }
+
+    fun toFirebase(): HashMap<String, Any> {
+        return hashMapOf(
+            "uid" to uid,
+            "firstName" to firstName,
+            "lastName" to lastName,
+            "email" to email,
+            "validEmail" to validEmail
+        )
+    }
 }

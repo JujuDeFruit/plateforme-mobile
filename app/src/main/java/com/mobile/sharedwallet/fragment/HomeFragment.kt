@@ -9,11 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.R
-import android.view.Gravity
-import androidx.core.view.setPadding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
