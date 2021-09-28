@@ -2,21 +2,23 @@ package com.mobile.sharedwallet.fragment
 
 import android.app.ActionBar
 import android.app.AlertDialog
+import android.content.ContentValues
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.R
-import android.view.Gravity
-import androidx.core.view.setPadding
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.MainActivity
+import com.mobile.sharedwallet.models.BDD
 
 
 class HomeFragment: Fragment() {
@@ -25,6 +27,7 @@ class HomeFragment: Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         println("bien charge------------------------------")
+        loadCagnotteList()
 
         val view: View = inflater.inflate(R.layout.home_fragment, container, false)
 
@@ -32,15 +35,32 @@ class HomeFragment: Fragment() {
             openDialog()
         }
 
-        view.findViewById<FloatingActionButton>(R.id.RefreshButton).setOnClickListener{
-            loadCagnotteList()
-        }
-
         return view
     }
 
     private fun loadCagnotteList() {
-        TODO("Not yet implemented")
+        println("--------loadCagnotteList---------")
+        //val bdd = BDD()
+
+        Firebase.firestore
+            .collection("Cagnotte")
+            .get()
+            .addOnSuccessListener { result ->
+                println("--------addOnSuccessListener---------")
+                val tricountList : HashMap<String, Any?> = HashMap();
+
+                for (document in result) {
+                    tricountList[document.id] = document.data
+                }
+
+                for ((key, value) in tricountList) {
+                    CreateButtonClick(key)
+                    print("key: $key = value: $value")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(ContentValues.TAG, "Error getting documents: ", exception)
+            }
     }
 
     fun openDialog(){
@@ -55,6 +75,7 @@ class HomeFragment: Fragment() {
             var m_Text = input.text.toString()
             if(m_Text!=""){
                 CreateButtonClick(m_Text)
+                BDD().addCagnotte(m_Text)
             }else{
                 Toast.makeText(activity, "Nom de groupe invalide", Toast.LENGTH_SHORT).show()
             }
@@ -63,7 +84,7 @@ class HomeFragment: Fragment() {
         builder.show()
     }
 
-    fun CreateButtonClick(inputtext : String? ) {
+    fun CreateButtonClick(inputtext : String ) {
         println("Test reussi------------------------------")
         var Liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
         var NewTextView = TextView(activity)

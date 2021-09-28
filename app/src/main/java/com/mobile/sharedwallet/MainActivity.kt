@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //val fragmentID : Int = if (LoginFragment.uID != null) R.id.homeFragment else R.id.loginFragment;
-        findNavController(R.id.navigation).navigate(R.id.loginFragment)
+        findNavController(R.id.navigation).navigate(R.id.homeFragment)
     }
     private var globalCagnottetoLoad : String = ""
 
@@ -45,5 +45,6 @@ class MainActivity : AppCompatActivity() {
     fun setCagnotteToLoad(cName : String){
         globalCagnottetoLoad = cName
     }
+
 
 }
