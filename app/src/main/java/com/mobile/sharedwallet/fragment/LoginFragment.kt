@@ -1,6 +1,7 @@
 package com.mobile.sharedwallet.fragment
 
 import android.os.Bundle
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +16,14 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.models.User
 
 class LoginFragment: Fragment() {
 
     private lateinit var mAuth: FirebaseAuth
+
+    private var email : String = String()
 
     companion object {
         var currentUser : User = User()
@@ -35,20 +39,38 @@ class LoginFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.login_fragment, container, false)
         view.findViewById<Button>(R.id.login).setOnClickListener{
-            login()
+            if (validate()) login()
         }
+        view.findViewById<Button>(R.id.register).setOnClickListener{
+            findNavController().navigate(R.id.registerFragment)
+        }
+
         return view;
     }
 
-    fun login() {
-        val email = view?.findViewById<EditText>(R.id.email)?.text.toString()
+    /**
+     * Email validation
+     */
+    private fun validate() : Boolean {
+        email = view?.findViewById<EditText>(R.id.email)?.text.toString()
+        if (email.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(activity, "Email is not in the good format !", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
+    /**
+     * Login function => firebase async methods
+     */
+    private fun login() {
         val password = view?.findViewById<EditText>(R.id.password)?.text.toString()
         mAuth = Firebase.auth;
         mAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 Firebase
                     .firestore
-                    .collection("users")
+                    .collection(FirebaseConstants.Users)
                     .whereEqualTo("uid", it.user?.uid)
                     .limit(1)
                     .get()

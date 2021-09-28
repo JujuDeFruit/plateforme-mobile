@@ -9,11 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.R
-import android.view.Gravity
-import androidx.core.view.setPadding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
@@ -34,39 +31,39 @@ class HomeFragment: Fragment() {
     }
 
 
-    fun openDialog(){
+    private fun openDialog() {
         val builder: AlertDialog.Builder = android.app.AlertDialog.Builder(activity)
         builder.setTitle("Nom du groupe")
         // Set up the input
         val input = EditText(activity)
         builder.setView(input)
         // Set up the buttons
-        builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
+        builder.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
             // Here you get get input text from the Edittext
-            var m_Text = input.text.toString()
-            if(m_Text!=""){
-                CreateButtonClick(m_Text)
+            val mText = input.text.toString()
+            if(mText!=""){
+                createButtonClick(mText)
             }else{
                 Toast.makeText(activity, "Nom de groupe invalide", Toast.LENGTH_SHORT).show()
             }
         })
-        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() })
         builder.show()
     }
 
-    fun CreateButtonClick(inputtext : String? ) {
+    private fun createButtonClick(inputtext : String? ) {
         println("Test reussi------------------------------")
-        var Liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
-        var tv_dynamic = TextView(activity)
-        tv_dynamic.setPadding(90,50,80,50)
-        tv_dynamic.layoutParams = ActionBar.LayoutParams(
+        val liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
+        val tvDynamic = TextView(activity)
+        tvDynamic.setPadding(90,50,80,50)
+        tvDynamic.layoutParams = ActionBar.LayoutParams(
             ActionBar.LayoutParams.WRAP_CONTENT,
             ActionBar.LayoutParams.MATCH_PARENT
         )
-        tv_dynamic.setTextColor(Color.BLACK)
-        tv_dynamic.textSize = 25f
-        tv_dynamic.text = inputtext
-        Liste?.addView(tv_dynamic)
+        tvDynamic.setTextColor(Color.BLACK)
+        tvDynamic.textSize = 25f
+        tvDynamic.text = inputtext
+        liste?.addView(tvDynamic)
     }
 
 }
