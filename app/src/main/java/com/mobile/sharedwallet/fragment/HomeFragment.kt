@@ -20,7 +20,6 @@ import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.models.BDD
 
-
 class HomeFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
