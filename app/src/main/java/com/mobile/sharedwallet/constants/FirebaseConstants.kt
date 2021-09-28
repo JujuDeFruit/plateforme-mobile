@@ -4,5 +4,5 @@ object FirebaseConstants {
 
     var Users : String = "users"
 
-    var Pot: String = "pot"
+    var Pot : String = "pot"
 }

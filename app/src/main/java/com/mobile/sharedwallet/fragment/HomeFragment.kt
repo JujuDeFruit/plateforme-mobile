@@ -2,17 +2,23 @@ package com.mobile.sharedwallet.fragment
 
 import android.app.ActionBar
 import android.app.AlertDialog
+import android.content.ContentValues
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.R
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.mobile.sharedwallet.MainActivity
+import com.mobile.sharedwallet.models.BDD
 
 class HomeFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater,
@@ -20,6 +26,7 @@ class HomeFragment: Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         println("bien charge------------------------------")
+        loadCagnotteList()
 
         val view: View = inflater.inflate(R.layout.home_fragment, container, false)
 
@@ -30,8 +37,32 @@ class HomeFragment: Fragment() {
         return view
     }
 
+    private fun loadCagnotteList() {
+        println("--------loadCagnotteList---------")
+        //val bdd = BDD()
 
-    private fun openDialog() {
+        Firebase.firestore
+            .collection("Cagnotte")
+            .get()
+            .addOnSuccessListener { result ->
+                println("--------addOnSuccessListener---------")
+                val tricountList : HashMap<String, Any?> = HashMap();
+
+                for (document in result) {
+                    tricountList[document.id] = document.data
+                }
+
+                for ((key, value) in tricountList) {
+                    createButtonClick(key)
+                    print("key: $key = value: $value")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(ContentValues.TAG, "Error getting documents: ", exception)
+            }
+    }
+
+    private fun openDialog(){
         val builder: AlertDialog.Builder = android.app.AlertDialog.Builder(activity)
         builder.setTitle("Nom du groupe")
         // Set up the input
@@ -43,6 +74,7 @@ class HomeFragment: Fragment() {
             val mText = input.text.toString()
             if(mText!=""){
                 createButtonClick(mText)
+                BDD().addCagnotte(mText)
             }else{
                 Toast.makeText(activity, "Nom de groupe invalide", Toast.LENGTH_SHORT).show()
             }
@@ -53,6 +85,29 @@ class HomeFragment: Fragment() {
 
     private fun createButtonClick(inputtext : String? ) {
         println("Test reussi------------------------------")
+        var Liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
+        var NewTextView = TextView(activity)
+        NewTextView.setPadding(90,50,80,50)
+        NewTextView.layoutParams = ActionBar.LayoutParams(
+            ActionBar.LayoutParams.WRAP_CONTENT,
+            ActionBar.LayoutParams.MATCH_PARENT
+        )
+        NewTextView.setTextColor(Color.BLACK)
+        NewTextView.textSize = 25f
+        NewTextView.text = inputtext
+        NewTextView.id = inputtext.hashCode()
+        NewTextView.isClickable = true
+        NewTextView.setOnClickListener{
+            LoadCagnottePage(inputtext)
+        }
+        Liste?.addView(NewTextView)
+    }
+
+    fun LoadCagnottePage(inputtext : String?){
+        if (inputtext != null) {
+            (activity as MainActivity).setCagnotteToLoad(inputtext)
+            findNavController().navigate(R.id.cagnotteFragment)
+        }
         val liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
         val tvDynamic = TextView(activity)
         tvDynamic.setPadding(90,50,80,50)
