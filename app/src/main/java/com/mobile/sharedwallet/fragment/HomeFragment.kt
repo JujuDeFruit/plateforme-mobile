@@ -34,10 +34,6 @@ class HomeFragment: Fragment() {
             openDialog()
         }
 
-        view.findViewById<FloatingActionButton>(R.id.RefreshButton).setOnClickListener{
-            loadCagnotteList()
-        }
-
         return view
     }
 
@@ -57,7 +53,7 @@ class HomeFragment: Fragment() {
                 }
 
                 for ((key, value) in tricountList) {
-                    CreateButtonClick(key)
+                    createButtonClick(key)
                     print("key: $key = value: $value")
                 }
             }
@@ -75,10 +71,10 @@ class HomeFragment: Fragment() {
         // Set up the buttons
         builder.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
             // Here you get get input text from the Edittext
-            var m_Text = input.text.toString()
-            if(m_Text!=""){
-                CreateButtonClick(m_Text)
-                BDD().addCagnotte(m_Text)
+            val mText = input.text.toString()
+            if(mText!=""){
+                createButtonClick(mText)
+                BDD().addCagnotte(mText)
             }else{
                 Toast.makeText(activity, "Nom de groupe invalide", Toast.LENGTH_SHORT).show()
             }
@@ -87,7 +83,7 @@ class HomeFragment: Fragment() {
         builder.show()
     }
 
-    fun CreateButtonClick(inputtext : String ) {
+    private fun createButtonClick(inputtext : String? ) {
         println("Test reussi------------------------------")
         var Liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
         var NewTextView = TextView(activity)
