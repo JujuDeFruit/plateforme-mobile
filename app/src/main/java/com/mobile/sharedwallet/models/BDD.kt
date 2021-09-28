@@ -24,7 +24,8 @@ class BDD {
             "date de création" to currentDate
         )
         // Add a new document with a generated ID
-        store.collection("Cagnotte").document(nameCagnotte)
+        store.collection("Cagnotte")
+            .document(nameCagnotte)
             .set(info, SetOptions.merge())
             .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
             .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
