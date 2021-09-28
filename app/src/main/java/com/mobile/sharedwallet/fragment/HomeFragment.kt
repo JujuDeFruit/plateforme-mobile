@@ -63,14 +63,14 @@ class HomeFragment: Fragment() {
             }
     }
 
-    fun openDialog(){
+    private fun openDialog() {
         val builder: AlertDialog.Builder = android.app.AlertDialog.Builder(activity)
         builder.setTitle("Nom du groupe")
         // Set up the input
         val input = EditText(activity)
         builder.setView(input)
         // Set up the buttons
-        builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
+        builder.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
             // Here you get get input text from the Edittext
             var m_Text = input.text.toString()
             if(m_Text!=""){
@@ -80,7 +80,7 @@ class HomeFragment: Fragment() {
                 Toast.makeText(activity, "Nom de groupe invalide", Toast.LENGTH_SHORT).show()
             }
         })
-        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() })
         builder.show()
     }
 
@@ -109,7 +109,6 @@ class HomeFragment: Fragment() {
             (activity as MainActivity).setCagnotteToLoad(inputtext)
             findNavController().navigate(R.id.cagnotteFragment)
         }
-
     }
 
 }
