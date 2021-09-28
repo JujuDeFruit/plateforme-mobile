@@ -19,12 +19,6 @@
             tools:layout="@layout/home_fragment" />
 
         <fragment
-            android:id="@+id/cagnotteFragment"
-            android:name="com.mobile.sharedwallet.fragment.CagnotteFragment"
-            android:label="cagnotteFragment"
-            tools:layout="@layout/cagnotte_fragment" />
-
-        <fragment
             android:id="@+id/registerFragment"
             android:name="com.mobile.sharedwallet.fragment.RegisterFragment"
             android:label="loginFragment"

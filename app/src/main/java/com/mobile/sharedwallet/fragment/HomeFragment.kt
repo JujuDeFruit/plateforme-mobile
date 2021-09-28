@@ -108,6 +108,17 @@ class HomeFragment: Fragment() {
             (activity as MainActivity).setCagnotteToLoad(inputtext)
             findNavController().navigate(R.id.cagnotteFragment)
         }
+        val liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
+        val tvDynamic = TextView(activity)
+        tvDynamic.setPadding(90,50,80,50)
+        tvDynamic.layoutParams = ActionBar.LayoutParams(
+            ActionBar.LayoutParams.WRAP_CONTENT,
+            ActionBar.LayoutParams.MATCH_PARENT
+        )
+        tvDynamic.setTextColor(Color.BLACK)
+        tvDynamic.textSize = 25f
+        tvDynamic.text = inputtext
+        liste?.addView(tvDynamic)
     }
 
 }
