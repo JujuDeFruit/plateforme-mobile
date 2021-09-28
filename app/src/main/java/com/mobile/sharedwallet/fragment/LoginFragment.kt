@@ -15,6 +15,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.models.User
 
 class LoginFragment: Fragment() {
@@ -37,6 +38,10 @@ class LoginFragment: Fragment() {
         view.findViewById<Button>(R.id.login).setOnClickListener{
             login()
         }
+        view.findViewById<Button>(R.id.register).setOnClickListener{
+            findNavController().navigate(R.id.registerFragment)
+        }
+
         return view;
     }
 
@@ -48,7 +53,7 @@ class LoginFragment: Fragment() {
             .addOnSuccessListener {
                 Firebase
                     .firestore
-                    .collection("users")
+                    .collection(FirebaseConstants.Users)
                     .whereEqualTo("uid", it.user?.uid)
                     .limit(1)
                     .get()

@@ -18,4 +18,10 @@
             android:label="homeFragment"
             tools:layout="@layout/home_fragment" />
 
+        <fragment
+            android:id="@+id/registerFragment"
+            android:name="com.mobile.sharedwallet.fragment.RegisterFragment"
+            android:label="loginFragment"
+            tools:layout="@layout/register_fragment" />
+
 </navigation>
