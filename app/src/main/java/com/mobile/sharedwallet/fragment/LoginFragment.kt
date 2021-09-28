@@ -29,7 +29,7 @@ class LoginFragment: Fragment() {
         var currentUser : User = User()
             get() {
                 if (field.isEmpty()) {
-                    field = User()
+                    field = User("ACGGNPVUBIPpaH7A480QN6V7npU2", "test", "test", "test@yahoo.fr", true)
                 }
                 return field
             }
