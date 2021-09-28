@@ -1,6 +1,7 @@
 package com.mobile.sharedwallet.fragment
 
 import android.os.Bundle
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,8 @@ class LoginFragment: Fragment() {
 
     private lateinit var mAuth: FirebaseAuth
 
+    private var email : String = String()
+
     companion object {
         var currentUser : User = User()
             get() {
@@ -36,7 +39,7 @@ class LoginFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.login_fragment, container, false)
         view.findViewById<Button>(R.id.login).setOnClickListener{
-            login()
+            if (validate()) login()
         }
         view.findViewById<Button>(R.id.register).setOnClickListener{
             findNavController().navigate(R.id.registerFragment)
@@ -45,8 +48,22 @@ class LoginFragment: Fragment() {
         return view;
     }
 
-    fun login() {
-        val email = view?.findViewById<EditText>(R.id.email)?.text.toString()
+    /**
+     * Email validation
+     */
+    private fun validate() : Boolean {
+        email = view?.findViewById<EditText>(R.id.email)?.text.toString()
+        if (email.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(activity, "Email is not in the good format !", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
+    /**
+     * Login function => firebase async methods
+     */
+    private fun login() {
         val password = view?.findViewById<EditText>(R.id.password)?.text.toString()
         mAuth = Firebase.auth;
         mAuth.signInWithEmailAndPassword(email, password)
