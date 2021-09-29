@@ -27,7 +27,7 @@ class CagnotteFragment:Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.cagnotte_fragment, container, false)
 
-        var name : String = (activity as MainActivity).getCagnotteToLoad()
+        val name : String = (activity as MainActivity).getCagnotteToLoad()
         //Connexion a firebase, au document correspondant au nom de la cagnotte qu'on veut charger
         /*
         var DepCollect : MutableList<Depense>
@@ -39,19 +39,18 @@ class CagnotteFragment:Fragment() {
 
         var CurrentCagnotte = Cagnotte(name, DepCollect, null)
         */
-        var Liste = view?.findViewById<LinearLayout>(R.id.ListeDepense)
-        var NewTextView = TextView(activity)
-        NewTextView.setPadding(10,20,0,20)
-        NewTextView.layoutParams = ActionBar.LayoutParams(
+        val liste = view?.findViewById<LinearLayout>(R.id.listeDepense)
+        val newTextView = TextView(activity)
+        newTextView.setPadding(10,20,0,20)
+        newTextView.layoutParams = ActionBar.LayoutParams(
             ActionBar.LayoutParams.WRAP_CONTENT,
             ActionBar.LayoutParams.MATCH_PARENT
         )
-        NewTextView.setTextColor(Color.BLACK)
-        NewTextView.textSize = 15f
-        NewTextView.text = name + " - 15$, Julien"
-        NewTextView.id = name.hashCode()
-        Liste?.addView(NewTextView)
-
+        newTextView.setTextColor(Color.BLACK)
+        newTextView.textSize = 15f
+        newTextView.text = name + " - 15$, Julien"
+        newTextView.id = name.hashCode()
+        liste?.addView(newTextView)
 
         return view;
     }

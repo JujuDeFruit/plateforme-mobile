@@ -2,7 +2,7 @@ package com.mobile.sharedwallet.constants
 
 object FirebaseConstants {
 
-    var Users : String = "users"
+    val Users : String = "users"
 
-    var Pot : String = "pot"
+    val Pot : String = "pot"
 }

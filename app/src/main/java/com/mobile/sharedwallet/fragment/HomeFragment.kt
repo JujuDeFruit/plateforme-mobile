@@ -15,12 +15,18 @@ import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.R
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.MainActivity
-import com.mobile.sharedwallet.models.BDD
+import com.mobile.sharedwallet.constants.FirebaseConstants
+import com.mobile.sharedwallet.models.Cagnotte
+import com.mobile.sharedwallet.models.Depense
+import com.mobile.sharedwallet.models.User
+import java.util.ArrayList
 
-class HomeFragment: Fragment() {
+class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -30,7 +36,7 @@ class HomeFragment: Fragment() {
 
         val view: View = inflater.inflate(R.layout.home_fragment, container, false)
 
-        view.findViewById<FloatingActionButton>(R.id.CreateButton).setOnClickListener{
+        view.findViewById<FloatingActionButton>(R.id.createButton).setOnClickListener{
             openDialog()
         }
 
@@ -38,23 +44,20 @@ class HomeFragment: Fragment() {
     }
 
     private fun loadCagnotteList() {
-        println("--------loadCagnotteList---------")
-        //val bdd = BDD()
-
+        // Load all pots current user is involved in
         Firebase.firestore
-            .collection("Cagnotte")
+            .collection(FirebaseConstants.Pot)
+            .whereArrayContains(Cagnotte.Attributes.PARTICIPANTS.string, LoginFragment.currentUser.toFirebase())
             .get()
             .addOnSuccessListener { result ->
-                println("--------addOnSuccessListener---------")
-                val tricountList : HashMap<String, Any?> = HashMap();
+                val tricountList : HashMap<String, Cagnotte> = HashMap();
 
                 for (document in result) {
-                    tricountList[document.id] = document.data
+                    tricountList[document.id] = document.toObject<Cagnotte>()
                 }
 
                 for ((key, value) in tricountList) {
-                    createButtonClick(key)
-                    print("key: $key = value: $value")
+                    createButtonClick(value.name)
                 }
             }
             .addOnFailureListener { exception ->
@@ -62,8 +65,8 @@ class HomeFragment: Fragment() {
             }
     }
 
-    private fun openDialog(){
-        val builder: AlertDialog.Builder = android.app.AlertDialog.Builder(activity)
+    private fun openDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
         builder.setTitle("Nom du groupe")
         // Set up the input
         val input = EditText(activity)
@@ -72,10 +75,10 @@ class HomeFragment: Fragment() {
         builder.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
             // Here you get get input text from the Edittext
             val mText = input.text.toString()
-            if(mText!=""){
+            if(mText != ""){
                 createButtonClick(mText)
-                BDD().addCagnotte(mText)
-            }else{
+                addCagnotte(mText)
+            } else {
                 Toast.makeText(activity, "Nom de groupe invalide", Toast.LENGTH_SHORT).show()
             }
         })
@@ -83,32 +86,33 @@ class HomeFragment: Fragment() {
         builder.show()
     }
 
-    private fun createButtonClick(inputtext : String? ) {
+    private fun createButtonClick(inputText : String?) {
         println("Test reussi------------------------------")
-        var Liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
-        var NewTextView = TextView(activity)
-        NewTextView.setPadding(90,50,80,50)
-        NewTextView.layoutParams = ActionBar.LayoutParams(
+        val liste = view?.findViewById<LinearLayout>(R.id.listCagnotte)
+        val newTextView = TextView(activity)
+        newTextView.setPadding(90,50,80,50)
+        newTextView.layoutParams = ActionBar.LayoutParams(
             ActionBar.LayoutParams.WRAP_CONTENT,
             ActionBar.LayoutParams.MATCH_PARENT
         )
-        NewTextView.setTextColor(Color.BLACK)
-        NewTextView.textSize = 25f
-        NewTextView.text = inputtext
-        NewTextView.id = inputtext.hashCode()
-        NewTextView.isClickable = true
-        NewTextView.setOnClickListener{
-            LoadCagnottePage(inputtext)
+        newTextView.setTextColor(Color.BLACK)
+        newTextView.textSize = 25f
+        newTextView.text = inputText
+        newTextView.id = inputText.hashCode()
+        newTextView.isClickable = true
+        newTextView.setOnClickListener{
+            loadCagnottePage(inputText)
         }
-        Liste?.addView(NewTextView)
+        liste?.addView(newTextView)
     }
 
-    fun LoadCagnottePage(inputtext : String?){
-        if (inputtext != null) {
-            (activity as MainActivity).setCagnotteToLoad(inputtext)
+    private fun loadCagnottePage(inputText : String?){
+        if (inputText != null) {
+            (activity as MainActivity).setCagnotteToLoad(inputText)
             findNavController().navigate(R.id.cagnotteFragment)
         }
-        val liste = view?.findViewById<LinearLayout>(R.id.ListCagnotte)
+
+        val liste = view?.findViewById<LinearLayout>(R.id.listCagnotte)
         val tvDynamic = TextView(activity)
         tvDynamic.setPadding(90,50,80,50)
         tvDynamic.layoutParams = ActionBar.LayoutParams(
@@ -117,8 +121,21 @@ class HomeFragment: Fragment() {
         )
         tvDynamic.setTextColor(Color.BLACK)
         tvDynamic.textSize = 25f
-        tvDynamic.text = inputtext
+        tvDynamic.text = inputText
         liste?.addView(tvDynamic)
     }
 
+    private fun addCagnotte(name: String){
+
+        // Create a new cagnotte with a first and last name
+        val info : HashMap<String, Any> =
+            Cagnotte(name, Timestamp.now(), ArrayList<Depense>(), arrayListOf(LoginFragment.currentUser)).toFirebase()
+        // Add a new document with a generated ID
+        Firebase
+            .firestore
+            .collection(FirebaseConstants.Pot)
+            .add(info)
+            .addOnSuccessListener { Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w(ContentValues.TAG, "Error writing document", e) }
+    }
 }
