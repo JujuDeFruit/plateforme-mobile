@@ -6,14 +6,14 @@ data class User(
     var lastName: String,
     var email: String,
     var validEmail: Boolean
-) {
+) : Model {
     constructor() : this("", "", "", "", false)
 
     fun isEmpty() : Boolean {
         return uid == "" && firstName == "" && lastName == "" && email == "" && !validEmail
     }
 
-    fun toFirebase(): HashMap<String, Any> {
+    override fun toFirebase(): HashMap<String, Any> {
         return hashMapOf(
             "uid" to uid,
             "firstName" to firstName,

@@ -18,7 +18,7 @@
             tools:ignore="SpeakableTextPresentCheck">
 
             <LinearLayout
-                android:id="@+id/ListCagnotte"
+                android:id="@+id/listCagnotte"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -32,7 +32,7 @@
             android:orientation="horizontal">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/CreateButton"
+                android:id="@+id/createButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -41,7 +41,7 @@
                 tools:ignore="SpeakableTextPresentCheck" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/RefreshButton"
+                android:id="@+id/refreshButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
