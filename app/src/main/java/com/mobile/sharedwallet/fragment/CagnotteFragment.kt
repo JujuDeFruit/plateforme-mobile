@@ -39,7 +39,7 @@ class CagnotteFragment:Fragment() {
 
         var CurrentCagnotte = Cagnotte(name, DepCollect, null)
         */
-        val liste = view?.findViewById<LinearLayout>(R.id.listeDepense)
+        val liste = view.findViewById<LinearLayout>(R.id.listeDepense)
         val newTextView = TextView(activity)
         newTextView.setPadding(10,20,0,20)
         newTextView.layoutParams = ActionBar.LayoutParams(

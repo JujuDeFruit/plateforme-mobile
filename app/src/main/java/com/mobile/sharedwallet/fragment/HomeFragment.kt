@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.R
 import androidx.navigation.fragment.findNavController
@@ -25,6 +26,10 @@ import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.User
 import java.util.ArrayList
+import android.view.Gravity
+
+
+
 
 class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater,
@@ -39,6 +44,12 @@ class HomeFragment : Fragment() {
         view.findViewById<FloatingActionButton>(R.id.createButton).setOnClickListener{
             openDialog()
         }
+
+        view.findViewById<FloatingActionButton>(R.id.profileButton).setOnClickListener{
+            findNavController().navigate(R.id.profileFragment)
+        }
+
+        view.findViewById<TextView>(R.id.welcome).text = "Welcome ".plus(LoginFragment.currentUser.firstName)
 
         return view
     }
@@ -56,7 +67,7 @@ class HomeFragment : Fragment() {
                     tricountList[document.id] = document.toObject<Cagnotte>()
                 }
 
-                for ((key, value) in tricountList) {
+                for ((_, value) in tricountList) {
                     createButtonClick(value.name)
                 }
             }
@@ -66,11 +77,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun openDialog() {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
-        builder.setTitle("Nom du groupe")
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder.setTitle("Pot name")
+        val layout = FrameLayout(builder.context)
+        layout.setPadding(125,15,125,0)
         // Set up the input
-        val input = EditText(activity)
-        builder.setView(input)
+        val input : EditText = EditText(layout.context)
+        input.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER_HORIZONTAL
+        layout.addView(input)
+        builder.setView(layout)
         // Set up the buttons
         builder.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
             // Here you get get input text from the Edittext
@@ -136,6 +151,9 @@ class HomeFragment : Fragment() {
             .collection(FirebaseConstants.Pot)
             .add(info)
             .addOnSuccessListener { Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!") }
-            .addOnFailureListener { e -> Log.w(ContentValues.TAG, "Error writing document", e) }
+            .addOnFailureListener { e ->
+                Toast.makeText(activity, "An error occured while creating new pot. Please retry !", Toast.LENGTH_SHORT).show()
+                Log.w(ContentValues.TAG, "Error writing document", e)
+            }
     }
 }

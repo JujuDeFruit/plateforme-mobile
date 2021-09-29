@@ -30,4 +30,10 @@
             android:label="cagnotteFragment"
             tools:layout="@layout/cagnotte_fragment" />
 
+        <fragment
+            android:id="@+id/profileFragment"
+            android:name="com.mobile.sharedwallet.fragment.ProfileFragment"
+            android:label="profileFragment"
+            tools:layout="@layout/profile_fragment" />
+
 </navigation>
