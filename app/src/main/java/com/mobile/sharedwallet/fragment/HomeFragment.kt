@@ -36,7 +36,6 @@ class HomeFragment : Fragment() {
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        println("bien charge------------------------------")
         loadCagnotteList()
 
         val view: View = inflater.inflate(R.layout.home_fragment, container, false)
@@ -102,7 +101,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun createButtonClick(inputText : String?) {
-        println("Test reussi------------------------------")
         val liste = view?.findViewById<LinearLayout>(R.id.listCagnotte)
         val newTextView = TextView(activity)
         newTextView.setPadding(90,50,80,50)

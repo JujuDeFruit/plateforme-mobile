@@ -24,6 +24,19 @@ import com.mobile.sharedwallet.models.User
 
 class CagnotteFragment:Fragment() {
 
+    companion object {
+        var pot : Cagnotte = Cagnotte()
+            get() {
+                if (pot.isEmpty()) {
+                    field = Cagnotte()
+                }
+                return field
+            }
+            set(value : Cagnotte) {
+                field = value
+            }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.cagnotte_fragment, container, false)
 

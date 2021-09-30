@@ -18,6 +18,10 @@ data class Cagnotte(
 
     constructor() : this("", Timestamp(0, 0), ArrayList<Depense>(), ArrayList<User>())
 
+    fun isEmpty() : Boolean {
+        return name == "" && creationDate == Timestamp(0, 0) && totalSpent.isEmpty() && participants.isEmpty()
+    }
+
     override fun toFirebase() : HashMap<String, Any> {
         return hashMapOf<String, Any>(
             Attributes.NAME.string to name,

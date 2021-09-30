@@ -54,4 +54,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     // Import firebase auth
     implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // Import flexbox
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 }
