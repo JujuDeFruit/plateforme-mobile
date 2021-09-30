@@ -13,7 +13,7 @@
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Portal"
+        android:text="Shared Wallet"
         android:textSize="35dp"/>
 
     <LinearLayout
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:hint="julien.raynal@yahoo.fr"
+            android:text="test@yahoo.fr"
             android:inputType="textEmailAddress"
             android:maxLines="1"
             />
@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:hint="**********"
+            android:text="azerty"
             android:inputType="textPassword"
             android:maxLines="1"
             />

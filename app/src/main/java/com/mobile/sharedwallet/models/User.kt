@@ -1,24 +1,24 @@
 package com.mobile.sharedwallet.models
 
 data class User(
-    var uid : String,
-    var firstName: String,
-    var lastName: String,
-    var email: String,
-    var validEmail: Boolean
+    val uid : String?,
+    val firstName: String?,
+    val lastName: String?,
+    val email: String?,
+    val validEmail: Boolean
 ) : Model {
-    constructor() : this("", "", "", "", false)
+    constructor() : this(null, null, null, null, false)
 
     fun isEmpty() : Boolean {
-        return uid == "" && firstName == "" && lastName == "" && email == "" && !validEmail
+        return uid.isNullOrEmpty() && firstName.isNullOrEmpty() && lastName.isNullOrEmpty() && email.isNullOrEmpty() && !validEmail
     }
 
     override fun toFirebase(): HashMap<String, Any> {
-        return hashMapOf(
-            "uid" to uid,
-            "firstName" to firstName,
-            "lastName" to lastName,
-            "email" to email,
+        return hashMapOf<String, Any>(
+            "uid" to uid!!,
+            "firstName" to firstName!!,
+            "lastName" to lastName!!,
+            "email" to email!!,
             "validEmail" to validEmail
         )
     }

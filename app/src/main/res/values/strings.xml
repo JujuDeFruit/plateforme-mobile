@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">SharedWallet</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="my_profile">My profile</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email">E-mail</string>
+    <string name="valid_email">Valid e-mail ?</string>
 </resources>

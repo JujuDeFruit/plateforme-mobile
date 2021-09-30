@@ -24,6 +24,19 @@ import com.mobile.sharedwallet.models.User
 
 class CagnotteFragment:Fragment() {
 
+    companion object {
+        var pot : Cagnotte = Cagnotte()
+            get() {
+                if (pot.isEmpty()) {
+                    field = Cagnotte()
+                }
+                return field
+            }
+            set(value : Cagnotte) {
+                field = value
+            }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.cagnotte_fragment, container, false)
 
@@ -39,7 +52,7 @@ class CagnotteFragment:Fragment() {
 
         var CurrentCagnotte = Cagnotte(name, DepCollect, null)
         */
-        val liste = view?.findViewById<LinearLayout>(R.id.listeDepense)
+        val liste = view.findViewById<LinearLayout>(R.id.listeDepense)
         val newTextView = TextView(activity)
         newTextView.setPadding(10,20,0,20)
         newTextView.layoutParams = ActionBar.LayoutParams(

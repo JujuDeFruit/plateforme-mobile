@@ -33,7 +33,7 @@ class RegisterFragment: Fragment() {
         val view : View? = inflater.inflate(R.layout.register_fragment, container, false)
 
         view?.findViewById<Button>(R.id.createAccount)?.setOnClickListener {
-            if (validate(view!!)) {
+            if (validate(view)) {
                 createAccount()
             }
         }
