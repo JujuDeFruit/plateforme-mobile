@@ -1,12 +1,41 @@
 <resources>
-    <string name="app_name">SharedWallet</string>
+    <string name="app_name">Shared Wallet</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 
+    <string name="welcome">Welcome</string>
+
+    <string name="pot_name">Pot name</string>
+
+    <!-- Log -->
+    <string name="log_in">Log in</string>
+    <string name="register">Register</string>
+
+    <!-- Register -->
+    <string name="new_account">New Account</string>
+    <string name="re_send_email">Re-send e-mail</string>
+    <string name="password">Password</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="create_account">Create account</string>
+
+    <!-- Profile -->
     <string name="my_profile">My profile</string>
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
     <string name="email">E-mail</string>
     <string name="valid_email">Valid e-mail ?</string>
+    <string name="change_password">Change my password</string>
+    <string name="new_password">New password</string>
+    <string name="repeat_new_password">Repeat new password</string>
+    <string name="log_out">Log out</string>
+    <string name="edit_profile">Edit profile</string>
+
+    <!-- Toast messages -->
+    <string name="message_new_repeated_password_not_match">Repeated password is not match new password</string>
+    <string name="message_successfully_updated_password">Your password has been successfully updated</string>
+    <string name="message_wrong_password">Wrong password</string>
+    <string name="message_new_password_not_empty">New password must not be empty</string>
 </resources>

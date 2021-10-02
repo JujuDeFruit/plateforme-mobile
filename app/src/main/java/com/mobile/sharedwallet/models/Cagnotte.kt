@@ -22,8 +22,8 @@ data class Cagnotte(
         return name == "" && creationDate == Timestamp(0, 0) && totalSpent.isEmpty() && participants.isEmpty()
     }
 
-    override fun toFirebase() : HashMap<String, Any> {
-        return hashMapOf<String, Any>(
+    override fun toFirebase() : HashMap<String, Any?> {
+        return hashMapOf<String, Any?>(
             Attributes.NAME.string to name,
             Attributes.CREATION_DATE.string to creationDate,
             Attributes.TOTAL_SPENT.string to totalSpent.map { it.toFirebase() },
