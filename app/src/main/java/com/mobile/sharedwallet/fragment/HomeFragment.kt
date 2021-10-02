@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.R
 import androidx.navigation.fragment.findNavController
@@ -24,11 +23,12 @@ import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
-import com.mobile.sharedwallet.models.User
 import java.util.ArrayList
 import android.view.Gravity
-
-
+import com.google.firebase.auth.ktx.auth
+import com.mobile.sharedwallet.dialog.MessageDialog
+import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.utils.Utils
 
 
 class HomeFragment : Fragment() {
@@ -36,38 +36,44 @@ class HomeFragment : Fragment() {
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        loadCagnotteList()
-
         val view: View = inflater.inflate(R.layout.home_fragment, container, false)
 
+        loadCagnotteList()
+
         view.findViewById<FloatingActionButton>(R.id.createButton).setOnClickListener{
-            openDialog()
+            if (Firebase.auth.currentUser?.isEmailVerified == true) openDialog()
+            else {
+                val dialog = MessageDialog(requireContext(), requireView())
+                    .verifyAccountDialog(R.id.homeFragment)
+                dialog.show()
+            }
         }
 
         view.findViewById<FloatingActionButton>(R.id.profileButton).setOnClickListener{
             findNavController().navigate(R.id.profileFragment)
         }
 
-        view.findViewById<TextView>(R.id.welcome).text = "Welcome ".plus(LoginFragment.currentUser.firstName)
+        view.findViewById<TextView>(R.id.welcome).text =
+            getString(R.string.welcome)
+                .plus(" ")
+                .plus(Utils.getFirstnameAndLastnameFromDisplayName(Firebase.auth.currentUser?.displayName)["firstName"])
 
         return view
     }
 
     private fun loadCagnotteList() {
+
+        val mySelf : User = Utils.createUserFromFirebaseUser(Firebase.auth.currentUser)
+
         // Load all pots current user is involved in
         Firebase.firestore
-            .collection(FirebaseConstants.Pot)
-            .whereArrayContains(Cagnotte.Attributes.PARTICIPANTS.string, LoginFragment.currentUser.toFirebase())
+            .collection(FirebaseConstants.CollectionNames.Pot)
+            .whereArrayContains(Cagnotte.Attributes.PARTICIPANTS.string, mySelf.toFirebase())
             .get()
             .addOnSuccessListener { result ->
-                val tricountList : HashMap<String, Cagnotte> = HashMap();
-
                 for (document in result) {
-                    tricountList[document.id] = document.toObject<Cagnotte>()
-                }
-
-                for ((_, value) in tricountList) {
-                    createButtonClick(value.name)
+                    val cagnotte : Cagnotte = document.toObject<Cagnotte>()
+                    createButtonClick(cagnotte.name)
                 }
             }
             .addOnFailureListener { exception ->
@@ -77,14 +83,17 @@ class HomeFragment : Fragment() {
 
     private fun openDialog() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-        builder.setTitle("Pot name")
+        builder.setTitle(getString(R.string.pot_name))
+
         val layout = FrameLayout(builder.context)
         layout.setPadding(125,15,125,0)
         // Set up the input
         val input : EditText = EditText(layout.context)
         input.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER_HORIZONTAL
+
         layout.addView(input)
         builder.setView(layout)
+
         // Set up the buttons
         builder.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
             // Here you get get input text from the Edittext
@@ -141,12 +150,18 @@ class HomeFragment : Fragment() {
     private fun addCagnotte(name: String){
 
         // Create a new cagnotte with a first and last name
-        val info : HashMap<String, Any> =
-            Cagnotte(name, Timestamp.now(), ArrayList<Depense>(), arrayListOf(LoginFragment.currentUser)).toFirebase()
+        val info : HashMap<String, Any?> =
+            Cagnotte(
+                name,
+                Timestamp.now(),
+                ArrayList<Depense>(),
+                arrayListOf(Utils.createUserFromFirebaseUser(Firebase.auth.currentUser!!))
+            ).toFirebase()
+
         // Add a new document with a generated ID
         Firebase
             .firestore
-            .collection(FirebaseConstants.Pot)
+            .collection(FirebaseConstants.CollectionNames.Pot)
             .add(info)
             .addOnSuccessListener { Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!") }
             .addOnFailureListener { e ->

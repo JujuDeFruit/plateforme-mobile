@@ -2,7 +2,14 @@ package com.mobile.sharedwallet.constants
 
 object FirebaseConstants {
 
-    const val Users : String = "users"
+    object CollectionNames {
+        val Users : kotlin.String = "users"
 
-    const val Pot : String = "pot"
+        val Pot : kotlin.String = "pot"
+    }
+
+    object String {
+        val DisplayNameSeparator : kotlin.String = "|||||"
+    }
+
 }

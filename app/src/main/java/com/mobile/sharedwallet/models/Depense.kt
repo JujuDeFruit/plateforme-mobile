@@ -9,7 +9,7 @@ data class Depense (
 
     constructor() : this(User(), 0.0f, ArrayList<User>())
 
-    override fun toFirebase() : HashMap<String, Any> {
+    override fun toFirebase() : HashMap<String, Any?> {
         return hashMapOf(
             "whoPaid" to whoPaid,
             "amountPaid" to amountPaid,

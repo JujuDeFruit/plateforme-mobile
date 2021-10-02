@@ -1,9 +1,8 @@
 package com.mobile.sharedwallet.fragment
 
 import android.app.AlertDialog
-import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Message
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -12,16 +11,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
+import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.R
-import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.utils.Utils
 import java.util.regex.Pattern
 
 class RegisterFragment: Fragment() {
+
+    private lateinit var auth : FirebaseAuth
 
     private var firstName : String? = null
     private var lastName : String? = null
@@ -32,7 +34,9 @@ class RegisterFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view : View? = inflater.inflate(R.layout.register_fragment, container, false)
 
-        view?.findViewById<Button>(R.id.createAccount)?.setOnClickListener {
+        auth = Firebase.auth
+
+        view?.findViewById<FloatingActionButton>(R.id.createAccount)?.setOnClickListener {
             if (validate(view)) {
                 createAccount()
             }
@@ -41,7 +45,7 @@ class RegisterFragment: Fragment() {
         return view
     }
 
-    fun validate(view : View) : Boolean {
+    private fun validate(view : View) : Boolean {
 
         firstName = view.findViewById<EditText>(R.id.firstNameEditText).text.toString();
         lastName = view.findViewById<EditText>(R.id.lastNameEditText).text.toString();
@@ -83,56 +87,48 @@ class RegisterFragment: Fragment() {
         return true
     }
 
-    fun createAccount() {
+    private fun createAccount() {
         /*
             Create authentication account
          */
-        Firebase
-            .auth
+        auth
             .createUserWithEmailAndPassword(email!!, password1!!)
             .addOnSuccessListener {
-                /*
-                    Create specific user in Store with informations
-                 */
-                val user : User = User(
-                    it.user!!.uid,
-                    firstName!!,
-                    lastName!!,
-                    email!!,
-                    false
-                )
-                Firebase
-                    .firestore
-                    .collection(FirebaseConstants.Users)
-                    .add(user.toFirebase())
-                    .addOnSuccessListener {
-                        LoginFragment.currentUser = user
-                        val dialog = createDialog()
-                        dialog.show()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(
-                            activity,
-                            "An error occured while creating your acccount. Please retry !",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                sendVerificationEmail()
             }
             .addOnFailureListener {
                 Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun createDialog() : AlertDialog.Builder {
-        val builder = AlertDialog.Builder(activity)
-        builder.setMessage("A confirmation email has been sent. Please confirm your email.")
-            .setPositiveButton(
-                "OK",
-                DialogInterface.OnClickListener { _, _ ->
-                    findNavController().navigate(R.id.homeFragment)
-                })
-        // Create the AlertDialog object and return it
-        builder.create()
-        return builder
+    private fun sendVerificationEmail() {
+        auth
+            .currentUser
+            ?.sendEmailVerification()
+            ?.addOnSuccessListener {
+                submitInfos()
+            }
+            ?.addOnFailureListener {
+                Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun submitInfos() {
+        auth
+            .currentUser!!
+            .updateProfile(userProfileChangeRequest {
+                displayName = Utils.getDisplayNameFromFirstnameAndLastName(firstName, lastName)
+            })
+            .addOnSuccessListener {
+                val dialog : MessageDialog = MessageDialog(requireContext(), requireView())
+                dialog.navigateTo(R.id.homeFragment)
+                dialog
+                    .create("A confirmation email has been sent. Please confirm your email.")
+                    .show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(activity, it.message, Toast.LENGTH_SHORT)
+            }
+
     }
 }
