@@ -114,6 +114,7 @@ class HomeFragment : Fragment() {
         // Set up the input
         val input = EditText(layout.context)
         input.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER_HORIZONTAL
+        input.inputType=1
 
         layout.addView(input)
         builder.setView(layout)
