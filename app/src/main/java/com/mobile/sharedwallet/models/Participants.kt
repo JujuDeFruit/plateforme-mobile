@@ -1,5 +1,5 @@
 package com.mobile.sharedwallet.models
 
-data class Category(
+data class Participants(
     val name: String,
-    val selected: Boolean)
+    var selected: Boolean)
