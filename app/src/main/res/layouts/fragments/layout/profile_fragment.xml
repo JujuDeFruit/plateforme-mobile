@@ -20,11 +20,35 @@
             android:gravity="center"
             android:textSize="25sp"/>
 
+        <androidx.cardview.widget.CardView
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            app:cardCornerRadius="75dp"
+            app:cardBackgroundColor="@color/white"
+            android:layout_gravity="center"
+            android:layout_marginTop="35dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                app:cardCornerRadius="75dp"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/profilePicture"
+                    android:scaleType="centerCrop"/>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.cardview.widget.CardView>
+
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="25dp"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="25dp"
             app:flexDirection="row"
             app:alignItems="center">
 
@@ -36,13 +60,12 @@
                 android:textSize="20sp"
                 android:textColor="@color/black" />
 
-            <EditText
+            <TextView
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 app:layout_flexBasisPercent="60%"
                 android:id="@+id/firstNameProfile"
-                android:textSize="20sp"
-                android:enabled="false" />
+                android:textSize="20sp" />
 
         </com.google.android.flexbox.FlexboxLayout>
 
@@ -62,13 +85,12 @@
                 android:textSize="20sp"
                 android:textColor="@color/black" />
 
-            <EditText
+            <TextView
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 app:layout_flexBasisPercent="60%"
                 android:id="@+id/lastNameProfile"
-                android:textSize="20sp"
-                android:enabled="false"/>
+                android:textSize="20sp" />
 
         </com.google.android.flexbox.FlexboxLayout>
 
@@ -88,13 +110,12 @@
                 android:textSize="20sp"
                 android:textColor="@color/black" />
 
-            <EditText
+            <TextView
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 app:layout_flexBasisPercent="60%"
                 android:id="@+id/emailProfile"
-                android:textSize="20sp"
-                android:enabled="false"/>
+                android:textSize="20sp" />
 
         </com.google.android.flexbox.FlexboxLayout>
 
@@ -121,11 +142,6 @@
                 android:textSize="20sp"/>
 
         </com.google.android.flexbox.FlexboxLayout>
-
-        <!--<androidx.legacy.widget.Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />-->
 
     </LinearLayout>
 

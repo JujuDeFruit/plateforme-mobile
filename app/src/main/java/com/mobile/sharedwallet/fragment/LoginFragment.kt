@@ -18,7 +18,7 @@ class LoginFragment: Fragment() {
 
     private var email : String = String()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view: View = inflater.inflate(R.layout.login_fragment, container, false)
         view.findViewById<Button>(R.id.login).setOnClickListener{
             if (validate()) login()
@@ -35,8 +35,8 @@ class LoginFragment: Fragment() {
      */
     private fun validate() : Boolean {
         email = view?.findViewById<EditText>(R.id.email)?.text.toString()
-        if (email.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(activity, "Email is not in the good format !", Toast.LENGTH_SHORT).show()
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(activity, getString(R.string.message_email_not_good_format), Toast.LENGTH_SHORT).show()
             return false
         }
         return true

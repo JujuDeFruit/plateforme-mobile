@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="message_passwords_must_match">Passwords must match !</string>
+    <string name="message_new_repeated_password_not_match">Repeated password is not match new password</string>
+    <string name="message_successfully_updated_password">Your password has been successfully updated</string>
+    <string name="message_wrong_password">Wrong password</string>
+    <string name="message_new_password_not_empty">New password must not be empty</string>
+    <string name="message_password_conditions">Password must contain at least one digit, one upper case and has to be 8 char long minimum</string>
+    <string name="message_error_updating_password">An error occurred while updating your password. Please retry !</string>
+
+
+    <string name="message_email_not_send">E-mail not sent. Please retry !</string>
+    <string name="message_email_not_good_format">Email is not in the good format !</string>
+    <string name="message_enter_valid_email">Please enter a valid email !</string>
+    <string name="message_confirmation_email_sent">A confirmation email has been sent. Please confirm your email.</string>
+
+
+    <string name="message_please_verify_account_before">Please verify your account before</string>
+    <string name="message_invalid_group_name">Invalid group name</string>
+    <string name="message_error_creating_new_pot">An error occurred while creating new pot. Please retry !</string>
+    <string name="message_first_name_must_not_empty">First name must not be empty !</string>
+    <string name="message_last_name_must_not_empty">Last name must not be empty !</string>
+
+    <string name="message_profile_successfully_updated">Your profile has been successfully updated !</string>
+
+    <string name="message_error_fetch_photo">An error occurred while fetching picture profile. Please retry !</string>
+    <string name="message_error_update_photo">An error occurred while updating profile picture, please retry</string>
+</resources>
