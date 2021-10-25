@@ -5,6 +5,8 @@
     <string name="no">No</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="space">\u0020</string>
+    <string name="submit">Submit</string>
 
     <string name="welcome">Welcome</string>
 
@@ -16,6 +18,7 @@
 
     <!-- Register -->
     <string name="new_account">New Account</string>
+    <string name="email_sent">"E-mail sent"</string>
     <string name="re_send_email">Re-send e-mail</string>
     <string name="password">Password</string>
     <string name="repeat_password">Repeat password</string>
@@ -33,9 +36,4 @@
     <string name="log_out">Log out</string>
     <string name="edit_profile">Edit profile</string>
 
-    <!-- Toast messages -->
-    <string name="message_new_repeated_password_not_match">Repeated password is not match new password</string>
-    <string name="message_successfully_updated_password">Your password has been successfully updated</string>
-    <string name="message_wrong_password">Wrong password</string>
-    <string name="message_new_password_not_empty">New password must not be empty</string>
 </resources>

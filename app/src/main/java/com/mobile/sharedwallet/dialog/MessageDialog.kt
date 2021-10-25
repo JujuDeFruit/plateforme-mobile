@@ -2,6 +2,7 @@ package com.mobile.sharedwallet.dialog
 
 import android.app.AlertDialog
 import android.content.Context
+import android.provider.Settings.Global.getString
 import android.view.View
 import android.widget.Toast
 import androidx.navigation.Navigation.findNavController
@@ -9,7 +10,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.R
 
-class MessageDialog(
+class MessageDialog (
     private val context: Context,
     private val view: View,
     private val callback: (() -> Any)? = null) {
@@ -35,7 +36,7 @@ class MessageDialog(
     fun verifyAccountDialog(id : Int): AlertDialog.Builder {
         navigateTo(id)
         val builder : AlertDialog.Builder = create(
-            "Please verify your account before"
+            context.getString(R.string.message_please_verify_account_before)
         )
 
         builder.setNeutralButton(context.getString(R.string.re_send_email)) { _, _ ->
@@ -44,10 +45,10 @@ class MessageDialog(
                 .currentUser!!
                 .sendEmailVerification()
                 .addOnSuccessListener {
-                    Toast.makeText(context, "E-mail sent", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.email_sent), Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(context, "E-mail not sent. Please retry !", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.message_email_not_send), Toast.LENGTH_SHORT).show()
                 }
         }
 
