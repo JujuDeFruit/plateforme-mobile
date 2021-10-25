@@ -35,18 +35,24 @@ import kotlin.collections.HashMap
 class HomeFragment : Fragment() {
 
     private lateinit var store : FirebaseFirestore
-    private lateinit var auth : FirebaseAuth
-    private var user : FirebaseUser? = null
 
-    private var cagnotteList = LinkedList<Cagnotte>()
+    private var user : User? = LoginFragment.user
+
+    private var cagnotteList : LinkedList<Cagnotte>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
-        user = auth.currentUser
+        cagnotteList = LinkedList<Cagnotte>()
         loadCagnotteList()
     }
+
+
+    override fun onStart() {
+        super.onStart()
+        Utils.checkLoggedIn(findNavController())
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -54,13 +60,13 @@ class HomeFragment : Fragment() {
 
         val view: View = inflater.inflate(R.layout.home_fragment, container, false)
 
-        cagnotteList.forEach { cagnotte -> createButtonClick(cagnotte.name) }
+        cagnotteList?.forEach { cagnotte -> createButtonClick(cagnotte.name) }
 
         view.findViewById<FloatingActionButton>(R.id.createButton).setOnClickListener{
-            if (user?.isEmailVerified == true) openDialog()
+            if (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) openDialog()
             else {
                 val dialog = MessageDialog(requireContext(), requireView())
-                    .verifyAccountDialog(R.id.homeFragment)
+                    .verifyAccountDialog()
                 dialog.show()
             }
         }
@@ -72,30 +78,31 @@ class HomeFragment : Fragment() {
         view.findViewById<TextView>(R.id.welcome).text =
             getString(R.string.welcome)
                 .plus(getString(R.string.space))
-                .plus(Utils.getFirstnameAndLastnameFromDisplayName(user?.displayName)[User.Attributes.FIRST_NAME.string])
+                .plus(user?.firstName)
 
         return view
     }
 
     private fun loadCagnotteList() {
 
-        val mySelf : User = Utils.createUserFromFirebaseUser(user)
-
         // Load all pots current user is involved in
-        store
-            .collection(FirebaseConstants.CollectionNames.Pot)
-            .whereArrayContains(Cagnotte.Attributes.PARTICIPANTS.string, mySelf.toFirebase())
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    val cagnotte = document.toObject<Cagnotte>()
-                    cagnotteList.add(cagnotte)
-                    createButtonClick(cagnotte.name)
+        user?.let { user : User ->
+            store
+                .collection(FirebaseConstants.CollectionNames.Pot)
+                .whereArrayContains(Cagnotte.Attributes.PARTICIPANTS.string, user.toFirebase())
+                .get()
+                .addOnSuccessListener { result ->
+                    for (document in result) {
+                        val cagnotte = document.toObject<Cagnotte>()
+                        cagnotteList?.add(cagnotte)
+                        createButtonClick(cagnotte.name)
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(ContentValues.TAG, "Error getting documents: ", exception)
-            }
+                .addOnFailureListener { exception ->
+                    Log.d(ContentValues.TAG, "Error getting documents: ", exception)
+                }
+        }
+
     }
 
     private fun openDialog() {
@@ -169,23 +176,25 @@ class HomeFragment : Fragment() {
 
     private fun addCagnotte(name: String){
 
-        // Create a new cagnotte with a first and last name
-        val info : HashMap<String, Any?> =
-            Cagnotte(
-                name,
-                Timestamp.now(),
-                ArrayList<Depense>(),
-                arrayListOf(Utils.createUserFromFirebaseUser(user))
-            ).toFirebase()
+        user?.let { user : User ->
+            // Create a new cagnotte with a first and last name
+            val info : HashMap<String, Any?> =
+                Cagnotte(
+                    name,
+                    Timestamp.now(),
+                    ArrayList<Depense>(),
+                    arrayListOf(user)
+                ).toFirebase()
 
-        // Add a new document with a generated ID
-        store
-            .collection(FirebaseConstants.CollectionNames.Pot)
-            .add(info)
-            .addOnSuccessListener { Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!") }
-            .addOnFailureListener { e ->
-                Toast.makeText(activity, getString(R.string.message_error_creating_new_pot), Toast.LENGTH_SHORT).show()
-                Log.w(ContentValues.TAG, "Error writing document", e)
-            }
+            // Add a new document with a generated ID
+            store
+                .collection(FirebaseConstants.CollectionNames.Pot)
+                .add(info)
+                .addOnSuccessListener { Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!") }
+                .addOnFailureListener { e ->
+                    Toast.makeText(activity, getString(R.string.message_error_creating_new_pot), Toast.LENGTH_SHORT).show()
+                    Log.w(ContentValues.TAG, "Error writing document", e)
+                }
+        }
     }
 }

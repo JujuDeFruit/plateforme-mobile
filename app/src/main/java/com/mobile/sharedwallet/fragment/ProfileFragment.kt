@@ -12,52 +12,55 @@ import com.google.firebase.auth.FirebaseUser
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.utils.Utils
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
+import android.os.Looper
 import android.text.Editable
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.firebase.auth.EmailAuthProvider.getCredential
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.mobile.sharedwallet.R
-import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.models.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
+import java.lang.Exception
 
 
 class ProfileFragment : Fragment() {
 
-    private lateinit var mAuth: FirebaseAuth
-    private var user : FirebaseUser? = null
-
+    private var isEmailVerified : Boolean = false
+    private var user : User? = null
     private var storageRef : StorageReference? = null
-
-    private lateinit var currentDialog: AlertDialog
-
+    private var dialog : AlertDialog? = null
     private lateinit var selectPictureActivity : ActivityResultLauncher<String>
-    private var pictureUri : Uri? = null
-
-    private var bitmap : Bitmap? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         storageRef = FirebaseStorage.getInstance().reference
-        mAuth = FirebaseAuth.getInstance()
-        user = mAuth.currentUser
+        user = LoginFragment.user
+
+        isEmailVerified = FirebaseAuth.getInstance().currentUser?.isEmailVerified ?: false
 
         selectPictureActivity =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-                pictureUri = uri
-                currentDialog.findViewById<ImageView>(R.id.changeProfilePicture).setImageURI(uri)
+                dialog?.findViewById<ImageView>(R.id.changeProfilePicture)?.setImageURI(uri)
             }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        Utils.checkLoggedIn(findNavController())
     }
 
 
@@ -65,29 +68,27 @@ class ProfileFragment : Fragment() {
 
         val view : View = inflater.inflate(R.layout.profile_fragment, container, false)
 
-        user?.let { user : FirebaseUser ->
-            setValues(view, true)
+        FirebaseAuth.getInstance().currentUser?.let { user : FirebaseUser ->
+            setValues(view)
 
             view.findViewById<FloatingActionButton>(R.id.logoutProfile).setOnClickListener {
-                mAuth.signOut()
+                logout()
                 findNavController().navigate(R.id.loginFragment)
             }
 
             view.findViewById<FloatingActionButton>(R.id.editProfile).setOnClickListener {
-                if (user.isEmailVerified) showEditProfileDialog(container)
+                if (isEmailVerified) showEditProfileDialog(container)
                 else {
-                    val dialog = MessageDialog(requireContext(), requireView())
-                        .verifyAccountDialog(R.id.profileFragment)
-                    dialog.show()
+                    MessageDialog(requireContext(), requireView())
+                        .verifyAccountDialog().show()
                 }
             }
 
-            view.findViewById<FloatingActionButton>(R.id.changePassword).setOnClickListener {
-                if (user.isEmailVerified) showChangePasswordDialog(container)
+            view.findViewById<FloatingActionButton>(R.id.changePassword).setOnClickListener { _ ->
+                if (isEmailVerified) showChangePasswordDialog(container)
                 else {
-                    val dialog = MessageDialog(requireContext(), requireView())
-                        .verifyAccountDialog(R.id.profileFragment)
-                    dialog.show()
+                    MessageDialog(requireContext(), requireView())
+                        .verifyAccountDialog().show()
                 }
             }
         }
@@ -101,17 +102,15 @@ class ProfileFragment : Fragment() {
      *
      * @param view : Profile view
      */
-    private fun setValues(v : View? = null, init : Boolean = false) {
+    private fun setValues(v : View? = null) {
         val view : View = v ?: requireView()
 
-        user?.let { user : FirebaseUser ->
-            val names : HashMap<String, String> = Utils.getFirstnameAndLastnameFromDisplayName(user.displayName)
-
-            view.findViewById<TextView>(R.id.firstNameProfile).text = names[User.Attributes.FIRST_NAME.string]
-            view.findViewById<TextView>(R.id.lastNameProfile).text = names[User.Attributes.LAST_NAME.string]
+        user?.let { user : User ->
+            view.findViewById<TextView>(R.id.firstNameProfile).text = user.firstName
+            view.findViewById<TextView>(R.id.lastNameProfile).text = user.lastName
             view.findViewById<TextView>(R.id.emailProfile).text = user.email
-            view.findViewById<TextView>(R.id.validEmailProfile).text = if(user.isEmailVerified) resources.getString(R.string.yes) else resources.getString(R.string.no)
-            if(init) fetchPhoto()
+            view.findViewById<TextView>(R.id.validEmailProfile).text = if(isEmailVerified) resources.getString(R.string.yes) else resources.getString(R.string.no)
+            view.findViewById<ImageView>(R.id.profilePicture).setImageBitmap(user.photo)
         }
     }
 
@@ -123,31 +122,34 @@ class ProfileFragment : Fragment() {
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
 
-        val dialogView: View = LayoutInflater.from(context).inflate(R.layout.edit_profile_dialog, container, false)
+        val dialogView: View = LayoutInflater.from(requireContext()).inflate(R.layout.edit_profile_dialog, container, false)
 
-        val reSendEmailButton : FloatingActionButton = dialogView.findViewById<FloatingActionButton>(R.id.reSendEmailEditProfile)
-        val isEmailVerifiedText : TextView = dialogView.findViewById<TextView>(R.id.isEmailVerified)
+        val reSendEmailButton : FloatingActionButton = dialogView.findViewById(R.id.reSendEmailEditProfile)
+        val isEmailVerifiedText : TextView = dialogView.findViewById(R.id.isEmailVerified)
 
-        user?.let { user : FirebaseUser ->
-            val mySelf : HashMap<String, String> = Utils.getFirstnameAndLastnameFromDisplayName(user.displayName)
+        user?.let { user : User ->
 
-            dialogView.findViewById<EditText>(R.id.firstNameEditProfile).setText(mySelf[User.Attributes.FIRST_NAME.string])
-            dialogView.findViewById<EditText>(R.id.lastNameEditProfile).setText(mySelf[User.Attributes.LAST_NAME.string])
+            dialogView.findViewById<EditText>(R.id.firstNameEditProfile).setText(user.firstName)
+            dialogView.findViewById<EditText>(R.id.lastNameEditProfile).setText(user.lastName)
 
-            if (user.isEmailVerified) {
+            if (isEmailVerified) {
                 isEmailVerifiedText.text = getString(R.string.yes)
                 reSendEmailButton.visibility = View.INVISIBLE
             } else {
                 isEmailVerifiedText.text = getString(R.string.no)
                 reSendEmailButton.visibility = View.VISIBLE
                 reSendEmailButton.setOnClickListener {
-                    user
-                        .sendEmailVerification()
-                        .addOnSuccessListener {
-                            Toast.makeText(context, getString(R.string.email_sent), Toast.LENGTH_SHORT).show()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(context, getString(R.string.message_email_not_send), Toast.LENGTH_SHORT).show()
+                    FirebaseAuth
+                        .getInstance()
+                        .currentUser
+                        ?.let { firebaseUser : FirebaseUser ->
+                            firebaseUser.sendEmailVerification()
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, getString(R.string.email_sent), Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(context, getString(R.string.message_email_not_send), Toast.LENGTH_SHORT).show()
+                                }
                         }
                 }
             }
@@ -155,11 +157,11 @@ class ProfileFragment : Fragment() {
 
         builder.setView(dialogView)
 
-        currentDialog = builder.create()
+        dialog = builder.create()
 
         val changeProfilePicture : ImageView = dialogView.findViewById<ImageView>(R.id.changeProfilePicture)
 
-        bitmap?.let {
+        user?.photo?.let {
             changeProfilePicture.setImageBitmap(it)
         }
 
@@ -167,17 +169,31 @@ class ProfileFragment : Fragment() {
             selectPictureActivity.launch("image/*")
         }
 
-        dialogView.findViewById<FloatingActionButton>(R.id.cancelEditProfile).setOnClickListener { currentDialog.dismiss() }
+        dialogView.findViewById<FloatingActionButton>(R.id.cancelEditProfile).setOnClickListener { dialog?.dismiss() }
 
         dialogView.findViewById<FloatingActionButton>(R.id.confirmEditProfile).setOnClickListener {
-            if(validateUpdateProfile(dialogView)) {
-                updateProfile(dialogView)
+            val updateProfile : Boolean = validateUpdateProfile()
+            val updatePhoto : Boolean = validateUpdatePhoto()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                if(updateProfile) updateProfile()
+                if(updatePhoto) updatePhoto()
+                setValues()
             }
-            updatePhoto(dialogView)
-            currentDialog.dismiss()
+
+            if (updatePhoto || updateProfile) {
+                val mDialog = MessageDialog(requireContext(), requireView()) {
+                    dialog!!.dismiss()
+                }
+                mDialog
+                    .create(getString(R.string.message_profile_successfully_updated))
+                    .show()
+            } else {
+                dialog!!.dismiss()
+            }
         }
 
-        currentDialog.show()
+        dialog?.show()
     }
 
 
@@ -186,17 +202,30 @@ class ProfileFragment : Fragment() {
      *
      * @param dialogView : current edit view
      */
-    private fun validateUpdateProfile(dialogView: View) : Boolean {
-        return user?.let { user: FirebaseUser ->
-            val firstName: String =
-                dialogView.findViewById<EditText>(R.id.firstNameEditProfile).text.toString()
-            val lastName: String =
-                dialogView.findViewById<EditText>(R.id.lastNameEditProfile).text.toString()
+    private fun validateUpdateProfile() : Boolean {
+        return user?.let { user: User ->
+            return@let dialog?.let { dialog ->
+                val firstName: String =
+                    dialog.findViewById<EditText>(R.id.firstNameEditProfile).text.toString()
+                val lastName: String =
+                    dialog.findViewById<EditText>(R.id.lastNameEditProfile).text.toString()
 
-            val currentUser: HashMap<String, String> =
-                Utils.getFirstnameAndLastnameFromDisplayName(user.displayName)
+                return@let lastName != user.lastName || firstName != user.firstName
+            }
+        } ?: false
+    }
 
-            return@let lastName != currentUser[User.Attributes.LAST_NAME.string] || firstName != currentUser[User.Attributes.FIRST_NAME.string]
+
+    /**
+     * Check if loaded bitmap is different from current bitmap
+     */
+    private fun validateUpdatePhoto() : Boolean {
+        return user?.let { user : User ->
+            dialog?.let { dialog ->
+                val newPhotoImageView : ImageView = dialog.findViewById<ImageView>(R.id.changeProfilePicture)
+                val newPhoto : BitmapDrawable = newPhotoImageView.drawable as BitmapDrawable
+                return@let if(user.photo != null) !user.photo!!.sameAs(newPhoto.bitmap) else true
+            }
         } ?: false
     }
 
@@ -204,26 +233,29 @@ class ProfileFragment : Fragment() {
     /**
      * Update user profile on Firebase
      */
-    private fun updateProfile(dialogView: View) {
-        user?.let { user : FirebaseUser ->
-            val firstName : String = dialogView.findViewById<EditText>(R.id.firstNameEditProfile).text.toString()
-            val lastName : String = dialogView.findViewById<EditText>(R.id.lastNameEditProfile).text.toString()
+    private suspend fun updateProfile() {
+        user?.let { user : User ->
+            dialog?.let { dialog ->
+                val firstName : String = dialog.findViewById<EditText>(R.id.firstNameEditProfile).text.toString()
+                val lastName : String = dialog.findViewById<EditText>(R.id.lastNameEditProfile).text.toString()
 
-            user
-                .updateProfile(userProfileChangeRequest {
-                    displayName = Utils.getDisplayNameFromFirstnameAndLastName(firstName, lastName)
-                })
-                .addOnSuccessListener {
-                    val dialog : MessageDialog = MessageDialog(requireContext(), requireView()) {
-                        setValues()
+                FirebaseAuth
+                    .getInstance()
+                    .currentUser
+                    ?.let { firebaseUser : FirebaseUser ->
+                        try {
+                            firebaseUser.updateProfile(userProfileChangeRequest {
+                                displayName = Utils.getDisplayNameFromFirstnameAndLastName(firstName, lastName)
+                            }).await()
+
+                            user.firstName = firstName
+                            user.lastName = lastName
+                        }
+                        catch (e: Exception) {
+                            Toast.makeText(requireContext(), getString(R.string.message_error_update_profile), Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    dialog
-                        .create(getString(R.string.message_profile_successfully_updated))
-                        .show()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
-                }
+            }
         }
     }
 
@@ -231,27 +263,29 @@ class ProfileFragment : Fragment() {
     /**
      * Update photo in storage
      */
-    private fun updatePhoto(dialogView: View) {
+    private suspend fun updatePhoto() {
+        dialog?.let { dialog ->
+            val imageView : ImageView = dialog.findViewById(R.id.changeProfilePicture)
+            val bitmap = (imageView.drawable as BitmapDrawable).bitmap
 
-        val imageView : ImageView = dialogView.findViewById<ImageView>(R.id.changeProfilePicture)
-        val bitmap_ = (imageView.drawable as BitmapDrawable).bitmap
+            val baos = ByteArrayOutputStream()
 
-        val baos : ByteArrayOutputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+            val data : ByteArray = baos.toByteArray()
 
-        bitmap_.compress(Bitmap.CompressFormat.PNG, 100, baos)
-        val data : ByteArray = baos.toByteArray()
-
-        storageRef?.let { storageRef : StorageReference ->
-            user?.let { user : FirebaseUser ->
-                storageRef
-                    .child(Utils.buildPicturePathRef(user))
-                    .putBytes(data)
-                    .addOnSuccessListener {
-                        requireView().findViewById<ImageView>(R.id.profilePicture).setImageBitmap(bitmap_)
+            storageRef?.let { storageRef : StorageReference ->
+                user?.let { user : User ->
+                    try {
+                        storageRef
+                            .child(Utils.buildPicturePathRef(user.uid!!))
+                            .putBytes(data)
+                            .await()
+                        user.photo = bitmap
                     }
-                    .addOnFailureListener {
+                    catch (e: Exception) {
                         Toast.makeText(requireContext(), getString(R.string.message_error_update_photo), Toast.LENGTH_SHORT).show()
                     }
+                }
             }
         }
     }
@@ -263,22 +297,26 @@ class ProfileFragment : Fragment() {
      * @param container ViewGroup needed to build AlertDialog
      */
     private fun showChangePasswordDialog(container: ViewGroup?) {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
 
         val dialogView: View =
-            LayoutInflater.from(context).inflate(R.layout.change_password_dialog, container, false)
+            LayoutInflater.from(requireContext()).inflate(R.layout.change_password_dialog, container, false)
+
         builder.setView(dialogView)
 
-        currentDialog = builder.create()
+        val passwordDialog : AlertDialog = builder.create()
 
         dialogView
             .findViewById<FloatingActionButton>(R.id.cancel)
-            .setOnClickListener { currentDialog.dismiss() }
+            .setOnClickListener { passwordDialog.dismiss() }
+
         dialogView
             .findViewById<FloatingActionButton>(R.id.submit)
-            .setOnClickListener { changePassword(dialogView) }
+            .setOnClickListener {
+                changePassword(passwordDialog)
+            }
 
-        currentDialog.show()
+        passwordDialog.show()
     }
 
 
@@ -287,17 +325,23 @@ class ProfileFragment : Fragment() {
      *
      * @param dialogView dialog view of the changing password dialog
      */
-    private fun changePassword(dialogView : View) {
-        val password : Editable? = dialogView.findViewById<EditText>(R.id.passwordOnChangePassword)?.text
+    private fun changePassword(passwordDialog: AlertDialog) {
+        val password : Editable? = passwordDialog.findViewById<EditText>(R.id.passwordOnChangePassword)?.text
 
         if (!password.isNullOrEmpty()) {
-            user?.let { user : FirebaseUser ->
-                user
-                    .reauthenticate(getCredential(user.email!!, password.toString()))
-                    .addOnSuccessListener { updatePassword(dialogView) }
-                    .addOnFailureListener {
-                        Toast.makeText(context, getString(R.string.message_wrong_password), Toast.LENGTH_SHORT).show()
+            user?.let { user : User ->
+                FirebaseAuth
+                    .getInstance()
+                    .currentUser
+                    ?.let { fbUser : FirebaseUser ->
+                        fbUser
+                            .reauthenticate(getCredential(user.email!!, password.toString()))
+                            .addOnSuccessListener { updatePassword(passwordDialog) }
+                            .addOnFailureListener {
+                                Toast.makeText(requireContext(), getString(R.string.message_wrong_password), Toast.LENGTH_SHORT).show()
+                            }
                     }
+
             }
         }
     }
@@ -308,66 +352,51 @@ class ProfileFragment : Fragment() {
      *
      * @param dialogView dialog view of the changing password dialog
      */
-    private fun updatePassword(dialogView : View) {
-        val newPassword : Editable? = dialogView.findViewById<EditText>(R.id.newPassword)?.text
-        val repeatedNewPassword : Editable? = dialogView.findViewById<EditText>(R.id.repeatedNewPassword)?.text
+    private fun updatePassword(passwordDialog: AlertDialog) {
+        val newPassword : Editable? = passwordDialog.findViewById<EditText>(R.id.newPassword)?.text
+        val repeatedNewPassword : Editable? = passwordDialog.findViewById<EditText>(R.id.repeatedNewPassword)?.text
 
         if (newPassword.toString() != repeatedNewPassword.toString()) {
-            Toast.makeText(context, getString(R.string.message_new_repeated_password_not_match), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.message_new_repeated_password_not_match), Toast.LENGTH_SHORT).show()
             return
         } else if (newPassword.isNullOrEmpty() || repeatedNewPassword.isNullOrEmpty()) {
-            Toast.makeText(context, getString(R.string.message_new_password_not_empty), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.message_new_password_not_empty), Toast.LENGTH_SHORT).show()
             return
+        } else {
+            val condition : Boolean = Utils.checkPasswordConditions(requireContext(), newPassword.toString(), repeatedNewPassword.toString()) ?: true
+            if (!condition) return
         }
 
-        user?.let { user : FirebaseUser ->
-            user
-                .updatePassword(newPassword.toString())
-                .addOnSuccessListener { _ : Void ->
-                    val dialog : MessageDialog = MessageDialog(
-                        requireContext(),
-                        requireView()
-                    ) {
-                        mAuth.signOut()
-                        currentDialog.dismiss()
+        FirebaseAuth
+            .getInstance()
+            .currentUser?.let {
+                it.updatePassword(newPassword.toString())
+                    .addOnSuccessListener {
+                        val dialog : MessageDialog = MessageDialog(
+                            requireContext(),
+                            requireView()
+                        ) {
+                            logout()
+                            passwordDialog.dismiss()
+                        }
+                        dialog.navigateTo(R.id.loginFragment)
+                        dialog
+                            .create(getString(R.string.message_successfully_updated_password))
+                            .show()
                     }
-                    dialog.navigateTo(R.id.loginFragment)
-                    dialog
-                        .create(getString(R.string.message_successfully_updated_password))
-                        .show()
-                }
-                .addOnFailureListener { _ : Exception ->
-                    Toast.makeText(context, getString(R.string.message_error_updating_password), Toast.LENGTH_SHORT).show()
-                }
-        }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), getString(R.string.message_error_updating_password), Toast.LENGTH_SHORT).show()
+                    }
+            }
     }
 
 
     /**
-     * Fetch user profile photo from firebase storage
+     * Logout from account
+     * Reset Fb user & local user
      */
-    private fun fetchPhoto() {
-        storageRef?.let { storageRef : StorageReference ->
-            user?.let { user : FirebaseUser ->
-                storageRef
-                    .child(Utils.buildPicturePathRef(user))
-                    .getBytes(FirebaseConstants.MAX_PROFILE_PHOTO_SIZE)
-                    .addOnSuccessListener { byteArray : ByteArray ->
-                        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-
-                        val imageBitmap : Bitmap =
-                            Bitmap.createScaledBitmap(bitmap, bitmap.width, bitmap.height,false)
-
-                        this.bitmap = imageBitmap
-                        requireView()
-                            .findViewById<ImageView>(R.id.profilePicture)
-                            .setImageBitmap(imageBitmap)
-
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(requireContext(), getString(R.string.message_error_fetch_photo), Toast.LENGTH_SHORT).show()
-                    }
-            }
-        }
+    private fun logout() {
+        user = null
+        FirebaseAuth.getInstance().signOut()
     }
 }

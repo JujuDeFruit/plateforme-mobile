@@ -4,10 +4,10 @@ import android.graphics.Bitmap
 
 data class User(
     val uid : String?,
-    val firstName : String?,
-    val lastName : String?,
+    var firstName : String?,
+    var lastName : String?,
     val email : String?,
-    val photo : Bitmap?
+    var photo : Bitmap?
 ) : Model {
     constructor() : this(null, null, null, null, null)
 
@@ -19,7 +19,7 @@ data class User(
         PHOTO("photo"),
     }
 
-    fun isEmpty() : Boolean {
+    fun isNullOrEmpty() : Boolean {
         return uid.isNullOrEmpty()
                 && firstName.isNullOrEmpty()
                 && lastName.isNullOrEmpty()

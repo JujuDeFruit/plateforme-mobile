@@ -10,11 +10,27 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.utils.Utils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginFragment: Fragment() {
+
+    companion object {
+        var user : User? = null
+            get() {
+                if (field == null || field!!.isNullOrEmpty())
+                    return User()
+                return field
+            }
+    }
 
     private var email : String = String()
 
@@ -46,15 +62,20 @@ class LoginFragment: Fragment() {
      * Login function => firebase async methods
      */
     private fun login() {
-        val password = view?.findViewById<EditText>(R.id.password)?.text.toString()
-        Firebase
-            .auth
-            .signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                findNavController().navigate(R.id.homeFragment)
-            }
-            .addOnFailureListener {
-                Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
-            }
+        view?.let {
+            val password = view?.findViewById<EditText>(R.id.password)?.text.toString()
+            FirebaseAuth
+                .getInstance()
+                .signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        user = Utils.createUserFromFirebaseUser(it.user, true)
+                        findNavController().navigate(R.id.homeFragment)
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 }

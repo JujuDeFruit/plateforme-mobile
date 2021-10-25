@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.navigation.fragment.findNavController
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Cagnotte
+import com.mobile.sharedwallet.utils.Utils
 
 class CagnotteFragment:Fragment() {
 
@@ -25,6 +27,11 @@ class CagnotteFragment:Fragment() {
             set(value : Cagnotte) {
                 field = value
             }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Utils.checkLoggedIn(findNavController())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
