@@ -1,18 +1,22 @@
 package com.mobile.sharedwallet.models
 
+import android.graphics.Bitmap
+
 data class User(
     val uid : String?,
     val firstName : String?,
     val lastName : String?,
     val email : String?,
+    val photo : Bitmap?
 ) : Model {
-    constructor() : this(null, null, null, null)
+    constructor() : this(null, null, null, null, null)
 
     enum class Attributes(val string: String) {
         UID("uid"),
         FIRST_NAME("firstName"),
         LAST_NAME("lastName"),
         EMAIL("email"),
+        PHOTO("photo"),
     }
 
     fun isEmpty() : Boolean {
@@ -20,6 +24,7 @@ data class User(
                 && firstName.isNullOrEmpty()
                 && lastName.isNullOrEmpty()
                 && email.isNullOrEmpty()
+                && photo == null
     }
 
     override fun toFirebase(): HashMap<String, Any?> {

@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -14,16 +12,15 @@ import com.google.firebase.auth.FirebaseUser
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.utils.Utils
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.text.Editable
-import android.widget.EditText
-import android.widget.ImageView
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.cardview.widget.CardView
 import com.google.firebase.auth.EmailAuthProvider.getCredential
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
@@ -69,7 +66,7 @@ class ProfileFragment : Fragment() {
         val view : View = inflater.inflate(R.layout.profile_fragment, container, false)
 
         user?.let { user : FirebaseUser ->
-            setValues(view)
+            setValues(view, true)
 
             view.findViewById<FloatingActionButton>(R.id.logoutProfile).setOnClickListener {
                 mAuth.signOut()
@@ -104,7 +101,7 @@ class ProfileFragment : Fragment() {
      *
      * @param view : Profile view
      */
-    private fun setValues(v : View? = null) {
+    private fun setValues(v : View? = null, init : Boolean = false) {
         val view : View = v ?: requireView()
 
         user?.let { user : FirebaseUser ->
@@ -114,8 +111,7 @@ class ProfileFragment : Fragment() {
             view.findViewById<TextView>(R.id.lastNameProfile).text = names[User.Attributes.LAST_NAME.string]
             view.findViewById<TextView>(R.id.emailProfile).text = user.email
             view.findViewById<TextView>(R.id.validEmailProfile).text = if(user.isEmailVerified) resources.getString(R.string.yes) else resources.getString(R.string.no)
-            fetchPhoto()
-
+            if(init) fetchPhoto()
         }
     }
 
@@ -174,8 +170,11 @@ class ProfileFragment : Fragment() {
         dialogView.findViewById<FloatingActionButton>(R.id.cancelEditProfile).setOnClickListener { currentDialog.dismiss() }
 
         dialogView.findViewById<FloatingActionButton>(R.id.confirmEditProfile).setOnClickListener {
-            if(validateUpdateProfile(dialogView)) updateProfile(dialogView)
-            if(validateUpdatePhoto(dialogView)) updatePhoto(dialogView)
+            if(validateUpdateProfile(dialogView)) {
+                updateProfile(dialogView)
+            }
+            updatePhoto(dialogView)
+            currentDialog.dismiss()
         }
 
         currentDialog.show()
@@ -203,17 +202,6 @@ class ProfileFragment : Fragment() {
 
 
     /**
-     * Check if profile photo has been changed TODO
-     */
-    private fun validateUpdatePhoto(dialogView: View) : Boolean {
-        return true;
-        storageRef?.let {
-            val photoPath : StorageReference = it.child(FirebaseConstants.StorageRef.Pictures)
-        }
-    }
-
-
-    /**
      * Update user profile on Firebase
      */
     private fun updateProfile(dialogView: View) {
@@ -228,7 +216,6 @@ class ProfileFragment : Fragment() {
                 .addOnSuccessListener {
                     val dialog : MessageDialog = MessageDialog(requireContext(), requireView()) {
                         setValues()
-                        currentDialog.dismiss()
                     }
                     dialog
                         .create(getString(R.string.message_profile_successfully_updated))
@@ -260,7 +247,6 @@ class ProfileFragment : Fragment() {
                     .child(Utils.buildPicturePathRef(user))
                     .putBytes(data)
                     .addOnSuccessListener {
-                        currentDialog.dismiss()
                         requireView().findViewById<ImageView>(R.id.profilePicture).setImageBitmap(bitmap_)
                     }
                     .addOnFailureListener {
