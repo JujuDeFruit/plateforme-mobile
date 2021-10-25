@@ -60,13 +60,13 @@ class HomeFragment : Fragment() {
 
         val view: View = inflater.inflate(R.layout.home_fragment, container, false)
 
-        // cagnotteList?.forEach { cagnotte -> createButtonClick(cagnotte.name) }
+        cagnotteList?.forEach { cagnotte -> createButtonClick(cagnotte.name) }
 
         view.findViewById<FloatingActionButton>(R.id.createButton).setOnClickListener{
-            if (user?.isEmailVerified == true) openDialog()
+            if (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) openDialog()
             else {
                 val dialog = MessageDialog(requireContext(), requireView())
-                    .verifyAccountDialog(R.id.homeFragment)
+                    .verifyAccountDialog()
                 dialog.show()
             }
         }

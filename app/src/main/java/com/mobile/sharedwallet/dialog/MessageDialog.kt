@@ -25,7 +25,7 @@ class MessageDialog (
         val builder = AlertDialog.Builder(context)
         builder.setMessage(message)
             .setPositiveButton(context.getString(R.string.ok)) { _, _ ->
-                if (navigateToId != null) findNavController(view).navigate(navigateToId!!)
+                navigateToId?.let { findNavController(view).navigate(it) }
                 callback?.invoke()
             }
         // Create the AlertDialog object and return it
@@ -33,8 +33,8 @@ class MessageDialog (
         return builder
     }
 
-    fun verifyAccountDialog(id : Int): AlertDialog.Builder {
-        navigateTo(id)
+    fun verifyAccountDialog(id : Int? = null): AlertDialog.Builder {
+        id?.let { navigateTo(id) }
         val builder : AlertDialog.Builder = create(
             context.getString(R.string.message_please_verify_account_before)
         )
@@ -42,18 +42,19 @@ class MessageDialog (
         builder.setNeutralButton(context.getString(R.string.re_send_email)) { _, _ ->
             Firebase
                 .auth
-                .currentUser!!
-                .sendEmailVerification()
-                .addOnSuccessListener {
-                    Toast.makeText(context, context.getString(R.string.email_sent), Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(context, context.getString(R.string.message_email_not_send), Toast.LENGTH_SHORT).show()
+                .currentUser?.let {
+                    it.sendEmailVerification()
+                    .addOnSuccessListener {
+                        Toast.makeText(context, context.getString(R.string.email_sent), Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(context, context.getString(R.string.message_email_not_send), Toast.LENGTH_SHORT).show()
+                    }
                 }
         }
 
         builder.setOnDismissListener {
-            if (navigateToId != null) findNavController(view).navigate(navigateToId!!)
+            navigateToId?.let { nav -> findNavController(view).navigate(nav) }
         }
 
         return builder

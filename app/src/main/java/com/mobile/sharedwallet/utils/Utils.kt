@@ -8,6 +8,8 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ListResult
+import com.google.firebase.storage.StorageReference
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.LoginFragment
@@ -70,7 +72,10 @@ class Utils {
 
                             val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
                             return@withContext Bitmap.createScaledBitmap(bitmap, bitmap.width, bitmap.height, false)
-                        } catch (e : Exception) {}
+
+                        } catch (e : Exception) {
+                            return@withContext null
+                        }
                     } as Bitmap?
 
                 }
@@ -79,7 +84,6 @@ class Utils {
                     names[User.Attributes.FIRST_NAME.string],
                     names[User.Attributes.LAST_NAME.string],
                     firebaseUser.email,
-                    firebaseUser.isEmailVerified,
                     photo)
             } ?: User()
         }

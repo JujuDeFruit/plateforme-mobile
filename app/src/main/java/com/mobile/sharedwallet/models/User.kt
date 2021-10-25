@@ -7,17 +7,15 @@ data class User(
     var firstName : String?,
     var lastName : String?,
     val email : String?,
-    val isEmailVerified : Boolean,
     var photo : Bitmap?
 ) : Model {
-    constructor() : this(null, null, null, null, false, null)
+    constructor() : this(null, null, null, null, null)
 
     enum class Attributes(val string: String) {
         UID("uid"),
         FIRST_NAME("firstName"),
         LAST_NAME("lastName"),
         EMAIL("email"),
-        IS_EMAIL_VERIFIED("isEmailVerified"),
         PHOTO("photo"),
     }
 

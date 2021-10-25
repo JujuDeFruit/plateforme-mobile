@@ -14,12 +14,14 @@ import com.mobile.sharedwallet.utils.Utils
 import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Looper
 import android.text.Editable
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.firebase.auth.EmailAuthProvider.getCredential
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.mobile.sharedwallet.R
@@ -34,6 +36,7 @@ import java.lang.Exception
 
 class ProfileFragment : Fragment() {
 
+    private var isEmailVerified : Boolean = false
     private var user : User? = null
     private var storageRef : StorageReference? = null
     private var dialog : AlertDialog? = null
@@ -45,6 +48,8 @@ class ProfileFragment : Fragment() {
 
         storageRef = FirebaseStorage.getInstance().reference
         user = LoginFragment.user
+
+        isEmailVerified = FirebaseAuth.getInstance().currentUser?.isEmailVerified ?: false
 
         selectPictureActivity =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -63,7 +68,7 @@ class ProfileFragment : Fragment() {
 
         val view : View = inflater.inflate(R.layout.profile_fragment, container, false)
 
-        user?.let { userIt : User ->
+        FirebaseAuth.getInstance().currentUser?.let { user : FirebaseUser ->
             setValues(view)
 
             view.findViewById<FloatingActionButton>(R.id.logoutProfile).setOnClickListener {
@@ -72,18 +77,18 @@ class ProfileFragment : Fragment() {
             }
 
             view.findViewById<FloatingActionButton>(R.id.editProfile).setOnClickListener {
-                if (userIt.isEmailVerified) showEditProfileDialog(container)
+                if (isEmailVerified) showEditProfileDialog(container)
                 else {
                     MessageDialog(requireContext(), requireView())
-                        .verifyAccountDialog(R.id.profileFragment).show()
+                        .verifyAccountDialog().show()
                 }
             }
 
             view.findViewById<FloatingActionButton>(R.id.changePassword).setOnClickListener { _ ->
-                if (userIt.isEmailVerified) showChangePasswordDialog(container)
+                if (isEmailVerified) showChangePasswordDialog(container)
                 else {
                     MessageDialog(requireContext(), requireView())
-                        .verifyAccountDialog(R.id.profileFragment).show()
+                        .verifyAccountDialog().show()
                 }
             }
         }
@@ -104,7 +109,7 @@ class ProfileFragment : Fragment() {
             view.findViewById<TextView>(R.id.firstNameProfile).text = user.firstName
             view.findViewById<TextView>(R.id.lastNameProfile).text = user.lastName
             view.findViewById<TextView>(R.id.emailProfile).text = user.email
-            view.findViewById<TextView>(R.id.validEmailProfile).text = if(user.isEmailVerified) resources.getString(R.string.yes) else resources.getString(R.string.no)
+            view.findViewById<TextView>(R.id.validEmailProfile).text = if(isEmailVerified) resources.getString(R.string.yes) else resources.getString(R.string.no)
             view.findViewById<ImageView>(R.id.profilePicture).setImageBitmap(user.photo)
         }
     }
@@ -127,7 +132,7 @@ class ProfileFragment : Fragment() {
             dialogView.findViewById<EditText>(R.id.firstNameEditProfile).setText(user.firstName)
             dialogView.findViewById<EditText>(R.id.lastNameEditProfile).setText(user.lastName)
 
-            if (user.isEmailVerified) {
+            if (isEmailVerified) {
                 isEmailVerifiedText.text = getString(R.string.yes)
                 reSendEmailButton.visibility = View.INVISIBLE
             } else {
@@ -170,20 +175,14 @@ class ProfileFragment : Fragment() {
             val updateProfile : Boolean = validateUpdateProfile()
             val updatePhoto : Boolean = validateUpdatePhoto()
 
-            if(updateProfile) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    updateProfile()
-                }
-            }
-            if (updatePhoto) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    updatePhoto()
-                }
+            CoroutineScope(Dispatchers.Main).launch {
+                if(updateProfile) updateProfile()
+                if(updatePhoto) updatePhoto()
+                setValues()
             }
 
             if (updatePhoto || updateProfile) {
                 val mDialog = MessageDialog(requireContext(), requireView()) {
-                    setValues()
                     dialog!!.dismiss()
                 }
                 mDialog
@@ -225,7 +224,7 @@ class ProfileFragment : Fragment() {
             dialog?.let { dialog ->
                 val newPhotoImageView : ImageView = dialog.findViewById<ImageView>(R.id.changeProfilePicture)
                 val newPhoto : BitmapDrawable = newPhotoImageView.drawable as BitmapDrawable
-                return@let !user.photo!!.sameAs(newPhoto.bitmap)
+                return@let if(user.photo != null) !user.photo!!.sameAs(newPhoto.bitmap) else true
             }
         } ?: false
     }

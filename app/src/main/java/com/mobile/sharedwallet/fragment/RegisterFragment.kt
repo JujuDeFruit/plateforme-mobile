@@ -15,6 +15,10 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.utils.Utils
+import io.grpc.okhttp.internal.Util
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 class RegisterFragment: Fragment() {
@@ -125,20 +129,23 @@ class RegisterFragment: Fragment() {
      * Update user data in Firebase
      */
     private fun submitInfos() {
-        user?.let {user : FirebaseUser ->
+        user?.let { user : FirebaseUser ->
             user
                 .updateProfile(userProfileChangeRequest {
                     displayName = Utils.getDisplayNameFromFirstnameAndLastName(firstName, lastName)
                 })
                 .addOnSuccessListener {
-                    val dialog : MessageDialog = MessageDialog(requireContext(), requireView())
-                    dialog.navigateTo(R.id.homeFragment)
-                    dialog
-                        .create(getString(R.string.message_confirmation_email_sent))
-                        .show()
+                    CoroutineScope(Dispatchers.Main).launch {
+                        LoginFragment.user = Utils.createUserFromFirebaseUser(user, false)
+                        val dialog : MessageDialog = MessageDialog(requireContext(), requireView())
+                        dialog.navigateTo(R.id.homeFragment)
+                        dialog
+                            .create(getString(R.string.message_confirmation_email_sent))
+                            .show()
+                    }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                 }
         }
     }
