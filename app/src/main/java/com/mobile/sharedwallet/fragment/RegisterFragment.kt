@@ -11,9 +11,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.utils.Utils
@@ -22,7 +20,7 @@ import java.util.regex.Pattern
 class RegisterFragment: Fragment() {
 
     private lateinit var auth : FirebaseAuth
-    private lateinit var user : FirebaseUser
+    private var user : FirebaseUser? = null
 
     private var firstName : String? = null
     private var lastName : String? = null
@@ -35,8 +33,8 @@ class RegisterFragment: Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        auth = Firebase.auth
-        user = auth.currentUser!!
+        auth = FirebaseAuth.getInstance()
+        user = auth.currentUser
     }
 
     /**
@@ -46,7 +44,7 @@ class RegisterFragment: Fragment() {
         val view : View? = inflater.inflate(R.layout.register_fragment, container, false)
 
         view?.findViewById<FloatingActionButton>(R.id.createAccount)?.setOnClickListener {
-            if (validate(view)) {
+            if (validate()) {
                 createAccount()
             }
         }
@@ -60,43 +58,34 @@ class RegisterFragment: Fragment() {
      * @param view : View of the form
      * @return true if everything is OK, false else
      */
-    private fun validate(view : View) : Boolean {
+    private fun validate() : Boolean {
 
-        firstName = view.findViewById<EditText>(R.id.firstNameEditText).text.toString();
-        lastName = view.findViewById<EditText>(R.id.lastNameEditText).text.toString();
-        email = view.findViewById<EditText>(R.id.emailEditText).text.toString();
-        password1 = view.findViewById<EditText>(R.id.passwordEditText).text.toString();
-        password2 = view.findViewById<EditText>(R.id.password2EditText).text!!.toString();
-
-        val passwordPattern : String = "^(?=.*\\d)(?=.*[A-Z])[0-9a-zA-Z]{4,}$"
+        view?.let { view : View ->
+            firstName = view.findViewById<EditText>(R.id.firstNameEditText).text.toString();
+            lastName = view.findViewById<EditText>(R.id.lastNameEditText).text.toString();
+            email = view.findViewById<EditText>(R.id.emailEditText).text.toString();
+            password1 = view.findViewById<EditText>(R.id.passwordEditText).text.toString();
+            password2 = view.findViewById<EditText>(R.id.password2EditText).text.toString();
+        }
 
         /*
             Check form conditions before to create an account
          */
         if (firstName.isNullOrEmpty()) {
-            Toast.makeText(activity, getString(R.string.message_first_name_must_not_empty), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.message_first_name_must_not_empty), Toast.LENGTH_SHORT).show()
             return false
         }
         else if (lastName.isNullOrEmpty()) {
-            Toast.makeText(activity, getString(R.string.message_last_name_must_not_empty), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.message_last_name_must_not_empty), Toast.LENGTH_SHORT).show()
             return false
         }
         else if (email.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(activity, getString(R.string.message_enter_valid_email), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.message_enter_valid_email), Toast.LENGTH_SHORT).show()
             return false
         }
-        else if (password1 != password2) {
-            Toast.makeText(activity, getString(R.string.message_passwords_must_match), Toast.LENGTH_SHORT).show()
-            return false
-        }
-        else if(!Pattern.compile(passwordPattern).matcher(password1).matches()
-            || !Pattern.compile(passwordPattern).matcher(password2).matches()) {
-            Toast.makeText(
-                activity,
-                getString(R.string.message_password_conditions),
-                Toast.LENGTH_SHORT
-            ).show()
-            return false
+        else {
+            val condition : Boolean? = Utils.checkPasswordConditions(requireContext(), password1, password2)
+            if (condition != null) return condition
         }
 
         return true
@@ -120,33 +109,37 @@ class RegisterFragment: Fragment() {
      * Send verification e-mail
      */
     private fun sendVerificationEmail() {
-        user
-            .sendEmailVerification()
-            .addOnSuccessListener {
-                submitInfos()
-            }
-            .addOnFailureListener {
-                Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
-            }
+        user?.let {user : FirebaseUser ->
+            user
+                .sendEmailVerification()
+                .addOnSuccessListener {
+                    submitInfos()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
     /**
      * Update user data in Firebase
      */
     private fun submitInfos() {
-        user
-            .updateProfile(userProfileChangeRequest {
-                displayName = Utils.getDisplayNameFromFirstnameAndLastName(firstName, lastName)
-            })
-            .addOnSuccessListener {
-                val dialog : MessageDialog = MessageDialog(requireContext(), requireView())
-                dialog.navigateTo(R.id.homeFragment)
-                dialog
-                    .create(getString(R.string.message_confirmation_email_sent))
-                    .show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
-            }
+        user?.let {user : FirebaseUser ->
+            user
+                .updateProfile(userProfileChangeRequest {
+                    displayName = Utils.getDisplayNameFromFirstnameAndLastName(firstName, lastName)
+                })
+                .addOnSuccessListener {
+                    val dialog : MessageDialog = MessageDialog(requireContext(), requireView())
+                    dialog.navigateTo(R.id.homeFragment)
+                    dialog
+                        .create(getString(R.string.message_confirmation_email_sent))
+                        .show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 }

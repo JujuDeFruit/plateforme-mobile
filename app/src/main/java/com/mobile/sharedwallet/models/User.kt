@@ -4,22 +4,24 @@ import android.graphics.Bitmap
 
 data class User(
     val uid : String?,
-    val firstName : String?,
-    val lastName : String?,
+    var firstName : String?,
+    var lastName : String?,
     val email : String?,
-    val photo : Bitmap?
+    val isEmailVerified : Boolean,
+    var photo : Bitmap?
 ) : Model {
-    constructor() : this(null, null, null, null, null)
+    constructor() : this(null, null, null, null, false, null)
 
     enum class Attributes(val string: String) {
         UID("uid"),
         FIRST_NAME("firstName"),
         LAST_NAME("lastName"),
         EMAIL("email"),
+        IS_EMAIL_VERIFIED("isEmailVerified"),
         PHOTO("photo"),
     }
 
-    fun isEmpty() : Boolean {
+    fun isNullOrEmpty() : Boolean {
         return uid.isNullOrEmpty()
                 && firstName.isNullOrEmpty()
                 && lastName.isNullOrEmpty()
