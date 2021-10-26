@@ -39,17 +39,30 @@
         android:orientation="horizontal"
         android:gravity="center">
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/newspendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="40dp"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:scaleType="centerInside"
+                app:backgroundTint="#673AB7"
+                app:maxImageSize="40dp"
+                app:srcCompat="@android:drawable/ic_menu_add" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/newspendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            app:backgroundTint="#673AB7"
-            app:srcCompat="@android:drawable/ic_menu_add"
-            app:maxImageSize="40dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addperson"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:scaleType="centerInside"
+                app:backgroundTint="#673AB7"
+                app:maxImageSize="40dp"
+                app:srcCompat="@drawable/ic_baseline_account_circle_24" />
+
     </LinearLayout>
 
 </LinearLayout>

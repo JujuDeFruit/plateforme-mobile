@@ -25,7 +25,7 @@
             android:foregroundTint="#090909">
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/backbutton"
                 android:layout_width="203dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -33,7 +33,7 @@
                 android:text="Annuler" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/savebutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -44,13 +44,14 @@
         </TableRow>
 
         <EditText
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:hint="Titre" />
 
         <EditText
-            android:id="@+id/phone"
+            android:id="@+id/montant"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="Montant"
@@ -62,6 +63,11 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="date" />
+
+        <Spinner
+            android:id="@+id/spinner_payeur"
+            android:layout_width="match_parent"
+            android:layout_height="36dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerListView"

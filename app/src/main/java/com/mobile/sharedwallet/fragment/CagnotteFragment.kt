@@ -1,24 +1,38 @@
 package com.mobile.sharedwallet.fragment
 
+import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import android.widget.Button
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.utils.Utils
+import com.mobile.sharedwallet.models.User
 
 class CagnotteFragment : Fragment() {
 
     companion object {
         var pot : Cagnotte = Cagnotte()
             get() {
-                if (pot.isEmpty()) {
+                if (field.isEmpty()) {
                     field = Cagnotte()
+                }
+                return field
+            }
+        var potRef : String = ""
+            get() {
+                if(field.isEmpty()) {
+                    field = ""
                 }
                 return field
             }
@@ -29,19 +43,24 @@ class CagnotteFragment : Fragment() {
         Utils.checkLoggedIn(requireActivity())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view: View = inflater.inflate(R.layout.cagnotte_fragment, container, false)
 
-        //val name : String = (activity as MainActivity).getCagnotteToLoad()
-        view.findViewById<Button>(R.id.balanceButton).setOnClickListener{
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.cagnotte_fragment, container, false)
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        view.findViewById<Button>(R.id.balanceButton).setOnClickListener {
             selectFrag(view.findViewById<Button>(R.id.balanceButton))
         }
 
-        view.findViewById<Button>(R.id.spendButton).setOnClickListener{
+        view.findViewById<Button>(R.id.spendButton).setOnClickListener {
             selectFrag(view.findViewById<Button>(R.id.spendButton))
         }
 
-        view.findViewById<FloatingActionButton>(R.id.newspendButton).setOnClickListener{
+        view.findViewById<FloatingActionButton>(R.id.newspendButton).setOnClickListener {
             findNavController().navigate(R.id.newspendFragment)
         }
 
@@ -59,7 +78,9 @@ class CagnotteFragment : Fragment() {
         newTextView.id = name.hashCode()
         liste?.addView(newTextView)*/
 
-        return view
+        view.findViewById<FloatingActionButton>(R.id.addperson).setOnClickListener {
+            addMember()
+        }
     }
 
     private fun selectFrag(view:View){
@@ -74,5 +95,20 @@ class CagnotteFragment : Fragment() {
             .replace(R.id.fragment_place, fr)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun addMember(){
+        val people = pot.participants
+        people.add(User("ACGGNPVUBIPpaH7A480QN6V7npU2", "test", "test", "test@yahoo.fr", null,0.0f))
+        Firebase
+            .firestore
+            .collection(FirebaseConstants.CollectionNames.Pot)
+            .document(potRef)
+            .update(Cagnotte.Attributes.PARTICIPANTS.string, people.map { it.toFirebase() })
+            .addOnSuccessListener { Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e ->
+                Toast.makeText(activity, "An error occured while creating new pot. Please retry !", Toast.LENGTH_SHORT).show()
+                Log.w(ContentValues.TAG, "Error writing document", e)
+            }
     }
 }
