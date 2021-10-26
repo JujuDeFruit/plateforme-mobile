@@ -16,7 +16,6 @@ data class User(
         FIRST_NAME("firstName"),
         LAST_NAME("lastName"),
         EMAIL("email"),
-        PHOTO("photo"),
     }
 
     fun isNullOrEmpty() : Boolean {

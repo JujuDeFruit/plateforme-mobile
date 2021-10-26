@@ -2,24 +2,21 @@ package com.mobile.sharedwallet.fragment
 
 import android.os.Bundle
 import android.util.Patterns
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class LoginFragment: Fragment() {
 
@@ -35,15 +32,19 @@ class LoginFragment: Fragment() {
     private var email : String = String()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view: View = inflater.inflate(R.layout.login_fragment, container, false)
+        return inflater.inflate(R.layout.login_fragment, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         view.findViewById<Button>(R.id.login).setOnClickListener{
             if (validate()) login()
         }
-        view.findViewById<Button>(R.id.register).setOnClickListener{
-            findNavController().navigate(R.id.registerFragment)
-        }
 
-        return view;
+        view.findViewById<Button>(R.id.register).setOnClickListener{
+            (activity as MainActivity).replaceFragment(RegisterFragment())
+        }
     }
 
     /**
@@ -70,7 +71,7 @@ class LoginFragment: Fragment() {
                 .addOnSuccessListener {
                     CoroutineScope(Dispatchers.Main).launch {
                         user = Utils.createUserFromFirebaseUser(it.user, true)
-                        findNavController().navigate(R.id.homeFragment)
+                        (activity as MainActivity).replaceFragment(HomeFragment(), false)
                     }
                 }
                 .addOnFailureListener {

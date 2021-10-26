@@ -3,18 +3,18 @@ package com.mobile.sharedwallet.fragment
 import android.app.ActionBar
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.navigation.fragment.findNavController
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.utils.Utils
 
-class CagnotteFragment:Fragment() {
+class CagnotteFragment : Fragment() {
 
     companion object {
         var pot : Cagnotte = Cagnotte()
@@ -24,17 +24,14 @@ class CagnotteFragment:Fragment() {
                 }
                 return field
             }
-            set(value : Cagnotte) {
-                field = value
-            }
     }
 
     override fun onStart() {
         super.onStart()
-        Utils.checkLoggedIn(findNavController())
+        Utils.checkLoggedIn(requireActivity())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view: View = inflater.inflate(R.layout.cagnotte_fragment, container, false)
 
         val name : String = (activity as MainActivity).getCagnotteToLoad()
@@ -58,10 +55,10 @@ class CagnotteFragment:Fragment() {
         )
         newTextView.setTextColor(Color.BLACK)
         newTextView.textSize = 15f
-        newTextView.text = name + " - 15$, Julien"
+        newTextView.text = name
         newTextView.id = name.hashCode()
         liste?.addView(newTextView)
 
-        return view;
+        return view
     }
 }

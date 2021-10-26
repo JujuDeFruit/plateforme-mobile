@@ -1,37 +1,34 @@
 package com.mobile.sharedwallet.fragment
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.mobile.sharedwallet.dialog.MessageDialog
-import com.mobile.sharedwallet.utils.Utils
 import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.os.Looper
+import android.os.Bundle
 import android.text.Editable
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.EmailAuthProvider.getCredential
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
-import java.lang.Exception
 
 
 class ProfileFragment : Fragment() {
@@ -60,57 +57,56 @@ class ProfileFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        Utils.checkLoggedIn(findNavController())
+        Utils.checkLoggedIn(requireActivity())
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val view : View = inflater.inflate(R.layout.profile_fragment, container, false)
+        return inflater.inflate(R.layout.profile_fragment, container, false)
+    }
 
-        FirebaseAuth.getInstance().currentUser?.let { user : FirebaseUser ->
-            setValues(view)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            view.findViewById<FloatingActionButton>(R.id.logoutProfile).setOnClickListener {
-                logout()
-                findNavController().navigate(R.id.loginFragment)
-            }
+        setValues()
 
-            view.findViewById<FloatingActionButton>(R.id.editProfile).setOnClickListener {
-                if (isEmailVerified) showEditProfileDialog(container)
-                else {
-                    MessageDialog(requireContext(), requireView())
-                        .verifyAccountDialog().show()
-                }
-            }
+        view.findViewById<FloatingActionButton>(R.id.logoutProfile).setOnClickListener {
+            logout()
+            (requireActivity() as MainActivity).replaceFragment(LoginFragment(), false)
+        }
 
-            view.findViewById<FloatingActionButton>(R.id.changePassword).setOnClickListener { _ ->
-                if (isEmailVerified) showChangePasswordDialog(container)
-                else {
-                    MessageDialog(requireContext(), requireView())
-                        .verifyAccountDialog().show()
-                }
+        view.findViewById<FloatingActionButton>(R.id.editProfile).setOnClickListener {
+            if (isEmailVerified) showEditProfileDialog()
+            else {
+                MessageDialog(requireActivity())
+                    .verifyAccountDialog().show()
             }
         }
 
-        return view
+        view.findViewById<FloatingActionButton>(R.id.changePassword).setOnClickListener { _ ->
+            if (isEmailVerified) showChangePasswordDialog()
+            else {
+                MessageDialog(requireActivity()).verifyAccountDialog().show()
+            }
+        }
     }
 
 
     /**
      * Set user current values in text fields
      *
-     * @param view : Profile view
      */
-    private fun setValues(v : View? = null) {
-        val view : View = v ?: requireView()
+    private fun setValues() {
 
         user?.let { user : User ->
-            view.findViewById<TextView>(R.id.firstNameProfile).text = user.firstName
-            view.findViewById<TextView>(R.id.lastNameProfile).text = user.lastName
-            view.findViewById<TextView>(R.id.emailProfile).text = user.email
-            view.findViewById<TextView>(R.id.validEmailProfile).text = if(isEmailVerified) resources.getString(R.string.yes) else resources.getString(R.string.no)
-            view.findViewById<ImageView>(R.id.profilePicture).setImageBitmap(user.photo)
+            view?.let { view : View ->
+                view.findViewById<TextView>(R.id.firstNameProfile).text = user.firstName
+                view.findViewById<TextView>(R.id.lastNameProfile).text = user.lastName
+                view.findViewById<TextView>(R.id.emailProfile).text = user.email
+                view.findViewById<TextView>(R.id.validEmailProfile).text = if(isEmailVerified) resources.getString(R.string.yes) else resources.getString(R.string.no)
+                view.findViewById<ImageView>(R.id.profilePicture).setImageBitmap(user.photo)
+            }
         }
     }
 
@@ -118,11 +114,12 @@ class ProfileFragment : Fragment() {
     /**
      * Show edit profile dialog
      */
-    private fun showEditProfileDialog(container: ViewGroup?) {
+    private fun showEditProfileDialog() {
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
 
-        val dialogView: View = LayoutInflater.from(requireContext()).inflate(R.layout.edit_profile_dialog, container, false)
+        val dialogView: View = LayoutInflater.from(requireContext()).inflate(R.layout.edit_profile_dialog,
+            layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup, false)
 
         val reSendEmailButton : FloatingActionButton = dialogView.findViewById(R.id.reSendEmailEditProfile)
         val isEmailVerifiedText : TextView = dialogView.findViewById(R.id.isEmailVerified)
@@ -182,7 +179,7 @@ class ProfileFragment : Fragment() {
             }
 
             if (updatePhoto || updateProfile) {
-                val mDialog = MessageDialog(requireContext(), requireView()) {
+                val mDialog = MessageDialog(requireActivity()) {
                     dialog!!.dismiss()
                 }
                 mDialog
@@ -200,7 +197,6 @@ class ProfileFragment : Fragment() {
     /**
      * Check if a modification occurred in the first name or in the last name
      *
-     * @param dialogView : current edit view
      */
     private fun validateUpdateProfile() : Boolean {
         return user?.let { user: User ->
@@ -294,13 +290,13 @@ class ProfileFragment : Fragment() {
     /**
      * Show alert dialog to change password
      *
-     * @param container ViewGroup needed to build AlertDialog
      */
-    private fun showChangePasswordDialog(container: ViewGroup?) {
+    private fun showChangePasswordDialog() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
 
         val dialogView: View =
-            LayoutInflater.from(requireContext()).inflate(R.layout.change_password_dialog, container, false)
+            LayoutInflater.from(requireContext()).inflate(R.layout.change_password_dialog,
+                layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup, false)
 
         builder.setView(dialogView)
 
@@ -323,7 +319,7 @@ class ProfileFragment : Fragment() {
     /**
      * Test authentication, user need to enter his password before changing it
      *
-     * @param dialogView dialog view of the changing password dialog
+     * @param passwordDialog dialog view of the changing password dialog
      */
     private fun changePassword(passwordDialog: AlertDialog) {
         val password : Editable? = passwordDialog.findViewById<EditText>(R.id.passwordOnChangePassword)?.text
@@ -350,7 +346,7 @@ class ProfileFragment : Fragment() {
     /**
      * Update password on firebase
      *
-     * @param dialogView dialog view of the changing password dialog
+     * @param passwordDialog dialog view of the changing password dialog
      */
     private fun updatePassword(passwordDialog: AlertDialog) {
         val newPassword : Editable? = passwordDialog.findViewById<EditText>(R.id.newPassword)?.text
@@ -372,14 +368,11 @@ class ProfileFragment : Fragment() {
             .currentUser?.let {
                 it.updatePassword(newPassword.toString())
                     .addOnSuccessListener {
-                        val dialog : MessageDialog = MessageDialog(
-                            requireContext(),
-                            requireView()
-                        ) {
+                        val dialog = MessageDialog(requireActivity()) {
                             logout()
                             passwordDialog.dismiss()
                         }
-                        dialog.navigateTo(R.id.loginFragment)
+                        dialog.navigateTo(LoginFragment(), false)
                         dialog
                             .create(getString(R.string.message_successfully_updated_password))
                             .show()
