@@ -36,15 +36,17 @@ class SpendFragment: Fragment() {
 
     private fun loadCagnotteList(){
 
-        val mySelf : User = Utils.createUserFromFirebaseUser(Firebase.auth.currentUser)
-
         // Load all pots current user is involved in
         Firebase.firestore
             .collection(FirebaseConstants.CollectionNames.Pot)
             .document(CagnotteFragment.potRef)
             .get()
             .addOnSuccessListener { result ->
-                pot= result.toObject<Cagnotte>()!!
+                result.toObject<Cagnotte>().also { cagnotte : Cagnotte? ->
+                    cagnotte?.let {
+                        pot = it
+                    }
+                }
                 createTextViewClick(pot.totalSpent)
             }
             .addOnFailureListener { exception ->
