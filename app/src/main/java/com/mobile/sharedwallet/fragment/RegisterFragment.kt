@@ -12,14 +12,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.utils.Utils
-import io.grpc.okhttp.internal.Util
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.regex.Pattern
 
 class RegisterFragment: Fragment() {
 
@@ -45,36 +43,35 @@ class RegisterFragment: Fragment() {
      * Bind buttons
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view : View? = inflater.inflate(R.layout.register_fragment, container, false)
+        return inflater.inflate(R.layout.register_fragment, container, false)
+    }
 
-        view?.findViewById<FloatingActionButton>(R.id.createAccount)?.setOnClickListener {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        view.findViewById<FloatingActionButton>(R.id.createAccount).setOnClickListener {
             if (validate()) {
                 createAccount()
             }
         }
-
-        return view
     }
 
     /**
      * Validate form
      *
-     * @param view : View of the form
      * @return true if everything is OK, false else
      */
     private fun validate() : Boolean {
 
         view?.let { view : View ->
-            firstName = view.findViewById<EditText>(R.id.firstNameEditText).text.toString();
-            lastName = view.findViewById<EditText>(R.id.lastNameEditText).text.toString();
-            email = view.findViewById<EditText>(R.id.emailEditText).text.toString();
-            password1 = view.findViewById<EditText>(R.id.passwordEditText).text.toString();
-            password2 = view.findViewById<EditText>(R.id.password2EditText).text.toString();
+            firstName = view.findViewById<EditText>(R.id.firstNameEditText).text.toString()
+            lastName = view.findViewById<EditText>(R.id.lastNameEditText).text.toString()
+            email = view.findViewById<EditText>(R.id.emailEditText).text.toString()
+            password1 = view.findViewById<EditText>(R.id.passwordEditText).text.toString()
+            password2 = view.findViewById<EditText>(R.id.password2EditText).text.toString()
         }
 
-        /*
-            Check form conditions before to create an account
-         */
+        // Check form conditions before to create an account
         if (firstName.isNullOrEmpty()) {
             Toast.makeText(requireContext(), getString(R.string.message_first_name_must_not_empty), Toast.LENGTH_SHORT).show()
             return false
@@ -83,7 +80,7 @@ class RegisterFragment: Fragment() {
             Toast.makeText(requireContext(), getString(R.string.message_last_name_must_not_empty), Toast.LENGTH_SHORT).show()
             return false
         }
-        else if (email.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        else if (email.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email as CharSequence).matches()) {
             Toast.makeText(requireContext(), getString(R.string.message_enter_valid_email), Toast.LENGTH_SHORT).show()
             return false
         }
@@ -105,7 +102,7 @@ class RegisterFragment: Fragment() {
                 sendVerificationEmail()
             }
             .addOnFailureListener {
-                Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireActivity(), it.message, Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -113,14 +110,14 @@ class RegisterFragment: Fragment() {
      * Send verification e-mail
      */
     private fun sendVerificationEmail() {
-        user?.let {user : FirebaseUser ->
+        user?.let { user : FirebaseUser ->
             user
                 .sendEmailVerification()
                 .addOnSuccessListener {
                     submitInfos()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), it.message, Toast.LENGTH_SHORT).show()
                 }
         }
     }
@@ -137,8 +134,8 @@ class RegisterFragment: Fragment() {
                 .addOnSuccessListener {
                     CoroutineScope(Dispatchers.Main).launch {
                         LoginFragment.user = Utils.createUserFromFirebaseUser(user, false)
-                        val dialog : MessageDialog = MessageDialog(requireContext(), requireView())
-                        dialog.navigateTo(R.id.homeFragment)
+                        val dialog = MessageDialog(requireActivity())
+                        dialog.navigateTo(HomeFragment(), false)
                         dialog
                             .create(getString(R.string.message_confirmation_email_sent))
                             .show()

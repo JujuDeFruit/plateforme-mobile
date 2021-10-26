@@ -1,31 +1,32 @@
 package com.mobile.sharedwallet.dialog
 
+import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
-import android.provider.Settings.Global.getString
-import android.view.View
 import android.widget.Toast
-import androidx.navigation.Navigation.findNavController
+import androidx.fragment.app.Fragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.fragment.LoginFragment
 
 class MessageDialog (
-    private val context: Context,
-    private val view: View,
+    private val activity: Activity,
     private val callback: (() -> Any)? = null) {
 
-    private var navigateToId : Int? = null
+    private var navigateToFragment : Fragment? = null
+    private var addToStackBack : Boolean? = null
 
-    fun navigateTo(id: Int) {
-        navigateToId = id
+    fun navigateTo(fragment: Fragment, possibleReturn : Boolean) {
+        navigateToFragment = fragment
+        addToStackBack = possibleReturn
     }
 
     fun create(message : String) : AlertDialog.Builder {
-        val builder = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(activity)
         builder.setMessage(message)
-            .setPositiveButton(context.getString(R.string.ok)) { _, _ ->
-                navigateToId?.let { findNavController(view).navigate(it) }
+            .setPositiveButton(activity.getString(R.string.ok)) { _, _ ->
+                navigate()
                 callback?.invoke()
             }
         // Create the AlertDialog object and return it
@@ -33,30 +34,36 @@ class MessageDialog (
         return builder
     }
 
-    fun verifyAccountDialog(id : Int? = null): AlertDialog.Builder {
-        id?.let { navigateTo(id) }
+    fun verifyAccountDialog(fragment : Fragment? = null, possibleReturn : Boolean? = null): AlertDialog.Builder {
+        fragment?.let { navigateTo(fragment, possibleReturn ?: true) }
         val builder : AlertDialog.Builder = create(
-            context.getString(R.string.message_please_verify_account_before)
+            activity.getString(R.string.message_please_verify_account_before)
         )
 
-        builder.setNeutralButton(context.getString(R.string.re_send_email)) { _, _ ->
+        builder.setNeutralButton(activity.getString(R.string.re_send_email)) { _, _ ->
             Firebase
                 .auth
                 .currentUser?.let {
                     it.sendEmailVerification()
                     .addOnSuccessListener {
-                        Toast.makeText(context, context.getString(R.string.email_sent), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, activity.getString(R.string.email_sent), Toast.LENGTH_SHORT).show()
                     }
                     .addOnFailureListener {
-                        Toast.makeText(context, context.getString(R.string.message_email_not_send), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, activity.getString(R.string.message_email_not_send), Toast.LENGTH_SHORT).show()
                     }
                 }
         }
 
-        builder.setOnDismissListener {
-            navigateToId?.let { nav -> findNavController(view).navigate(nav) }
+        builder.setOnDismissListener { _ ->
+            navigateToFragment?.let { (activity as MainActivity).replaceFragment(it, it !is LoginFragment) }
         }
 
         return builder
+    }
+
+    private fun navigate() {
+        navigateToFragment?. let {
+            (activity as MainActivity).replaceFragment(it, addToStackBack ?: true)
+        }
     }
 }
