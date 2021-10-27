@@ -29,10 +29,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
-import java.lang.Exception
 
 
 class ProfileFragment : Fragment() {

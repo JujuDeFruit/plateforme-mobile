@@ -1,46 +1,53 @@
 package com.mobile.sharedwallet.fragment
 
-import android.content.ContentValues
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
-import androidx.navigation.fragment.findNavController
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.adapter.ParticipantsAdapter
 import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.models.*
+import com.mobile.sharedwallet.models.Cagnotte
+import com.mobile.sharedwallet.models.Depense
+import com.mobile.sharedwallet.models.Participant
+import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Utils
 
 
 class NewSpendFragment : Fragment() {
 
     private lateinit var store : FirebaseFirestore;
+    private var participants : ArrayList<Participant>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = FirebaseFirestore.getInstance()
+        participants = getParticipantList()
     }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view : View = inflater.inflate(R.layout.newspend_fragment, container, false)
+        return inflater.inflate(R.layout.newspend_fragment, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val recyclerlistview = view.findViewById<RecyclerView>(R.id.recyclerListView)
         recyclerlistview.layoutManager = LinearLayoutManager(activity)
 
-        var arrayListAllParticipants=getPartcipantList()
-        val particiantAdapter= ParticipantsAdapter(arrayListAllParticipants)
+        val particiantAdapter = ParticipantsAdapter(participants!!)
         recyclerlistview.adapter = particiantAdapter
 
         //Chargement des éléments dans le spinner
@@ -48,39 +55,13 @@ class NewSpendFragment : Fragment() {
         val spinner = view.findViewById<Spinner>(R.id.spinner_payeur)
         //spinner.onItemSelectedListener = this
 
-        view.findViewById<Button>(R.id.savebutton).setOnClickListener{
-            val title : String =view.findViewById<EditText>(R.id.title).text.toString()
-            val montant = view.findViewById<EditText>(R.id.montant).text.toString().toFloat()
-            val participant_selected = particiantAdapter.saveNewSpend()
-            val payeur=User("LWBvvOIMgNeEL9b20J4ETVXoX9M2", "Julien" ,"Raynal","julien.raynal@yahoo.fr",null,0.0f )
-
-            for (k in participant_selected){
-                k.cout = repartition( montant ,participant_selected )
-            }
-
-            val depense = Depense(title,payeur,montant,participant_selected)
-
-            Firebase
-                .firestore
-                .collection(FirebaseConstants.CollectionNames.Pot)
-                .document(CagnotteFragment.potRef)
-                .update(Cagnotte.Attributes.TOTAL_SPENT.string, FieldValue.arrayUnion(depense.toFirebase()))
-                .addOnSuccessListener { Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!") }
-                .addOnFailureListener { e ->
-                    Toast.makeText(activity, "An error occured while creating new pot. Please retry !", Toast.LENGTH_SHORT).show()
-                    Log.w(ContentValues.TAG, "Error writing document", e)
-                }
-            updateAllSoldes(montant,participant_selected,payeur)
-            findNavController().navigate(R.id.cagnotteFragment)
-
+        view.findViewById<Button>(R.id.saveButton).setOnClickListener {
+            saveNewSpend(particiantAdapter)
         }
 
-        view.findViewById<Button>(R.id.backbutton).setOnClickListener{
+        /*view.findViewById<Button>(R.id.backbutton).setOnClickListener{
             findNavController().navigate(R.id.cagnotteFragment)
-        }
-
-        return view
-
+        }*/
     }
 
     /*private fun spiner(view: View, arrayListAllParticipants: ArrayList<Participant>){
@@ -95,37 +76,36 @@ class NewSpendFragment : Fragment() {
     }*/
 
     private fun updateAllSoldes(montant: Float, participantSelected: ArrayList<Participant>, payeur: User) {
-        val moy : Float = montant/(participantSelected.size.toFloat())
-        var updatedSolde= CagnotteFragment.pot.participants
-        for (soldes in updatedSolde){
-            for ( participant in participantSelected){
-                if ( soldes.uid == participant.id){
-                    if (soldes.uid == payeur.uid){
-                        soldes.solde += moy*( participantSelected.size -1.0f)
-                    }else{
+        val moy : Float = montant / participantSelected.size.toFloat()
+        val updatedSolde = CagnotteFragment.pot.participants
+        for (soldes in updatedSolde) {
+            for (participant in participantSelected) {
+                if (soldes.uid == participant.id) {
+                    if (soldes.uid == payeur.uid) {
+                        soldes.solde += moy * (participantSelected.size - 1.0f)
+                    } else {
                         soldes.solde -= moy
                     }
                 }
             }
         }
+
         store
             .collection(FirebaseConstants.CollectionNames.Pot)
             .document(CagnotteFragment.potRef)
             .update(Cagnotte.Attributes.PARTICIPANTS.string, updatedSolde.map { it.toFirebase() })
-            .addOnSuccessListener { Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!") }
-            .addOnFailureListener { e ->
-                Toast.makeText(activity, "An error occured while creating new pot. Please retry !", Toast.LENGTH_SHORT).show()
-                Log.w(ContentValues.TAG, "Error writing document", e)
+            .addOnFailureListener {
+                Toast.makeText(requireActivity(), getString(R.string.message_error_update_balances), Toast.LENGTH_SHORT).show()
             }
     }
 
     //getting data for checkbox list you can use server API to get the list data
-    private fun getPartcipantList(): ArrayList<Participant> {
+    private fun getParticipantList() : ArrayList<Participant> {
         return ArrayList(CagnotteFragment.pot.participants.map { Utils.castUserToParticipant(it) })
     }
 
-    private fun repartition(float: Float, participant_selected: ArrayList<Participant>):Float{
-        return float / (participant_selected.size).toFloat()
+    private fun repartition(float: Float, participantSelected: ArrayList<Participant>) : Float{
+        return float / participantSelected.size.toFloat()
     }
 
     /*private fun equilibrage(){
@@ -157,4 +137,32 @@ class NewSpendFragment : Fragment() {
             }
         }
     }*/
+
+    private fun saveNewSpend(adapter: ParticipantsAdapter) {
+        view?.let {
+            val title : String = it.findViewById<EditText>(R.id.title).text.toString()
+            val montant = it.findViewById<EditText>(R.id.montant).text.toString().toFloat()
+            val selectedParticipant = adapter.saveNewSpend()
+            val payeur = User("LWBvvOIMgNeEL9b20J4ETVXoX9M2", "Julien" ,"Raynal","julien.raynal@yahoo.fr",null,0.0f )
+
+            for (k in selectedParticipant){
+                k.cout = repartition(montant, selectedParticipant)
+            }
+
+            val depense = Depense(title, payeur, montant, selectedParticipant)
+
+            store
+                .collection(FirebaseConstants.CollectionNames.Pot)
+                .document(CagnotteFragment.potRef)
+                .update(Cagnotte.Attributes.TOTAL_SPENT.string, FieldValue.arrayUnion(depense.toFirebase()))
+                .addOnSuccessListener {
+                    updateAllSoldes(montant, selectedParticipant, payeur)
+                    (requireActivity() as MainActivity).replaceFragment(CagnotteFragment())
+                }
+                .addOnFailureListener {
+                    Toast.makeText(requireActivity(), getString(R.string.message_error_add_new_spend), Toast.LENGTH_SHORT).show()
+                }
+
+        }
+    }
 }

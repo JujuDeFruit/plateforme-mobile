@@ -1,11 +1,13 @@
 package com.mobile.sharedwallet.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
 
 
@@ -13,21 +15,15 @@ class ParticipantsAdapter(private val dataSet: ArrayList<Participant>) :
     RecyclerView.Adapter<ParticipantsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val checkbox:CheckBox
-        val textView:TextView
-
-        init {
-            checkbox = view.findViewById(com.mobile.sharedwallet.R.id.check_box)
-            textView = view.findViewById(com.mobile.sharedwallet.R.id.textView)
-
-        }
+        val checkbox : CheckBox = view.findViewById(R.id.check_box)
+        val textView: TextView = view.findViewById(R.id.textView)
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(viewGroup.context).inflate(com.mobile.sharedwallet.R.layout.row_item, viewGroup, false)
-        return ViewHolder(view)
+        return ViewHolder(LayoutInflater.from(viewGroup.context).inflate(R.layout.row_item, viewGroup, false))
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textView.text = dataSet[position].name
         viewHolder.checkbox.isSelected = dataSet[position].selected
@@ -38,14 +34,14 @@ class ParticipantsAdapter(private val dataSet: ArrayList<Participant>) :
 
     }
 
-    fun saveNewSpend():ArrayList<Participant>{
-        var participant_selected = ArrayList<Participant>()
+    fun saveNewSpend() : ArrayList<Participant>{
+        val participantSelected = ArrayList<Participant>()
         for (person in dataSet){
             if (person.selected){
-                participant_selected.add(person)
+                participantSelected.add(person)
             }
         }
-        return participant_selected
+        return participantSelected
     }
 
     // Return the size of your dataset (invoked by the layout manager)
