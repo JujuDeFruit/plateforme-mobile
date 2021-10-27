@@ -4,8 +4,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.mobile.sharedwallet.fragment.HomeFragment
 import com.mobile.sharedwallet.fragment.LoginFragment
-
+import com.mobile.sharedwallet.utils.Utils
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,12 +18,29 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
 
-        supportFragmentManager
+    override fun onStart() {
+        super.onStart()
+
+
+        val transaction : FragmentTransaction = supportFragmentManager
             .beginTransaction()
-            .add(layout, LoginFragment())
             .disallowAddToBackStack()
-            .commit()
+
+        val user : FirebaseUser? = FirebaseAuth.getInstance().currentUser
+
+
+        if(user == null) {
+            transaction.add(layout, LoginFragment())
+            transaction.commit()
+        } else {
+            transaction.add(layout, HomeFragment())
+            GlobalScope.launch {
+                LoginFragment.user = Utils.createUserFromFirebaseUser(user, true)
+                transaction.commit()
+            }
+        }
     }
 
     fun replaceFragment(fragment: Fragment, possibleReturn : Boolean = true) {
@@ -45,6 +66,4 @@ class MainActivity : AppCompatActivity() {
     fun setCagnotteToLoad(cName : String){
         globalCagnottetoLoad = cName
     }
-
-
 }
