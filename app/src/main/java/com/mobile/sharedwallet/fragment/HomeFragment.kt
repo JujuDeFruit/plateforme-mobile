@@ -26,6 +26,8 @@ import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Utils
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class HomeFragment : Fragment() {
@@ -34,22 +36,19 @@ class HomeFragment : Fragment() {
 
     private var user : User? = null
 
-    private var cagnotteList : LinkedList<Cagnotte>? = null
+    private var cagnottes : HashMap<String, Cagnotte> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = FirebaseFirestore.getInstance()
-        cagnotteList = LinkedList<Cagnotte>()
-        loadCagnotteList()
         user = LoginFragment.user
     }
-
 
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
+        loadCagnotteList()
     }
-
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -60,8 +59,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        cagnotteList?.forEach { cagnotte -> createButtonClick(cagnotte.name) }
 
         view.findViewById<FloatingActionButton>(R.id.createButton).setOnClickListener{
             if (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) openDialog()
@@ -92,11 +89,10 @@ class HomeFragment : Fragment() {
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
-                        val cagnotte = document.toObject<Cagnotte>()
-                        cagnotteList?.add(cagnotte)
+                        val cagnotte : Cagnotte = document.toObject()
+                        cagnottes[document.id] = cagnotte
                         createButtonClick(cagnotte.name)
-                    }
-                }
+                    }}
                 .addOnFailureListener { exception ->
                     Log.d(ContentValues.TAG, "Error getting documents: ", exception)
                 }
@@ -114,6 +110,7 @@ class HomeFragment : Fragment() {
         // Set up the input
         val input = EditText(layout.context)
         input.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER_HORIZONTAL
+        input.inputType=1
 
         layout.addView(input)
         builder.setView(layout)
@@ -154,35 +151,29 @@ class HomeFragment : Fragment() {
         liste?.addView(newTextView)
     }
 
-    private fun loadCagnottePage(inputText : String?){
+    private fun loadCagnottePage(inputText : String?) {
         if (inputText != null) {
+            for((key,value) in cagnottes) {
+                if (value.name == inputText) {
+                    CagnotteFragment.pot = value
+                    CagnotteFragment.potRef = key
+                    break
+                }
+            }
             val act : MainActivity = requireActivity() as MainActivity
             act.setCagnotteToLoad(inputText)
             act.replaceFragment(CagnotteFragment())
         }
-
-        val liste = view?.findViewById<LinearLayout>(R.id.listCagnotte)
-        val tvDynamic = TextView(requireActivity())
-        tvDynamic.setPadding(90,50,80,50)
-        tvDynamic.layoutParams = ActionBar.LayoutParams(
-            ActionBar.LayoutParams.WRAP_CONTENT,
-            ActionBar.LayoutParams.MATCH_PARENT
-        )
-        tvDynamic.setTextColor(Color.BLACK)
-        tvDynamic.textSize = 25f
-        tvDynamic.text = inputText
-        liste?.addView(tvDynamic)
     }
 
     private fun addCagnotte(name: String){
-
         user?.let { user : User ->
             // Create a new cagnotte with a first and last name
             val info : HashMap<String, Any?> =
                 Cagnotte(
                     name,
                     Timestamp.now(),
-                    ArrayList<Depense>(),
+                    ArrayList(),
                     arrayListOf(user)
                 ).toFirebase()
 

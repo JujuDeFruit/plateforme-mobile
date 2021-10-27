@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../../../../Library/Android/sdk/platforms/android-31/data/res/layout/simple_spinner_dropdown_item.xml" value="0.19427083333333334" />
         <entry key="..\:/AndroidStudio/sharedwallet/app/src/main/res/layout/activity_main.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3255208333333333" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.3255208333333333" />
@@ -29,7 +30,24 @@
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/edit_profile_dialog.xml" value="0.25" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/login_fragment.xml" value="0.1671875" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/profile_fragment.xml" value="0.25" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/activity_main.xml" value="0.1671875" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/cagnotte_fragment.xml" value="0.1671875" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/home_fragment.xml" value="0.28894927536231885" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/login_fragment.xml" value="0.264" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/register_fragment.xml" value="0.4" />
+        <entry key="app/src/main/res/drawable/ic_baseline_account_circle_24 2.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/drawable/ic_outline_mobile_off_24 2.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1480978260869565" />
+        <entry key="app/src/main/res/layout/balance_fragment.xml" value="0.15070921985815602" />
+        <entry key="app/src/main/res/layout/cagnotte_fragment.xml" value="0.125" />
+        <entry key="app/src/main/res/layout/change_password_dialog.xml" value="0.1634963768115942" />
         <entry key="app/src/main/res/layout/home_fragment.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/new_spend_fragment.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/newspend_fragment.xml" value="0.42242355605889015" />
+        <entry key="app/src/main/res/layout/profile_fragment.xml" value="0.16757246376811594" />
+        <entry key="app/src/main/res/layout/register_fragment.xml" value="0.16757246376811594" />
+        <entry key="app/src/main/res/layout/row_item.xml" value="0.15070921985815602" />
+        <entry key="app/src/main/res/layout/spend_fragment.xml" value="0.15070921985815602" />
       </map>
     </option>
   </component>

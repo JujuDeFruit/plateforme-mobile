@@ -12,6 +12,7 @@ import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.LoginFragment
+import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.models.User
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
@@ -80,7 +81,8 @@ class Utils {
                     names[User.Attributes.FIRST_NAME.string],
                     names[User.Attributes.LAST_NAME.string],
                     firebaseUser.email,
-                    photo)
+                    photo,
+                0.0f)
             } ?: User()
         }
 
@@ -94,14 +96,23 @@ class Utils {
         fun checkPasswordConditions(context : Context, password1 : String?, password2 : String?) : Boolean? {
             val passwordPattern = "^(?=.*\\d)(?=.*[A-Z])[0-9a-zA-Z]{4,}$"
 
-            return if(password1.isNullOrEmpty() || password2.isNullOrEmpty()) {
-                Toast.makeText(context, context.getString(R.string.message_password_not_empty), Toast.LENGTH_SHORT).show()
+            return if (password1.isNullOrEmpty() || password2.isNullOrEmpty()) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.message_password_not_empty),
+                    Toast.LENGTH_SHORT
+                ).show()
                 false
             } else if (password1 != password2) {
-                Toast.makeText(context, context.getString(R.string.message_passwords_must_match), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.message_passwords_must_match),
+                    Toast.LENGTH_SHORT
+                ).show()
                 false
-            } else if(!Pattern.compile(passwordPattern).matcher(password1).matches()
-                || !Pattern.compile(passwordPattern).matcher(password2).matches()) {
+            } else if (!Pattern.compile(passwordPattern).matcher(password1).matches()
+                || !Pattern.compile(passwordPattern).matcher(password2).matches()
+            ) {
                 Toast.makeText(
                     context,
                     context.getString(R.string.message_password_conditions),
@@ -109,6 +120,10 @@ class Utils {
                 ).show()
                 false
             } else null
+        }
+
+        fun castUserToParticipant(user : User) : Participant {
+            return Participant(user.firstName!!,user.uid.toString(),0f, false)
         }
     }
 }

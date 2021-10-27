@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foregroundTint="#0E0E0E"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="411dp"
+            android:layout_height="wrap_content"
+            android:background="#636363"
+            android:text="Nouvelle Dépense"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foregroundTint="#090909">
+
+            <Button
+                android:id="@+id/backbutton"
+                android:layout_width="203dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="Annuler" />
+
+            <Button
+                android:id="@+id/savebutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:text="Enregistrer" />
+
+        </TableRow>
+
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="Titre" />
+
+        <EditText
+            android:id="@+id/montant"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Montant"
+            android:inputType="phone" />
+
+        <EditText
+            android:id="@+id/editTextDate"
+            android:layout_width="411dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date" />
+
+        <Spinner
+            android:id="@+id/spinner_payeur"
+            android:layout_width="match_parent"
+            android:layout_height="36dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerListView"
+            android:layout_width="match_parent"
+            android:layout_height="356dp"
+            android:divider="#000"
+            android:dividerHeight="2dp" />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
