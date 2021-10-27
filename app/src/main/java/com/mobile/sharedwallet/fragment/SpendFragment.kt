@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -20,8 +19,6 @@ import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.CagnotteFragment.Companion.pot
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
-import com.mobile.sharedwallet.models.User
-import com.mobile.sharedwallet.utils.Utils
 
 class SpendFragment: Fragment() {
 

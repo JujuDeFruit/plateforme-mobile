@@ -9,15 +9,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.models.Cagnotte
-import com.mobile.sharedwallet.utils.Utils
 import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.utils.Utils
 
 class CagnotteFragment : Fragment() {
 
@@ -61,7 +61,7 @@ class CagnotteFragment : Fragment() {
         }
 
         view.findViewById<FloatingActionButton>(R.id.newspendButton).setOnClickListener {
-            findNavController().navigate(R.id.newspendFragment)
+            (requireActivity() as MainActivity).replaceFragment(NewSpendFragment())
         }
 
         /*val liste = view.findViewById<LinearLayout>(R.id.listeDepense)

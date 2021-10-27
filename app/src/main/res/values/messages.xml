@@ -16,6 +16,9 @@
     <string name="message_confirmation_email_sent">A confirmation email has been sent. Please confirm your email.</string>
 
 
+    <string name="message_pot_name_already_exists">Pot name already exists. Please choose another name.</string>
+
+
     <string name="message_please_verify_account_before">Please verify your account before</string>
     <string name="message_invalid_group_name">Invalid group name</string>
     <string name="message_error_creating_new_pot">An error occurred while creating new pot. Please retry !</string>
@@ -25,6 +28,9 @@
     <string name="message_profile_successfully_updated">Your profile has been successfully updated !</string>
 
     <string name="message_error_fetch_photo">An error occurred while fetching picture profile. Please retry !</string>
-    <string name="message_error_update_photo">An error occurred while updating profile picture, please retry</string>
-    <string name="message_error_update_profile">An error occurred while updating profile, please retry</string>
+    <string name="message_error_update_photo">An error occurred while updating profile picture, please retry.</string>
+    <string name="message_error_update_profile">An error occurred while updating profile, please retry.</string>
+    <string name="message_error_fetch_cagnottes">An error occurred while getting pots, please retry.</string>
+    <string name="message_error_add_new_spend">An error occurred while adding new spend, please retry.</string>
+    <string name="message_error_update_balances">An error occurred while updating balance, please retry.</string>
 </resources>

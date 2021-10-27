@@ -9,7 +9,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.mobile.sharedwallet.fragment.HomeFragment
 import com.mobile.sharedwallet.fragment.LoginFragment
 import com.mobile.sharedwallet.utils.Utils
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,15 +56,5 @@ class MainActivity : AppCompatActivity() {
         else replace.disallowAddToBackStack()
 
         replace.commit()
-    }
-
-    private var globalCagnottetoLoad : String = ""
-
-    fun getCagnotteToLoad() : String{
-        return globalCagnottetoLoad
-    }
-
-    fun setCagnotteToLoad(cName : String){
-        globalCagnottetoLoad = cName
     }
 }
