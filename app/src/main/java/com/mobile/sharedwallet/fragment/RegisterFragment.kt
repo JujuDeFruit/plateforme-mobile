@@ -35,6 +35,7 @@ class RegisterFragment: Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         auth = FirebaseAuth.getInstance()
         user = auth.currentUser
     }

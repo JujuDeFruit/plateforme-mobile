@@ -32,7 +32,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var store : FirebaseFirestore
 
-    private var user : User? = LoginFragment.user
+    private var user : User? = null
 
     private var cagnotteList : LinkedList<Cagnotte>? = null
 
@@ -41,6 +41,7 @@ class HomeFragment : Fragment() {
         store = FirebaseFirestore.getInstance()
         cagnotteList = LinkedList<Cagnotte>()
         loadCagnotteList()
+        user = LoginFragment.user
     }
 
 

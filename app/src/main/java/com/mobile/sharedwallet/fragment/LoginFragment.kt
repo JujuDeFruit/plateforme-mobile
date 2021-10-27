@@ -53,7 +53,7 @@ class LoginFragment: Fragment() {
     private fun validate() : Boolean {
         email = view?.findViewById<EditText>(R.id.email)?.text.toString()
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(activity, getString(R.string.message_email_not_good_format), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(), getString(R.string.message_email_not_good_format), Toast.LENGTH_SHORT).show()
             return false
         }
         return true
@@ -63,19 +63,19 @@ class LoginFragment: Fragment() {
      * Login function => firebase async methods
      */
     private fun login() {
-        view?.let {
-            val password = view?.findViewById<EditText>(R.id.password)?.text.toString()
+        view?.let { view : View ->
+            val password = view.findViewById<EditText>(R.id.password).text.toString()
             FirebaseAuth
                 .getInstance()
                 .signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     CoroutineScope(Dispatchers.Main).launch {
                         user = Utils.createUserFromFirebaseUser(it.user, true)
-                        (activity as MainActivity).replaceFragment(HomeFragment(), false)
+                        (requireActivity() as MainActivity).replaceFragment(HomeFragment(), false)
                     }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), it.message, Toast.LENGTH_SHORT).show()
                 }
         }
     }
