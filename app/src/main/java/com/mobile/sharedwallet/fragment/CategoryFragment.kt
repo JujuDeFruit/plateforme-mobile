@@ -8,12 +8,14 @@ import androidx.fragment.app.Fragment
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.utils.Utils
 
-class BalanceFragment: Fragment() {
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+class CategoryFragment : Fragment() {
 
-        return inflater.inflate(R.layout.balance_fragment, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return  inflater.inflate(R.layout.category_fragment, container, false)
     }
 
     override fun onStart() {

@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mobile.sharedwallet.MainActivity
@@ -50,18 +51,20 @@ class NewSpendFragment : Fragment() {
         val particiantAdapter = ParticipantsAdapter(participants!!)
         recyclerlistview.adapter = particiantAdapter
 
+
         //Chargement des éléments dans le spinner
         //spiner(view,arrayListAllParticipants)
-        val spinner = view.findViewById<Spinner>(R.id.spinner_payeur)
+        // val spinner = view.findViewById<Spinner>(R.id.spinnerPayeur)
         //spinner.onItemSelectedListener = this
 
-        view.findViewById<Button>(R.id.saveButton).setOnClickListener {
+        view.findViewById<FloatingActionButton>(R.id.saveButton).setOnClickListener {
             saveNewSpend(particiantAdapter)
         }
+    }
 
-        /*view.findViewById<Button>(R.id.backbutton).setOnClickListener{
-            findNavController().navigate(R.id.cagnotteFragment)
-        }*/
+    override fun onStart() {
+        super.onStart()
+        Utils.checkLoggedIn(requireActivity())
     }
 
     /*private fun spiner(view: View, arrayListAllParticipants: ArrayList<Participant>){

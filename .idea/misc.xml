@@ -9,6 +9,7 @@
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_baseline_arrow_forward_24.xml" value="0.3255208333333333" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_baseline_change_circle_24.xml" value="0.3255208333333333" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.3255208333333333" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_outline_cancel_24.xml" value="0.3255208333333333" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/fragments/layout/cagnotte_fragment.xml" value="0.1671875" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/fragments/layout/home_fragment.xml" value="0.1671875" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/fragments/layout/login_fragment.xml" value="0.1671875" />
@@ -25,12 +26,21 @@
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/login_fragment.xml" value="0.264" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/profile_fragment.xml" value="0.264" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/register_fragment.xml" value="0.264" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/cagnotte_preview.xml" value="0.16354166666666667" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/category_fragment.xml" value="0.26992753623188404" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/change_password_dialog.xml" value="0.1671875" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/edit_profile_dialog.xml" value="0.25" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/menu/bottom_nav_menu.xml" value="0.259375" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/balance_fragment.xml" value="0.16979166666666667" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/cagnotte_fragment.xml" value="0.176" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/category_fragment.xml" value="0.16354166666666667" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/home_fragment.xml" value="0.26992753623188404" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/login_fragment.xml" value="0.1671875" />
-        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/newspend_fragment.xml" value="0.1671875" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/newspend_fragment.xml" value="0.264" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/profile_fragment.xml" value="0.25" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/spend_fragment.xml" value="0.1671875" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/others/layout/cagnotte_preview.xml" value="0.4461181923522596" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/others/layout/row_item.xml" value="0.1671875" />
         <entry key="app/src/main/res/layout/home_fragment.xml" value="0.25" />
       </map>
     </option>

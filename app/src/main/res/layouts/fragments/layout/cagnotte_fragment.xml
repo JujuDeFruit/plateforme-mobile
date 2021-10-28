@@ -1,68 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TableRow
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foregroundTint="#090909">
+        android:id="@+id/cagnotteName" />
 
-        <Button
-            android:id="@+id/spendButton"
-            android:layout_width="203dp"
-            android:layout_height="wrap_content"
-            android:text="Dépenses" />
 
-        <Button
-            android:id="@+id/balanceButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Equilibre" />
-
-    </TableRow>
-
-    <fragment
-        android:id="@+id/fragment_place"
-        android:name="com.mobile.sharedwallet.fragment.SpendFragment"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentPlace"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_weight="0"
-        android:layout_height="485dp" />
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/navView"
+        android:layout_alignParentTop="true"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/cagnotte_navigation" />
 
-
-    <LinearLayout
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_menu"
+        android:layout_alignParentBottom="true"/>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/newspendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="40dp"
-                android:adjustViewBounds="true"
-                android:clickable="true"
-                android:scaleType="centerInside"
-                app:backgroundTint="#673AB7"
-                app:maxImageSize="40dp"
-                app:srcCompat="@android:drawable/ic_menu_add" />
+</RelativeLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/addperson"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:adjustViewBounds="true"
-                android:clickable="true"
-                android:scaleType="centerInside"
-                app:backgroundTint="#673AB7"
-                app:maxImageSize="40dp"
-                app:srcCompat="@drawable/ic_baseline_account_circle_24" />
-
-    </LinearLayout>
-
-</LinearLayout>

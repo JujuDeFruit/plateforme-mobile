@@ -17,17 +17,18 @@ class MessageDialog (
     private var navigateToFragment : Fragment? = null
     private var addToStackBack : Boolean? = null
 
-    fun navigateTo(fragment: Fragment, possibleReturn : Boolean) {
+    fun navigateTo(fragment: Fragment, possibleReturn : Boolean? = null) : MessageDialog {
         navigateToFragment = fragment
-        addToStackBack = possibleReturn
+        possibleReturn?.let { addToStackBack = it }
+        return this
     }
 
     fun create(message : String) : AlertDialog.Builder {
         val builder = AlertDialog.Builder(activity)
         builder.setMessage(message)
             .setPositiveButton(activity.getString(R.string.ok)) { _, _ ->
-                navigate()
                 callback?.invoke()
+                navigate()
             }
         // Create the AlertDialog object and return it
         builder.create()
@@ -55,15 +56,15 @@ class MessageDialog (
         }
 
         builder.setOnDismissListener { _ ->
-            navigateToFragment?.let { (activity as MainActivity).replaceFragment(it, it !is LoginFragment) }
+            navigateToFragment?.let { (activity as MainActivity).replaceFragment(it, addToStackBack ?: true) }
         }
 
         return builder
     }
 
     private fun navigate() {
-        navigateToFragment?. let {
-            (activity as MainActivity).replaceFragment(it, addToStackBack ?: true)
-        }
+        if (navigateToFragment == null) return
+        else (activity as MainActivity).replaceFragment(navigateToFragment!!, addToStackBack ?: true)
+
     }
 }

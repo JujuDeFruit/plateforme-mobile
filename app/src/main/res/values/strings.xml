@@ -36,4 +36,16 @@
     <string name="log_out">Log out</string>
     <string name="edit_profile">Edit profile</string>
 
+    <!-- Cagnotte -->
+    <string name="cagnotte">Cagnotte</string>
+    <string name="balance">Balance</string>
+    <string name="category">Category</string>
+
+    <!-- New spend -->
+    <string name="new_spend">New spend</string>
+    <string name="save">Save</string>
+    <string name="title">Title</string>
+    <string name="amount">Amount</string>
+
+
 </resources>
