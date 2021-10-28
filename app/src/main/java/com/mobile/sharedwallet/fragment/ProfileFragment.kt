@@ -48,7 +48,7 @@ class ProfileFragment : Fragment() {
 
         isEmailVerified = FirebaseAuth.getInstance().currentUser?.isEmailVerified ?: false
 
-        selectPictureActivity =
+        selectPictureActivity = // TODO casse le navController
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
                 dialog?.findViewById<ImageView>(R.id.changeProfilePicture)?.setImageURI(uri)
             }
@@ -142,10 +142,10 @@ class ProfileFragment : Fragment() {
                         ?.let { firebaseUser : FirebaseUser ->
                             firebaseUser.sendEmailVerification()
                                 .addOnSuccessListener {
-                                    Toast.makeText(context, getString(R.string.email_sent), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(requireContext(), getString(R.string.email_sent), Toast.LENGTH_SHORT).show()
                                 }
                                 .addOnFailureListener {
-                                    Toast.makeText(context, getString(R.string.message_email_not_send), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(requireContext(), getString(R.string.message_email_not_send), Toast.LENGTH_SHORT).show()
                                 }
                         }
                 }
@@ -183,7 +183,7 @@ class ProfileFragment : Fragment() {
                     dialog!!.dismiss()
                 }
                 mDialog
-                    .create(getString(R.string.message_profile_successfully_updated))
+                    .create(getString(R.string.message_profile_successfully_updated),)
                     .show()
             } else {
                 dialog!!.dismiss()

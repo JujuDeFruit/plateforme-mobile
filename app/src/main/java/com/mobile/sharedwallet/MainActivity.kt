@@ -51,10 +51,20 @@ class MainActivity : AppCompatActivity() {
 
         if(possibleReturn) {
             replace.addToBackStack(null)
-            replace.setReorderingAllowed(true)
+            // replace.setReorderingAllowed(true)
         }
-        else replace.disallowAddToBackStack()
+        else {
+            replace.disallowAddToBackStack()
+        }
 
         replace.commit()
+
+        if (!possibleReturn) clearFragmentManager()
+    }
+
+    private fun clearFragmentManager() {
+        for (i in 0 until supportFragmentManager.backStackEntryCount) {
+            supportFragmentManager.popBackStack()
+        }
     }
 }

@@ -2,10 +2,8 @@ package com.mobile.sharedwallet.fragment
 
 import android.app.ActionBar
 import android.app.AlertDialog
-import android.content.ContentValues
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -46,11 +44,7 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
-    }
-
-    override fun onResume() {
-        super.onResume()
-        cagnottes.forEach { createButtonClick(it.key) }
+        cagnottes.forEach { addCardToView(it.key) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -92,7 +86,7 @@ class HomeFragment : Fragment() {
                     for (document in result) {
                         val cagnotte : Cagnotte = document.toObject()
                         cagnottes[document.id] = cagnotte
-                        createButtonClick(document.id)
+                        addCardToView(document.id, true)
                     }
                 }
                 .addOnFailureListener {
@@ -139,11 +133,11 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun createButtonClick(cagnotteRef : String) {
+    private fun addCardToView(cagnotteRef : String, init : Boolean = false) {
         val cagnotte = cagnottes[cagnotteRef]!!
 
         val liste = view?.findViewById<LinearLayout>(R.id.listCagnotte)
-        val newTextView = TextView(requireActivity())
+        /*val newTextView = TextView(requireActivity())
         newTextView.setPadding(90,50,80,50)
         newTextView.layoutParams = ActionBar.LayoutParams(
             ActionBar.LayoutParams.WRAP_CONTENT,
@@ -157,12 +151,50 @@ class HomeFragment : Fragment() {
         newTextView.setOnClickListener{
             loadCagnotteView(cagnotteRef)
         }
-        liste?.addView(newTextView)
+        liste?.addView(newTextView)*/
+
+        val textMargin = 30
+
+        val container : ViewGroup = layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup
+
+        val cardView : View = LayoutInflater.from(requireContext()).inflate(R.layout.cagnotte_preview, container,false)
+
+        val cardText = cardView.findViewById<TextView>(R.id.cardText)
+
+        val params : FrameLayout.LayoutParams = FrameLayout.LayoutParams(cardText.layoutParams);
+
+        cardText.text = cagnotte.name
+
+        if (init) {
+            if (cagnottes.size % 2 == 0) {
+                params.gravity = Gravity.END or Gravity.CENTER_VERTICAL
+                params.setMargins(0,0, textMargin,0)
+            } else {
+                params.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+                params.setMargins(textMargin,0, 0,0)
+            }
+        } else {
+            if (cagnottes.keys.indexOf(cagnotteRef) % 2 == 0) {
+                params.gravity = Gravity.END or Gravity.CENTER_VERTICAL
+                params.setMargins(0,0, textMargin,0)
+            } else {
+                params.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+                params.setMargins(textMargin,0, 0,0)
+            }
+        }
+
+        cardText.layoutParams = params
+
+        cardView.setOnClickListener{
+            loadCagnotteView(cagnotteRef)
+        }
+
+        liste?.addView(cardView)
     }
 
 
     private fun loadCagnotteView(cagnotteRef : String) {
-        cagnottes[cagnotteRef]?.let { CagnotteFragment.pot = it }
+        CagnotteFragment.pot = cagnottes[cagnotteRef]!!
         CagnotteFragment.potRef = cagnotteRef
         (requireActivity() as MainActivity).replaceFragment(CagnotteFragment())
     }
@@ -180,11 +212,10 @@ class HomeFragment : Fragment() {
                 .addOnSuccessListener {
                     val id = it.id
                     cagnottes[id] = newCagnotte
-                    createButtonClick(id)
+                    addCardToView(id)
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(requireActivity(), getString(R.string.message_error_creating_new_pot), Toast.LENGTH_SHORT).show()
-                    Log.w(ContentValues.TAG, "Error writing document", e)
                 }
         }
     }

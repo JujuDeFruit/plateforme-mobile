@@ -33,4 +33,5 @@
     <string name="message_error_fetch_cagnottes">An error occurred while getting pots, please retry.</string>
     <string name="message_error_add_new_spend">An error occurred while adding new spend, please retry.</string>
     <string name="message_error_update_balances">An error occurred while updating balance, please retry.</string>
+    <string name="message_error_add_participant">An error occurred while adding a participant to the pot, please retry.</string>
 </resources>
