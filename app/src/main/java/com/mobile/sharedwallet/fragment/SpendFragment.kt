@@ -8,17 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
+import com.mobile.sharedwallet.dialog.AddUserToPotDialog
+import com.mobile.sharedwallet.dialog.NewSpendDialog
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
-import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Utils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 class SpendFragment : Fragment() {
 
@@ -40,11 +45,14 @@ class SpendFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<FloatingActionButton>(R.id.newSpendButton).setOnClickListener {
-            (requireActivity() as MainActivity).replaceFragment(NewSpendFragment())
+            NewSpendDialog().show(parentFragmentManager, "NewSpendFragment")
         }
 
         view.findViewById<FloatingActionButton>(R.id.addPerson).setOnClickListener {
-            addMember()
+            CoroutineScope(Dispatchers.Main).launch {
+                val usersEmails = fetchUsersEmails()
+                AddUserToPotDialog(cagnotte, usersEmails).show(parentFragmentManager, "AddUserToPotDialog")
+            }
         }
 
         cagnotte?.let { createTextViewClick(it.totalSpent) }
@@ -56,9 +64,9 @@ class SpendFragment : Fragment() {
     }
 
 
-    private fun createTextViewClick(listdepenses: List<Depense>) {
+    private fun createTextViewClick(listDepenses: List<Depense>) {
         val liste = view?.findViewById<LinearLayout>(R.id.spends)
-        for(depense in listdepenses){
+        for(depense in listDepenses){
             val inputText = depense.title
             val newTextView = TextView(activity)
             newTextView.setPadding(90, 50, 80, 50)
@@ -70,42 +78,23 @@ class SpendFragment : Fragment() {
             newTextView.textSize = 25f
             newTextView.text = inputText
             newTextView.id = inputText.hashCode()
-            /*newTextView.isClickable = true
-                newTextView.setOnClickListener{
-                    loadCagnottePage(inputText)
-                }*/
             liste?.addView(newTextView)
         }
     }
 
-    private fun addMember(){
-        cagnotte?.let { cagnotte : Cagnotte ->
-            val people = cagnotte.participants
-            people.add(
-                User(
-                    "ACGGNPVUBIPpaH7A480QN6V7npU2",
-                    "test",
-                    "test",
-                    "test@yahoo.fr",
-                    null,
-                    0.0f
-                )
-            )
+    private suspend fun fetchUsersEmails() : ArrayList<String> {
+        return withContext(Dispatchers.Main) {
+            try {
+                val snapShot = store
+                    .collection(FirebaseConstants.CollectionNames.Users)
+                    .get()
+                    .await()
 
-            store
-                .collection(FirebaseConstants.CollectionNames.Pot)
-                .document(CagnotteFragment.potRef)
-                .update(Cagnotte.Attributes.PARTICIPANTS.string, people.map { it.toFirebase() })
-                .addOnSuccessListener {
-                    // TODO
-                }
-                .addOnFailureListener {
-                    Toast.makeText(
-                        requireActivity(),
-                        getString(R.string.message_error_add_participant),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                return@withContext snapShot.map { d -> d["email"].toString() } as ArrayList<String>
+            }
+            catch (e : Exception) {
+                return@withContext ArrayList<String>()
+            }
         }
     }
 }

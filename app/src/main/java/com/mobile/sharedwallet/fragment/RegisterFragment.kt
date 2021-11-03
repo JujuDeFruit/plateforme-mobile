@@ -12,9 +12,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
+import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.dialog.MessageDialog
+import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Utils
+import com.mobile.sharedwallet.utils.Validate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,6 +29,7 @@ class RegisterFragment: Fragment() {
 
     private lateinit var auth : FirebaseAuth
     private var user : FirebaseUser? = null
+    private var overlay : Overlay? = null
 
     private var firstName : String? = null
     private var lastName : String? = null
@@ -37,7 +44,6 @@ class RegisterFragment: Fragment() {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
-        user = auth.currentUser
     }
 
     /**
@@ -55,6 +61,8 @@ class RegisterFragment: Fragment() {
                 createAccount()
             }
         }
+
+        overlay = Overlay(requireView())
     }
 
     /**
@@ -86,7 +94,7 @@ class RegisterFragment: Fragment() {
             return false
         }
         else {
-            val condition : Boolean? = Utils.checkPasswordConditions(requireContext(), password1, password2)
+            val condition : Boolean? = Validate.checkPasswordConditions(requireContext(), password1, password2)
             if (condition != null) return condition
         }
 
@@ -97,12 +105,15 @@ class RegisterFragment: Fragment() {
      * Create authentication account
      */
     private fun createAccount() {
+        overlay?.show()
         auth
             .createUserWithEmailAndPassword(email!!, password1!!)
             .addOnSuccessListener {
+                user = it.user
                 sendVerificationEmail()
             }
             .addOnFailureListener {
+                overlay?.hide()
                 Toast.makeText(requireActivity(), it.message, Toast.LENGTH_SHORT).show()
             }
     }
@@ -118,6 +129,7 @@ class RegisterFragment: Fragment() {
                     submitInfos()
                 }
                 .addOnFailureListener {
+                    overlay?.hide()
                     Toast.makeText(requireActivity(), it.message, Toast.LENGTH_SHORT).show()
                 }
         }
@@ -133,18 +145,40 @@ class RegisterFragment: Fragment() {
                     displayName = Utils.getDisplayNameFromFirstnameAndLastName(firstName, lastName)
                 })
                 .addOnSuccessListener {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        LoginFragment.user = Utils.createUserFromFirebaseUser(user, false)
+                    createUser()
+                }
+                .addOnFailureListener {
+                    overlay?.hide()
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun createUser() {
+
+        user?.let {
+            CoroutineScope(Dispatchers.Main).launch {
+                val myUser : User = Utils.createUserFromFirebaseUser(user, false)
+
+                LoginFragment.user = myUser
+
+                FirebaseFirestore
+                    .getInstance()
+                    .collection(FirebaseConstants.CollectionNames.Users)
+                    .add(myUser.toFirebase())
+                    .addOnSuccessListener {
+                        overlay?.hide()
                         val dialog = MessageDialog(requireActivity())
-                        dialog.navigateTo(HomeFragment(), false)
                         dialog
+                            .navigateTo(HomeFragment(), false)
                             .create(getString(R.string.message_confirmation_email_sent))
                             .show()
                     }
-                }
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                }
+                    .addOnFailureListener {
+                        overlay?.hide()
+                        Toast.makeText(requireContext(), getString(R.string.message_error_create_profile), Toast.LENGTH_SHORT).show()
+                    }
+            }
         }
     }
 }

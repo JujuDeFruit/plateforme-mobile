@@ -8,9 +8,8 @@ data class User(
     var lastName : String?,
     val email : String?,
     var photo : Bitmap?,
-    var solde:Float
 ) : Model {
-    constructor() : this(null, null, null, null, null,0.0f)
+    constructor() : this(null, null, null, null, null)
 
     enum class Attributes(val string: String) {
         UID("uid"),
@@ -25,16 +24,14 @@ data class User(
                 && lastName.isNullOrEmpty()
                 && email.isNullOrEmpty()
                 && photo == null
-                && solde == 0.0f
     }
 
     override fun toFirebase(): HashMap<String, Any?> {
-        return hashMapOf<String, Any?>(
+        return hashMapOf(
             Attributes.UID.string to uid,
             Attributes.FIRST_NAME.string to firstName,
             Attributes.LAST_NAME.string to lastName,
-            Attributes.EMAIL.string to email,
-            "solde" to solde
+            Attributes.EMAIL.string to email
         )
     }
 }

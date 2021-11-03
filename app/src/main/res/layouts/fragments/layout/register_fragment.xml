@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <include layout="@layout/overlay" />
+
     <TextView
         android:id="@+id/registerTitle"
         android:layout_marginTop="30dp"
@@ -19,71 +21,69 @@
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/registerTitle"
+        app:flexDirection="column"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:flexDirection="column">
+        app:layout_constraintTop_toBottomOf="@+id/registerTitle">
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:flexDirection="row"
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="5dp"
-            app:alignItems="center">
+            app:alignItems="center"
+            app:flexDirection="row">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_flexBasisPercent="25%"
                 android:text="@string/first_name"
-                />
+                app:layout_flexBasisPercent="25%" />
 
             <EditText
                 android:id="@+id/firstNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_flexBasisPercent="75%"
                 android:layout_marginHorizontal="10dp"
+                android:gravity="center"
                 android:inputType="text"
                 android:maxLines="1"
-                android:gravity="center" />
+                app:layout_flexBasisPercent="75%" />
 
         </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:flexDirection="row"
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="5dp"
-            app:alignItems="center">
+            app:alignItems="center"
+            app:flexDirection="row">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_flexBasisPercent="25%"
                 android:text="@string/last_name"
-                />
+                app:layout_flexBasisPercent="25%" />
 
             <EditText
+                android:id="@+id/lastNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:id="@+id/lastNameEditText"
-                android:maxLines="1"
+                android:gravity="center"
                 android:inputType="text"
-                app:layout_flexBasisPercent="75%"
-                android:gravity="center" />
+                android:maxLines="1"
+                app:layout_flexBasisPercent="75%" />
 
         </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:flexDirection="row"
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="5dp"
-            app:alignItems="center">
+            app:alignItems="center"
+            app:flexDirection="row">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -92,51 +92,50 @@
                 app:layout_flexBasisPercent="25%" />
 
             <EditText
+                android:id="@+id/emailEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_flexBasisPercent="75%"
-                android:gravity="center"
                 android:layout_marginHorizontal="10dp"
-                android:id="@+id/emailEditText"
+                android:gravity="center"
+                android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:inputType="textEmailAddress" />
+                app:layout_flexBasisPercent="75%" />
 
         </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:flexDirection="row"
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="5dp"
-            app:alignItems="center">
+            app:alignItems="center"
+            app:flexDirection="row">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/password"
-                app:layout_flexBasisPercent="25%"
-                />
+                app:layout_flexBasisPercent="25%" />
 
             <EditText
+                android:id="@+id/passwordEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_flexBasisPercent="75%"
-                android:gravity="center"
                 android:layout_marginHorizontal="10dp"
-                android:id="@+id/passwordEditText"
+                android:gravity="center"
                 android:inputType="textPassword"
-                android:maxLines="1" />
+                android:maxLines="1"
+                app:layout_flexBasisPercent="75%" />
 
         </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:flexDirection="row"
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="5dp"
-            app:alignItems="center">
+            app:alignItems="center"
+            app:flexDirection="row">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -145,26 +144,26 @@
                 app:layout_flexBasisPercent="25%" />
 
             <EditText
+                android:id="@+id/password2EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_flexBasisPercent="75%"
-                android:gravity="center"
                 android:layout_marginHorizontal="10dp"
-                android:id="@+id/password2EditText"
+                android:gravity="center"
                 android:inputType="textPassword"
-                android:maxLines="1" />
+                android:maxLines="1"
+                app:layout_flexBasisPercent="75%" />
         </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/createAccount"
-            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/register"
-            app:layout_alignSelf="center"
+            android:tooltipText="@string/create_account"
             app:backgroundTint="@color/info"
-            app:srcCompat="@drawable/ic_baseline_arrow_forward_24"
-            android:tooltipText="@string/create_account"/>
+            app:layout_alignSelf="center"
+            app:srcCompat="@drawable/ic_baseline_arrow_forward_24" />
 
     </com.google.android.flexbox.FlexboxLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

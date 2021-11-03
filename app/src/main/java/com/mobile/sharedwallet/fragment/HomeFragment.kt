@@ -1,6 +1,5 @@
 package com.mobile.sharedwallet.fragment
 
-import android.app.ActionBar
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
@@ -9,42 +8,40 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.models.WaitingPot
+import com.mobile.sharedwallet.utils.Colors
+import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Utils
 
 
-class HomeFragment : Fragment() {
+class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()) : Fragment() {
 
     private lateinit var store : FirebaseFirestore
-
     private var user : User? = null
-
-    private var cagnottes : HashMap<String, Cagnotte> = HashMap()
-
+    private var overlay : Overlay? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = FirebaseFirestore.getInstance()
         user = LoginFragment.user
-        loadCagnotteList()
     }
 
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
-        cagnottes.forEach { addCardToView(it.key) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -54,6 +51,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        cagnottes.forEach { addCardToView(it.key) }
 
         view.findViewById<FloatingActionButton>(R.id.createButton).setOnClickListener{
             if (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) openDialog()
@@ -72,28 +71,8 @@ class HomeFragment : Fragment() {
             getString(R.string.welcome)
                 .plus(getString(R.string.space))
                 .plus(user?.firstName)
-    }
 
-
-    private fun loadCagnotteList() {
-        // Load all pots current user is involved in
-        user?.let { user : User ->
-            store
-                .collection(FirebaseConstants.CollectionNames.Pot)
-                .whereArrayContains(Cagnotte.Attributes.PARTICIPANTS.string, user.toFirebase())
-                .get()
-                .addOnSuccessListener { result : QuerySnapshot ->
-                    for (document in result) {
-                        val cagnotte : Cagnotte = document.toObject()
-                        cagnottes[document.id] = cagnotte
-                        addCardToView(document.id, true)
-                    }
-                }
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), getString(R.string.message_error_fetch_cagnottes), Toast.LENGTH_SHORT).show()
-                }
-        }
-
+        overlay = Overlay(view)
     }
 
 
@@ -133,57 +112,24 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun addCardToView(cagnotteRef : String, init : Boolean = false) {
+    private fun addCardToView(cagnotteRef : String) {
         val cagnotte = cagnottes[cagnotteRef]!!
 
         val liste = view?.findViewById<LinearLayout>(R.id.listCagnotte)
-        /*val newTextView = TextView(requireActivity())
-        newTextView.setPadding(90,50,80,50)
-        newTextView.layoutParams = ActionBar.LayoutParams(
-            ActionBar.LayoutParams.WRAP_CONTENT,
-            ActionBar.LayoutParams.MATCH_PARENT
-        )
-        newTextView.setTextColor(Color.BLACK)
-        newTextView.textSize = 25f
-        newTextView.text = cagnotte.name
-        newTextView.id = cagnotte.name.hashCode()
-        newTextView.isClickable = true
-        newTextView.setOnClickListener{
-            loadCagnotteView(cagnotteRef)
-        }
-        liste?.addView(newTextView)*/
-
-        val textMargin = 30
 
         val container : ViewGroup = layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup
 
         val cardView : View = LayoutInflater.from(requireContext()).inflate(R.layout.cagnotte_preview, container,false)
 
-        val cardText = cardView.findViewById<TextView>(R.id.cardText)
+        cardView.findViewById<CardView>(R.id.cagnottePreview).setCardBackgroundColor(Color.parseColor(Colors.randomColor()))
+        cardView.findViewById<TextView>(R.id.cardTextPreview).text = cagnotte.name
 
-        val params : FrameLayout.LayoutParams = FrameLayout.LayoutParams(cardText.layoutParams);
+        val totalSpentAmountPreview = cardView.findViewById<TextView>(R.id.totalSpentAmountPreview)
 
-        cardText.text = cagnotte.name
+        var sum = 0f
+        cagnotte.totalSpent.forEach { sum += it.amountPaid }
 
-        if (init) {
-            if (cagnottes.size % 2 == 0) {
-                params.gravity = Gravity.END or Gravity.CENTER_VERTICAL
-                params.setMargins(0,0, textMargin,0)
-            } else {
-                params.gravity = Gravity.START or Gravity.CENTER_VERTICAL
-                params.setMargins(textMargin,0, 0,0)
-            }
-        } else {
-            if (cagnottes.keys.indexOf(cagnotteRef) % 2 == 0) {
-                params.gravity = Gravity.END or Gravity.CENTER_VERTICAL
-                params.setMargins(0,0, textMargin,0)
-            } else {
-                params.gravity = Gravity.START or Gravity.CENTER_VERTICAL
-                params.setMargins(textMargin,0, 0,0)
-            }
-        }
-
-        cardText.layoutParams = params
+        totalSpentAmountPreview?.text = sum.toString().plus(getString(R.string.space)).plus(getString(R.string.euro_symbol))
 
         cardView.setOnClickListener{
             loadCagnotteView(cagnotteRef)
@@ -203,18 +149,23 @@ class HomeFragment : Fragment() {
     private fun addCagnotte(name: String){
         user?.let { user : User ->
             // Create a new cagnotte with a first and last name
-            val newCagnotte = Cagnotte(name, Timestamp.now(), ArrayList(), arrayListOf(user))
+            val newCagnotte = Cagnotte(name, Timestamp.now(), ArrayList(), arrayListOf(Utils.castUserToParticipant(user)))
 
             // Add a new document with a generated ID
             store
                 .collection(FirebaseConstants.CollectionNames.Pot)
                 .add(newCagnotte.toFirebase())
-                .addOnSuccessListener {
-                    val id = it.id
-                    cagnottes[id] = newCagnotte
-                    addCardToView(id)
+                .addOnSuccessListener { docRef : DocumentReference ->
+                    store
+                        .collection(FirebaseConstants.CollectionNames.WaitingPot)
+                        .add(WaitingPot(docRef, ArrayList()).toFirebase())
+                        .addOnSuccessListener { _ ->
+                            val id = docRef.id
+                            cagnottes[id] = newCagnotte
+                            addCardToView(id)
+                        }
                 }
-                .addOnFailureListener { e ->
+                .addOnFailureListener { _ ->
                     Toast.makeText(requireActivity(), getString(R.string.message_error_creating_new_pot), Toast.LENGTH_SHORT).show()
                 }
         }
