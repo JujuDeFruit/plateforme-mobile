@@ -63,8 +63,12 @@ class MessageDialog (
     }
 
     private fun navigate() {
-        if (navigateToFragment == null) return
-        else (activity as MainActivity).replaceFragment(navigateToFragment!!, addToStackBack ?: true)
+        navigateToFragment?.let {
+            (activity as MainActivity).replaceFragment(
+                it,
+                addToStackBack ?: true
+            )
+        }
 
     }
 }

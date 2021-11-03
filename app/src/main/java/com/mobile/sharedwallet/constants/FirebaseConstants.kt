@@ -7,6 +7,10 @@ object FirebaseConstants {
 
     object CollectionNames {
         val Pot : kotlin.String = "pot"
+
+        val Users : kotlin.String = "users"
+
+        val WaitingPot : kotlin.String = "waitingPot"
     }
 
     object StorageRef {

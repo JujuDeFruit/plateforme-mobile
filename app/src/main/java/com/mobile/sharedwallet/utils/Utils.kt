@@ -3,14 +3,18 @@ package com.mobile.sharedwallet.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.provider.Telephony
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
+import com.mobile.sharedwallet.fragment.CagnotteFragment
 import com.mobile.sharedwallet.fragment.LoginFragment
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.models.User
@@ -75,14 +79,13 @@ class Utils {
                         // If exception is catched then file does not exist on Storage
                         null
                     }
-                    }
+                }
                 return@let User(
                     firebaseUser.uid,
                     names[User.Attributes.FIRST_NAME.string],
                     names[User.Attributes.LAST_NAME.string],
                     firebaseUser.email,
-                    photo,
-                0.0f)
+                    photo)
             } ?: User()
         }
 
@@ -93,37 +96,14 @@ class Utils {
                 .plus(".png")
         }
 
-        fun checkPasswordConditions(context : Context, password1 : String?, password2 : String?) : Boolean? {
-            val passwordPattern = "^(?=.*\\d)(?=.*[A-Z])[0-9a-zA-Z]{4,}$"
-
-            return if (password1.isNullOrEmpty() || password2.isNullOrEmpty()) {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.message_password_not_empty),
-                    Toast.LENGTH_SHORT
-                ).show()
-                false
-            } else if (password1 != password2) {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.message_passwords_must_match),
-                    Toast.LENGTH_SHORT
-                ).show()
-                false
-            } else if (!Pattern.compile(passwordPattern).matcher(password1).matches()
-                || !Pattern.compile(passwordPattern).matcher(password2).matches()
-            ) {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.message_password_conditions),
-                    Toast.LENGTH_SHORT
-                ).show()
-                false
-            } else null
+        fun castUserToParticipant(user : User) : Participant {
+            return user.uid?.let {
+                return@let Participant(user.firstName!!, it,0f, 0f, false)
+            } ?: Participant()
         }
 
-        fun castUserToParticipant(user : User) : Participant {
-            return Participant(user.firstName!!,user.uid.toString(),0f, false)
+        fun convertStringToRef(collectionName : String, ref : String) : DocumentReference {
+            return FirebaseFirestore.getInstance().collection(collectionName).document(ref)
         }
     }
 }

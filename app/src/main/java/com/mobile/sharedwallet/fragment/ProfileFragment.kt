@@ -24,6 +24,7 @@ import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Utils
+import com.mobile.sharedwallet.utils.Validate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -229,7 +230,7 @@ class ProfileFragment : Fragment() {
     /**
      * Update user profile on Firebase
      */
-    private suspend fun updateProfile() {
+    private suspend fun updateProfile() { // TODO for users collection
         user?.let { user : User ->
             dialog?.let { dialog ->
                 val firstName : String = dialog.findViewById<EditText>(R.id.firstNameEditProfile).text.toString()
@@ -359,7 +360,7 @@ class ProfileFragment : Fragment() {
             Toast.makeText(requireContext(), getString(R.string.message_new_password_not_empty), Toast.LENGTH_SHORT).show()
             return
         } else {
-            val condition : Boolean = Utils.checkPasswordConditions(requireContext(), newPassword.toString(), repeatedNewPassword.toString()) ?: true
+            val condition : Boolean = Validate.checkPasswordConditions(requireContext(), newPassword.toString(), repeatedNewPassword.toString()) ?: true
             if (!condition) return
         }
 

@@ -7,10 +7,17 @@
     <string name="cancel">Cancel</string>
     <string name="space">\u0020</string>
     <string name="submit">Submit</string>
+    <string name="accept">Accept</string>
+    <string name="refuse">Refuse</string>
 
     <string name="welcome">Welcome</string>
 
     <string name="pot_name">Pot name</string>
+
+    <!-- Invitation -->
+    <string name="invitation">Invitation</string>
+    <string name="invitation_accept_refuse">You can accept or refuse invitation</string>
+    <string name="have_been_invited">You have been invited to </string>
 
     <!-- Log -->
     <string name="log_in">Log in</string>
@@ -22,6 +29,7 @@
     <string name="re_send_email">Re-send e-mail</string>
     <string name="password">Password</string>
     <string name="repeat_password">Repeat password</string>
+    <string name="reset_password">Reset password</string>
     <string name="create_account">Create account</string>
 
     <!-- Profile -->
@@ -40,12 +48,17 @@
     <string name="cagnotte">Cagnotte</string>
     <string name="balance">Balance</string>
     <string name="category">Category</string>
+    <string name="add_user">Add a new user</string>
+    <string name="invite_enter_email">Please enter new user e-mail</string>
 
     <!-- New spend -->
     <string name="new_spend">New spend</string>
     <string name="save">Save</string>
     <string name="title">Title</string>
     <string name="amount">Amount</string>
+
+
+    <string name="euro_symbol">€</string>
 
 
 </resources>
