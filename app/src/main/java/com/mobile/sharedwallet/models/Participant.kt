@@ -27,4 +27,8 @@ data class Participant(
             Attributes.SOLDE.string to solde,
         )
     }
+
+    override fun toString(): String {
+        return name
+    }
 }

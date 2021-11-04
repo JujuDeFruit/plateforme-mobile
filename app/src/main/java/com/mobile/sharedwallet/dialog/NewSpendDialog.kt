@@ -52,7 +52,7 @@ class NewSpendDialog : DialogFragment(){
         }
 
         //Spinner Payeur
-        SpinnerAdapter().generateSpinner(requireContext(),view, participants)
+        SpinnerAdapter(participants!!).generateSpinner(requireContext(),view)
 
     }
 
