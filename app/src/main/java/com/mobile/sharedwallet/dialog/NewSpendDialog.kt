@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,9 +19,9 @@ import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.utils.Utils
+import com.mobile.sharedwallet.adapter.SpinnerAdapter
 
-
-class NewSpendDialog : DialogFragment() {
+class NewSpendDialog : DialogFragment(){
 
     private lateinit var store : FirebaseFirestore;
     private var participants : ArrayList<Participant>? = null
@@ -51,20 +50,19 @@ class NewSpendDialog : DialogFragment() {
         view.findViewById<FloatingActionButton>(R.id.saveButton).setOnClickListener {
             saveNewSpend(particiantAdapter)
         }
+
+        //Spinner Payeur
+        SpinnerAdapter().generateSpinner(requireContext(),view, participants)
+
     }
 
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
 
-        // Hide Overlay
-        /*dialog?.window?.also { window ->
-            window.attributes?.also { attributes ->
-                attributes.dimAmount = 0.1f
-                window.attributes = attributes
-            }
-        }*/
     }
+
+
 
     private fun updateAllSoldes(montant: Float, participantSelected: ArrayList<Participant>, payeur: Participant) {
         val moy : Float = montant / participantSelected.size.toFloat()
@@ -89,11 +87,6 @@ class NewSpendDialog : DialogFragment() {
                 Toast.makeText(requireActivity(), getString(R.string.message_error_update_balances), Toast.LENGTH_SHORT).show()
             }
     }
-
-    //getting data for checkbox list you can use server API to get the list data
-    /* private fun getParticipantList() : ArrayList<Participant> {
-        return ArrayList(CagnotteFragment.pot.participants.map { Utils.castUserToParticipant(it) })
-    }*/
 
     private fun repartition(float: Float, participantSelected: ArrayList<Participant>) : Float{
         return float / participantSelected.size.toFloat()
