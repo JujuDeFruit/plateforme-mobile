@@ -1,7 +1,6 @@
 package com.mobile.sharedwallet.fragment
 
 import android.os.Bundle
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
@@ -23,9 +23,7 @@ import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Utils
 import com.mobile.sharedwallet.utils.Validate
 import kotlinx.coroutines.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
 
 class LoginFragment(): Fragment() {
 
@@ -38,34 +36,6 @@ class LoginFragment(): Fragment() {
                     return User()
                 return field
             }
-
-        suspend fun loadCagnotteList() : HashMap<String, Cagnotte> {
-            // Load all pots current user is involved in
-            return user?.let { user: User ->
-                return@let withContext(Dispatchers.Main) {
-                    try {
-                        val result: QuerySnapshot = FirebaseFirestore
-                            .getInstance()
-                            .collection(FirebaseConstants.CollectionNames.Pot)
-                            .whereArrayContains(
-                                Cagnotte.Attributes.PARTICIPANTS.string,
-                                Utils.castUserToParticipant(user).toFirebase()
-                            )
-                            .get()
-                            .await()
-
-                        val cagnottes: HashMap<String, Cagnotte> = HashMap()
-                        for (document in result) {
-                            val cagnotte : Cagnotte = document.toObject()
-                            cagnottes[document.id] = cagnotte
-                        }
-                        return@withContext cagnottes
-                    } catch (e: Exception) {
-                        return@withContext null
-                    }
-                }
-            } ?: HashMap()
-        }
     }
 
     private var email : String = String()
@@ -114,8 +84,8 @@ class LoginFragment(): Fragment() {
                     MainScope().launch {
                         user = Utils.createUserFromFirebaseUser(it.user, true)
                         overlay?.hide()
-                        user?.let { u -> (requireActivity() as MainActivity).checkIfInvitation(u) }
-                        val cagnottes = loadCagnotteList()
+                        user?.let { u -> HomeFragment().checkIfInvitation(u) }
+                        val cagnottes = HomeFragment.loadCagnotteList()
                         (requireActivity() as MainActivity).replaceFragment(HomeFragment(cagnottes), false)
                     }
                 }

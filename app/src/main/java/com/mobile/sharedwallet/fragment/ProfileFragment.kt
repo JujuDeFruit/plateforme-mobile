@@ -49,7 +49,7 @@ class ProfileFragment : Fragment() {
 
         isEmailVerified = FirebaseAuth.getInstance().currentUser?.isEmailVerified ?: false
 
-        selectPictureActivity = // TODO casse le navController
+        selectPictureActivity =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
                 dialog?.findViewById<ImageView>(R.id.changeProfilePicture)?.setImageURI(uri)
             }
@@ -218,7 +218,7 @@ class ProfileFragment : Fragment() {
      */
     private fun validateUpdatePhoto() : Boolean {
         return user?.let { user : User ->
-            dialog?.let { dialog ->
+            return@let dialog?.let { dialog ->
                 val newPhotoImageView : ImageView = dialog.findViewById<ImageView>(R.id.changeProfilePicture)
                 val newPhoto : BitmapDrawable = newPhotoImageView.drawable as BitmapDrawable
                 return@let if(user.photo != null) !user.photo!!.sameAs(newPhoto.bitmap) else true
@@ -230,7 +230,7 @@ class ProfileFragment : Fragment() {
     /**
      * Update user profile on Firebase
      */
-    private suspend fun updateProfile() { // TODO for users collection
+    private suspend fun updateProfile() {
         user?.let { user : User ->
             dialog?.let { dialog ->
                 val firstName : String = dialog.findViewById<EditText>(R.id.firstNameEditProfile).text.toString()

@@ -8,7 +8,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
-import com.mobile.sharedwallet.fragment.LoginFragment
 
 class MessageDialog (
     private val activity: Activity,

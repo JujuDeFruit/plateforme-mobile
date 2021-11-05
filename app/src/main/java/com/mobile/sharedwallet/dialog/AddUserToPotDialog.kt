@@ -1,7 +1,6 @@
 package com.mobile.sharedwallet.dialog
 
 import android.os.Bundle
-import android.provider.Telephony
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,12 +22,10 @@ import com.mobile.sharedwallet.utils.Utils
 import com.mobile.sharedwallet.utils.Validate
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
-class AddUserToPotDialog(private val cagnotte : Cagnotte?, private val usersEmails : ArrayList<String> = ArrayList()) : DialogFragment() {
+class AddUserToPotDialog(private val cagnotte : Cagnotte?, private var usersEmails : ArrayList<String> = ArrayList()) : DialogFragment() {
 
     private lateinit var store : FirebaseFirestore
 
@@ -40,7 +37,6 @@ class AddUserToPotDialog(private val cagnotte : Cagnotte?, private val usersEmai
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

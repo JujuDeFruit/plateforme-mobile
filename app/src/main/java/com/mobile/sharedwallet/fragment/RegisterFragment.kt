@@ -13,7 +13,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.dialog.MessageDialog
@@ -21,8 +20,7 @@ import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Utils
 import com.mobile.sharedwallet.utils.Validate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 class RegisterFragment: Fragment() {
@@ -157,7 +155,7 @@ class RegisterFragment: Fragment() {
     private fun createUser() {
 
         user?.let {
-            CoroutineScope(Dispatchers.Main).launch {
+            MainScope().launch {
                 val myUser : User = Utils.createUserFromFirebaseUser(user, false)
 
                 LoginFragment.user = myUser

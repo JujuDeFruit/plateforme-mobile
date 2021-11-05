@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
+import com.mobile.sharedwallet.fragment.HomeFragment
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.models.WaitingPot
@@ -34,13 +36,11 @@ class InvitationDialog(private val user : User, private val cagnotteRef : String
         store = FirebaseFirestore.getInstance()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.invitation_dialog, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -62,15 +62,18 @@ class InvitationDialog(private val user : User, private val cagnotteRef : String
         }
     }
 
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         isCancelable = false
         return super.onCreateDialog(savedInstanceState)
     }
 
+
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
     }
+
 
     override fun onDismiss(dialog: DialogInterface) {
         MainScope().launch {
@@ -95,6 +98,7 @@ class InvitationDialog(private val user : User, private val cagnotteRef : String
 
     }
 
+
     private suspend fun refuse() {
         withContext(Dispatchers.Main) {
             try {
@@ -108,18 +112,31 @@ class InvitationDialog(private val user : User, private val cagnotteRef : String
         }
     }
 
+
     private suspend fun accept() {
-        withContext(Dispatchers.Main) {
-            try  {
-                store
-                    .document(cagnotteRef)
-                    .update(Cagnotte.Attributes.PARTICIPANTS.string, FieldValue.arrayUnion(Utils.castUserToParticipant(user)))
-            }
-            finally {
-                refuse()
+        cagnotte?.let { cagnotte: Cagnotte ->
+            user.uid?.let { uid : String ->
+                withContext(Dispatchers.Main) {
+                    try {
+                        cagnotte.uids.add(uid)
+                        cagnotte.participants.add(Utils.castUserToParticipant(user))
+
+                        val task: Task<Void> = store
+                            .document(cagnotteRef)
+                            .update(cagnotte.toFirebase())
+
+                        if (task.isSuccessful) {
+                            val ref : String = Utils.getLastRefFromRef(cagnotteRef)
+                            (requireParentFragment() as HomeFragment).joinCagnotte(hashMapOf(ref to cagnotte))
+                            //HomeFragment.cagnottes.putAll(hashMapOf(ref to cagnotte))
+                        }
+
+                    } finally {
+                        // Delete Waiting ID in waitingPot anyway
+                        refuse()
+                    }
+                }
             }
         }
-
     }
-
 }

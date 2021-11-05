@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.adapter.ParticipantsAdapter
 import com.mobile.sharedwallet.constants.FirebaseConstants
@@ -20,7 +19,6 @@ import com.mobile.sharedwallet.fragment.CagnotteFragment
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.Participant
-import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Utils
 
 

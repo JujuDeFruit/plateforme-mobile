@@ -1,10 +1,7 @@
 package com.mobile.sharedwallet.utils
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.provider.Telephony
-import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -12,15 +9,12 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.mobile.sharedwallet.MainActivity
-import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.fragment.CagnotteFragment
 import com.mobile.sharedwallet.fragment.LoginFragment
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.models.User
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import java.util.regex.Pattern
 
 class Utils {
 
@@ -49,11 +43,11 @@ class Utils {
         private fun getFirstnameAndLastnameFromDisplayName(displayName: String?) : HashMap<String, String> {
             return if (!displayName.isNullOrEmpty()) {
                 val fNAndLN : List<String> = displayName.split(FirebaseConstants.String.DisplayNameSeparator)
-                hashMapOf<String, String>(
+                hashMapOf(
                     User.Attributes.FIRST_NAME.string to fNAndLN.first(),
                     User.Attributes.LAST_NAME.string to fNAndLN.last()
                 )
-            } else hashMapOf<String, String>(
+            } else hashMapOf(
                 User.Attributes.FIRST_NAME.string to "",
                 User.Attributes.LAST_NAME.string to ""
             )
@@ -104,6 +98,10 @@ class Utils {
 
         fun convertStringToRef(collectionName : String, ref : String) : DocumentReference {
             return FirebaseFirestore.getInstance().collection(collectionName).document(ref)
+        }
+
+        fun getLastRefFromRef(ref : String) : String {
+            return ref.split("/").last()
         }
     }
 }
