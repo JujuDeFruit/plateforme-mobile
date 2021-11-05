@@ -13,15 +13,12 @@ import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.dialog.InvitationDialog
 import com.mobile.sharedwallet.fragment.HomeFragment
 import com.mobile.sharedwallet.fragment.LoginFragment
-import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.models.WaitingPot
 import com.mobile.sharedwallet.utils.Utils
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,29 +44,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             GlobalScope.launch {
                 LoginFragment.user = Utils.createUserFromFirebaseUser(user, true)
-                checkIfInvitation(LoginFragment.user!!)  // TODO Cagnottes not loaded
-                transaction.add(layout, HomeFragment(LoginFragment.loadCagnotteList()))
+                // checkIfInvitation(LoginFragment.user!!)  // TODO Cagnottes not loaded
+                transaction.add(layout, HomeFragment(HomeFragment.loadCagnotteList()))
                 transaction.commit()
-            }
-        }
-    }
-
-    suspend fun checkIfInvitation(user : User) {
-        val store : FirebaseFirestore = FirebaseFirestore.getInstance()
-        user.uid?.let {
-            withContext(Dispatchers.Main) {
-                try {
-                    val snapShot : QuerySnapshot = store
-                        .collection(FirebaseConstants.CollectionNames.WaitingPot)
-                        .whereArrayContains(WaitingPot.Attributes.WAITING_UID.string, it)
-                        .get()
-                        .await()
-
-                    for(doc in snapShot) {
-                        InvitationDialog(user, (doc.get(WaitingPot.Attributes.POT_REF.string) as DocumentReference).path, doc.id).show(supportFragmentManager, "InvitationDialog")
-                    }
-                }
-                catch (_ : Exception) {}
             }
         }
     }
@@ -82,10 +59,11 @@ class MainActivity : AppCompatActivity() {
         if(possibleReturn) {
             replace.addToBackStack(null)
         }
+        else clearFragmentManager()
 
         replace.commit()
 
-        if (!possibleReturn) clearFragmentManager()
+
     }
 
     private fun clearFragmentManager() {

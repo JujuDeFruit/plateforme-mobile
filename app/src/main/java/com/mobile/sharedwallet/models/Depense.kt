@@ -1,7 +1,5 @@
 package com.mobile.sharedwallet.models
 
-import android.provider.Telephony
-
 // Users are stored with their uID, that is why there are strings
 data class Depense (
     val title : String,

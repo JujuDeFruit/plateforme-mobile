@@ -17,13 +17,13 @@ import com.mobile.sharedwallet.dialog.AddUserToPotDialog
 import com.mobile.sharedwallet.dialog.NewSpendDialog
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
+import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class SpendFragment : Fragment() {
 
@@ -85,12 +85,12 @@ class SpendFragment : Fragment() {
     private suspend fun fetchUsersEmails() : ArrayList<String> {
         return withContext(Dispatchers.Main) {
             try {
-                val snapShot = store
+                return@withContext store
                     .collection(FirebaseConstants.CollectionNames.Users)
                     .get()
                     .await()
-
-                return@withContext snapShot.map { d -> d["email"].toString() } as ArrayList<String>
+                    .map { d -> d[User.Attributes.EMAIL.string].toString() }
+                        as ArrayList<String>
             }
             catch (e : Exception) {
                 return@withContext ArrayList<String>()

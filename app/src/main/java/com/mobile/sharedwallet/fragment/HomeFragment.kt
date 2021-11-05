@@ -2,12 +2,14 @@ package com.mobile.sharedwallet.fragment
 
 import android.app.AlertDialog
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -15,9 +17,12 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
+import com.mobile.sharedwallet.dialog.InvitationDialog
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.User
@@ -25,6 +30,12 @@ import com.mobile.sharedwallet.models.WaitingPot
 import com.mobile.sharedwallet.utils.Colors
 import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import kotlin.properties.Delegates
 
 
 class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()) : Fragment() {
@@ -33,16 +44,50 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
     private var user : User? = null
     private var overlay : Overlay? = null
 
+
+    companion object {
+
+        suspend fun loadCagnotteList() : HashMap<String, Cagnotte> {
+            // Load all pots current user is involved in
+            return LoginFragment.user?.let { user : User ->
+                return@let withContext(Dispatchers.Main) {
+                    try {
+                        val result: QuerySnapshot = FirebaseFirestore
+                            .getInstance()
+                            .collection(FirebaseConstants.CollectionNames.Pot)
+                            .whereArrayContains(Cagnotte.Attributes.UIDS.string, user.uid!!)
+                            .get()
+                            .await()
+
+                        val cagnottes: HashMap<String, Cagnotte> = HashMap()
+                        for (document in result) {
+                            val cagnotte : Cagnotte = document.toObject()
+                            cagnottes[document.id] = cagnotte
+                        }
+                        return@withContext cagnottes
+                    } catch (e: Exception) {
+                        return@withContext null
+                    }
+                }
+            } ?: HashMap()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = FirebaseFirestore.getInstance()
         user = LoginFragment.user
     }
 
+
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
+        MainScope().launch {
+            checkIfInvitation(user!!)
+        }
     }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.home_fragment, container, false)
@@ -50,7 +95,6 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         cagnottes.forEach { addCardToView(it.key) }
 
@@ -112,7 +156,7 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
     }
 
 
-    private fun addCardToView(cagnotteRef : String) {
+    fun addCardToView(cagnotteRef : String) {
         val cagnotte = cagnottes[cagnotteRef]!!
 
         val liste = view?.findViewById<LinearLayout>(R.id.listCagnotte)
@@ -149,7 +193,7 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
     private fun addCagnotte(name: String){
         user?.let { user : User ->
             // Create a new cagnotte with a first and last name
-            val newCagnotte = Cagnotte(name, Timestamp.now(), ArrayList(), arrayListOf(Utils.castUserToParticipant(user)))
+            val newCagnotte = Cagnotte(arrayListOf(user.uid!!), name, Timestamp.now(), ArrayList(), arrayListOf(Utils.castUserToParticipant(user)))
 
             // Add a new document with a generated ID
             store
@@ -170,4 +214,38 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
                 }
         }
     }
+
+
+    fun joinCagnotte(joinedCagnotte : HashMap<String, Cagnotte>) {
+        cagnottes.putAll(joinedCagnotte)
+        joinedCagnotte.forEach { addCardToView(it.key) }
+    }
+
+
+    suspend fun checkIfInvitation(user : User) {
+        val store : FirebaseFirestore = FirebaseFirestore.getInstance()
+        user.uid?.let {
+            try {
+                val snapShot: QuerySnapshot = store
+                    .collection(FirebaseConstants.CollectionNames.WaitingPot)
+                    .whereArrayContains(WaitingPot.Attributes.WAITING_UID.string, it)
+                    .get()
+                    .await()
+
+                for (doc in snapShot) {
+                    InvitationDialog(
+                        user,
+                        (doc.get(WaitingPot.Attributes.POT_REF.string) as DocumentReference).path,
+                        doc.id)
+                        .show(parentFragmentManager, "InvitationDialog")
+                }
+            }
+            catch (_ : Exception) {}
+        }
+    }
+
+    /*override fun onDetach() {
+        super.onDetach()
+        cagnottes = HashMap()
+    }*/
 }
