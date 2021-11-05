@@ -83,9 +83,9 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
-        MainScope().launch {
-            checkIfInvitation(user!!)
-        }
+        /*MainScope().launch {
+            (requireActivity() as MainActivity).checkIfInvitation(user!!)
+        }*/
     }
 
 
@@ -212,35 +212,6 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
                 .addOnFailureListener { _ ->
                     Toast.makeText(requireActivity(), getString(R.string.message_error_creating_new_pot), Toast.LENGTH_SHORT).show()
                 }
-        }
-    }
-
-
-    fun joinCagnotte(joinedCagnotte : HashMap<String, Cagnotte>) {
-        cagnottes.putAll(joinedCagnotte)
-        joinedCagnotte.forEach { addCardToView(it.key) }
-    }
-
-
-    suspend fun checkIfInvitation(user : User) {
-        val store : FirebaseFirestore = FirebaseFirestore.getInstance()
-        user.uid?.let {
-            try {
-                val snapShot: QuerySnapshot = store
-                    .collection(FirebaseConstants.CollectionNames.WaitingPot)
-                    .whereArrayContains(WaitingPot.Attributes.WAITING_UID.string, it)
-                    .get()
-                    .await()
-
-                for (doc in snapShot) {
-                    InvitationDialog(
-                        user,
-                        (doc.get(WaitingPot.Attributes.POT_REF.string) as DocumentReference).path,
-                        doc.id)
-                        .show(parentFragmentManager, "InvitationDialog")
-                }
-            }
-            catch (_ : Exception) {}
         }
     }
 

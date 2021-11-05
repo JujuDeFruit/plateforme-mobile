@@ -1,6 +1,7 @@
 package com.mobile.sharedwallet.dialog
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
+import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.HomeFragment
@@ -25,14 +27,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class InvitationDialog(private val user : User, private val cagnotteRef : String, private val waitingPotRef : String) : DialogFragment() {
+class InvitationDialog(
+    private val activity : MainActivity,
+    private val user : User,
+    private val cagnotteRef : String,
+    private val waitingPotRef : String,
+    private val isLast : Boolean
+) : DialogFragment() {
 
     private lateinit var store : FirebaseFirestore
     private var cagnotte : Cagnotte? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         store = FirebaseFirestore.getInstance()
     }
 
@@ -50,9 +58,7 @@ class InvitationDialog(private val user : User, private val cagnotteRef : String
         }
 
         view.findViewById<FloatingActionButton>(R.id.refuseInvitation).setOnClickListener {
-            MainScope().launch {
-                refuse()
-            }
+            dismiss()
         }
 
         view.findViewById<FloatingActionButton>(R.id.acceptInvitation).setOnClickListener {
@@ -77,7 +83,16 @@ class InvitationDialog(private val user : User, private val cagnotteRef : String
 
     override fun onDismiss(dialog: DialogInterface) {
         MainScope().launch {
-            refuse()
+            withContext(Dispatchers.Main) {
+                try {
+                    store
+                        .document(Utils.convertStringToRef(FirebaseConstants.CollectionNames.WaitingPot, waitingPotRef).path)
+                        .update(WaitingPot.Attributes.WAITING_UID.string, FieldValue.arrayRemove(user.uid))
+                }
+                catch(e : Exception) {}
+                quit()
+            }
+
         }
     }
 
@@ -99,20 +114,6 @@ class InvitationDialog(private val user : User, private val cagnotteRef : String
     }
 
 
-    private suspend fun refuse() {
-        withContext(Dispatchers.Main) {
-            try {
-                store
-                    .document(Utils.convertStringToRef(FirebaseConstants.CollectionNames.WaitingPot, waitingPotRef).path)
-                    .update(WaitingPot.Attributes.WAITING_UID.string, FieldValue.arrayRemove(user.uid))
-            }
-            finally {
-                dismiss()
-            }
-        }
-    }
-
-
     private suspend fun accept() {
         cagnotte?.let { cagnotte: Cagnotte ->
             user.uid?.let { uid : String ->
@@ -121,21 +122,23 @@ class InvitationDialog(private val user : User, private val cagnotteRef : String
                         cagnotte.uids.add(uid)
                         cagnotte.participants.add(Utils.castUserToParticipant(user))
 
-                        val task: Task<Void> = store
+                        store
                             .document(cagnotteRef)
                             .update(cagnotte.toFirebase())
 
-                        if (task.isSuccessful) {
-                            val ref : String = Utils.getLastRefFromRef(cagnotteRef)
-                            (requireParentFragment() as HomeFragment).joinCagnotte(hashMapOf(ref to cagnotte))
-                            //HomeFragment.cagnottes.putAll(hashMapOf(ref to cagnotte))
-                        }
-
                     } finally {
                         // Delete Waiting ID in waitingPot anyway
-                        refuse()
+                        dismiss()
                     }
                 }
+            }
+        }
+    }
+
+    private fun quit() {
+        if (isLast) {
+            MainScope().launch {
+                activity.replaceFragment(HomeFragment(HomeFragment.loadCagnotteList()), false)
             }
         }
     }

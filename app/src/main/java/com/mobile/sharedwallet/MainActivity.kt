@@ -44,9 +44,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             GlobalScope.launch {
                 LoginFragment.user = Utils.createUserFromFirebaseUser(user, true)
-                // checkIfInvitation(LoginFragment.user!!)  // TODO Cagnottes not loaded
-                transaction.add(layout, HomeFragment(HomeFragment.loadCagnotteList()))
-                transaction.commit()
+                checkIfInvitation(LoginFragment.user!!)  // TODO Cagnottes not loaded
+                //transaction.add(layout, HomeFragment(HomeFragment.loadCagnotteList()))
+                // transaction.commit()
             }
         }
     }
@@ -69,6 +69,37 @@ class MainActivity : AppCompatActivity() {
     private fun clearFragmentManager() {
         for (i in 0 until supportFragmentManager.backStackEntryCount) {
             supportFragmentManager.popBackStack()
+        }
+    }
+
+
+    suspend fun checkIfInvitation(user : User) {
+        val store : FirebaseFirestore = FirebaseFirestore.getInstance()
+        user.uid?.let {
+            try {
+                val snapShot: QuerySnapshot = store
+                    .collection(FirebaseConstants.CollectionNames.WaitingPot)
+                    .whereArrayContains(WaitingPot.Attributes.WAITING_UID.string, it)
+                    .get()
+                    .await()
+
+                if(!snapShot.isEmpty) {
+                    snapShot.mapIndexed { i, doc ->
+                        InvitationDialog(
+                            this,
+                            user,
+                            (doc.get(WaitingPot.Attributes.POT_REF.string) as DocumentReference).path,
+                            doc.id,
+                            snapShot.size() - 1 == i
+                        )
+                    }
+                        .reversed()
+                        .forEachIndexed { i, d -> d.show(supportFragmentManager, "InvitationDialog".plus(i)) }
+                } else {
+                    replaceFragment(HomeFragment(HomeFragment.loadCagnotteList()), false)
+                }
+            }
+            catch (_ : Exception) {}
         }
     }
 }
