@@ -84,9 +84,9 @@ class LoginFragment(): Fragment() {
                     MainScope().launch {
                         user = Utils.createUserFromFirebaseUser(it.user, true)
                         overlay?.hide()
-                        user?.let { u -> HomeFragment().checkIfInvitation(u) }
-                        val cagnottes = HomeFragment.loadCagnotteList()
-                        (requireActivity() as MainActivity).replaceFragment(HomeFragment(cagnottes), false)
+                        user?.let { u : User -> (requireActivity() as MainActivity).checkIfInvitation(u) }
+                        /*val cagnottes = HomeFragment.loadCagnotteList()
+                        (requireActivity() as MainActivity).replaceFragment(HomeFragment(cagnottes), false)*/
                     }
                 }
                 .addOnFailureListener {
