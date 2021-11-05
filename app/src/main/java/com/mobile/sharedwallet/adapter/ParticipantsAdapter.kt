@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
+import com.mobile.sharedwallet.models.Tributaire
+import com.mobile.sharedwallet.utils.Utils.Companion.castParticipantToTributaire
 
 
 class ParticipantsAdapter(private val dataSet: ArrayList<Participant>) :
@@ -34,11 +36,11 @@ class ParticipantsAdapter(private val dataSet: ArrayList<Participant>) :
 
     }
 
-    fun saveNewSpend() : ArrayList<Participant>{
-        val participantSelected = ArrayList<Participant>()
+    fun peopleSelected() : ArrayList<Tributaire>{
+        val participantSelected = ArrayList<Tributaire>()
         for (person in dataSet){
             if (person.selected){
-                participantSelected.add(person)
+                participantSelected.add(castParticipantToTributaire(person))
             }
         }
         return participantSelected
