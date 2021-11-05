@@ -44,9 +44,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             GlobalScope.launch {
                 LoginFragment.user = Utils.createUserFromFirebaseUser(user, true)
-                checkIfInvitation(LoginFragment.user!!)  // TODO Cagnottes not loaded
-                //transaction.add(layout, HomeFragment(HomeFragment.loadCagnotteList()))
-                // transaction.commit()
+                checkIfInvitation(LoginFragment.user!!)
             }
         }
     }
@@ -62,8 +60,6 @@ class MainActivity : AppCompatActivity() {
         else clearFragmentManager()
 
         replace.commit()
-
-
     }
 
     private fun clearFragmentManager() {
