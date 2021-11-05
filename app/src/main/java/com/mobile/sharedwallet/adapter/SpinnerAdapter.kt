@@ -8,11 +8,16 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import com.mobile.sharedwallet.models.Participant
 
+<<<<<<< Updated upstream
 
 
 
 class SpinnerAdapter(private val participants : ArrayList<Participant>) : AdapterView.OnItemSelectedListener {
 
+=======
+class SpinnerAdapter(private val participants : ArrayList<Participant>) : AdapterView.OnItemSelectedListener {
+
+>>>>>>> Stashed changes
     fun generateSpinner (context : Context, view : View ){
         val spinner:Spinner= view.findViewById(R.id.spinnerPayeur)
         val spinnerArrayAdapter:ArrayAdapter<Participant> = ArrayAdapter(
