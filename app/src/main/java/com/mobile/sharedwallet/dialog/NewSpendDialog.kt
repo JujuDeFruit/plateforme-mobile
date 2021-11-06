@@ -1,10 +1,13 @@
 package com.mobile.sharedwallet.dialog
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,8 +24,10 @@ import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.utils.Utils
 import com.mobile.sharedwallet.adapter.SpinnerAdapter
 import com.mobile.sharedwallet.models.Tributaire
+import java.lang.Float.min
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.math.abs
 
 class NewSpendDialog : DialogFragment() {
 
@@ -124,4 +129,5 @@ class NewSpendDialog : DialogFragment() {
                 }
         }
     }
+
 }
