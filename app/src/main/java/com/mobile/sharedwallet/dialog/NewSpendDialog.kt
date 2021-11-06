@@ -1,11 +1,13 @@
 package com.mobile.sharedwallet.dialog
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +22,12 @@ import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.utils.Utils
-
+import com.mobile.sharedwallet.adapter.SpinnerAdapter
+import com.mobile.sharedwallet.models.Tributaire
+import java.lang.Float.min
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.math.abs
 
 class NewSpendDialog : DialogFragment() {
 
@@ -51,32 +58,34 @@ class NewSpendDialog : DialogFragment() {
         view.findViewById<FloatingActionButton>(R.id.saveButton).setOnClickListener {
             saveNewSpend(particiantAdapter)
         }
+
+        //Spinner Payeur
+        var spinnerAdapter = SpinnerAdapter(participants!!)
+        spinnerAdapter.generateSpinner(requireContext(),view)
+
     }
 
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
 
-        // Hide Overlay
-        /*dialog?.window?.also { window ->
-            window.attributes?.also { attributes ->
-                attributes.dimAmount = 0.1f
-                window.attributes = attributes
-            }
-        }*/
     }
 
-    private fun updateAllSoldes(montant: Float, participantSelected: ArrayList<Participant>, payeur: Participant) {
-        val moy : Float = montant / participantSelected.size.toFloat()
+    private fun updateAllSoldes(montant: Float, tributaireSelected: ArrayList<Tributaire>) {
+        val payeur : Tributaire = SpinnerAdapter.payeur ?: Tributaire()
+        val moy : Float = montant / tributaireSelected.size.toFloat()
         val updatedSolde = participants ?: ArrayList()
         for (soldes in updatedSolde) {
-            for (participant in participantSelected) {
-                if (soldes.uid == participant.uid) {
-                    if (soldes.uid == payeur.uid) {
-                        soldes.solde += moy * (participantSelected.size - 1).toFloat()
-                    } else {
-                        soldes.solde -= moy
-                    }
+            if (soldes.uid == payeur.uid) {
+                if (tributaireSelected.map { it.uid }.contains(payeur.uid)){
+                    soldes.solde += BigDecimal((moy * (tributaireSelected.size - 1).toFloat()).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
+                }else{
+                    soldes.solde += BigDecimal((moy * tributaireSelected.size.toFloat()).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
+                }
+            }
+            for (tributaire in tributaireSelected) {
+                if (soldes.uid == tributaire.uid && tributaire.uid!=payeur.uid) {
+                    soldes.solde -= BigDecimal(moy.toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
                 }
             }
         }
@@ -90,12 +99,7 @@ class NewSpendDialog : DialogFragment() {
             }
     }
 
-    //getting data for checkbox list you can use server API to get the list data
-    /* private fun getParticipantList() : ArrayList<Participant> {
-        return ArrayList(CagnotteFragment.pot.participants.map { Utils.castUserToParticipant(it) })
-    }*/
-
-    private fun repartition(float: Float, participantSelected: ArrayList<Participant>) : Float{
+    private fun repartition(float: Float, participantSelected: ArrayList<Tributaire>) : Float{
         return float / participantSelected.size.toFloat()
     }
 
@@ -103,28 +107,27 @@ class NewSpendDialog : DialogFragment() {
         view?.let {
             val title : String = it.findViewById<EditText>(R.id.title).text.toString()
             val montant = it.findViewById<EditText>(R.id.montant).text.toString().toFloat()
-            val selectedParticipant = adapter.saveNewSpend()
-            val payeur = Participant( "Julien" ,"LWBvvOIMgNeEL9b20J4ETVXoX9M2", 10f,0f, true)
+            val selectedParticipant = adapter.peopleSelected()
 
             for (k in selectedParticipant){
-                k.cout = repartition(montant, selectedParticipant)
+                k.cout = BigDecimal(repartition(montant, selectedParticipant).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
             }
 
-            val depense = Depense(title, payeur, montant, selectedParticipant)
+            val depense = Depense(title, SpinnerAdapter.payeur ?: Tributaire(), montant, selectedParticipant)
 
             store
                 .collection(FirebaseConstants.CollectionNames.Pot)
                 .document(CagnotteFragment.potRef)
                 .update(Cagnotte.Attributes.TOTAL_SPENT.string, FieldValue.arrayUnion(depense.toFirebase()))
                 .addOnSuccessListener {
-                    updateAllSoldes(montant, selectedParticipant, payeur)
+                    updateAllSoldes(montant, selectedParticipant)
                     dismiss()
                 }
                 .addOnFailureListener {
                     dismiss()
                     Toast.makeText(requireActivity(), getString(R.string.message_error_add_new_spend), Toast.LENGTH_SHORT).show()
                 }
-
         }
     }
+
 }

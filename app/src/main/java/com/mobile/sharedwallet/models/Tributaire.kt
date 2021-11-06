@@ -1,29 +1,24 @@
 package com.mobile.sharedwallet.models
 
-data class Participant(
+class Tributaire (
     val name : String,
     val uid : String,
-    var solde : Float,
-    var selected : Boolean
-    ) : Model {
+    var cout : Float,
+) : Model {
 
     enum class Attributes(val string: String) {
         NAME("name"),
         UID("uid"),
-        SOLDE("solde"),
+        COUT("cout")
     }
 
-    constructor() : this("","",0f,false)
+    constructor() : this("","",0f)
 
     override fun toFirebase(): HashMap<String, Any?> {
         return hashMapOf(
             Attributes.NAME.string to name,
             Attributes.UID.string to uid,
-            Attributes.SOLDE.string to solde,
+            Attributes.COUT.string to cout
         )
-    }
-
-    override fun toString(): String {
-        return name
     }
 }
