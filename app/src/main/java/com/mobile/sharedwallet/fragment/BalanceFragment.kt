@@ -81,7 +81,7 @@ class BalanceFragment: Fragment() {
         newTextView.setPadding(90, 50, 80, 50)
         newTextView.setTextColor(Color.BLACK)
         newTextView.textSize = 15f
-        newTextView.text = "$p2 owes to $p1 : $debt"
+        newTextView.text = "$p2 owes $debt to $p1"
         liste?.addView(newTextView)
     }
 }
