@@ -1,79 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/overlay" />
-
-    <TextView
-        android:id="@+id/welcome"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="15dp"
-        android:paddingHorizontal="20dp"
-        android:textSize="25sp" />
+        android:layout_height="match_parent">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:paddingHorizontal="15dp"
-        android:layout_below="@+id/welcome">
+        <include layout="@layout/overlay" />
 
-        <LinearLayout
-            android:id="@+id/listCagnotte"
+        <TextView
+            android:id="@+id/welcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:paddingTop="15dp"
+            android:paddingHorizontal="20dp"
+            android:textSize="25sp" />
 
-    </ScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="25dp">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/createButton"
-            android:layout_width="wrap_content"
+        <ScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            app:srcCompat="@android:drawable/ic_input_add"
-            tools:ignore="SpeakableTextPresentCheck"
-            android:tooltipText="Add a pot" />
+            android:layout_marginTop="15dp"
+            android:paddingHorizontal="15dp"
+            android:layout_below="@+id/welcome">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/refreshButton"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/listCagnotte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:clickable="true"
-            app:srcCompat="?attr/actionModePasteDrawable"
-            tools:ignore="SpeakableTextPresentCheck"
-            android:tooltipText="Infos"
-            android:focusable="true" />
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="25dp">
 
-        <androidx.legacy.widget.Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/createButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                app:srcCompat="@android:drawable/ic_input_add"
+                tools:ignore="SpeakableTextPresentCheck"
+                android:tooltipText="Add a pot" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/profileButton"
-            app:backgroundTint="@color/primary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:clickable="true"
-            app:srcCompat="@drawable/ic_baseline_account_circle_24"
-            tools:ignore="SpeakableTextPresentCheck"
-            android:tooltipText="My profile"
-            android:focusable="true" />
-    </LinearLayout>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/refreshButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:clickable="true"
+                app:srcCompat="?attr/actionModePasteDrawable"
+                tools:ignore="SpeakableTextPresentCheck"
+                android:tooltipText="Infos"
+                android:focusable="true" />
 
-</RelativeLayout>
+            <androidx.legacy.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/profileButton"
+                app:backgroundTint="@color/primary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_baseline_account_circle_24"
+                tools:ignore="SpeakableTextPresentCheck"
+                android:tooltipText="My profile"
+                android:focusable="true" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
