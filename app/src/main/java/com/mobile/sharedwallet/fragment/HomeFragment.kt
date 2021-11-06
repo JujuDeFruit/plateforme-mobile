@@ -2,16 +2,17 @@ package com.mobile.sharedwallet.fragment
 
 import android.app.AlertDialog
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -22,7 +23,6 @@ import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.dialog.InvitationDialog
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.User
@@ -31,11 +31,8 @@ import com.mobile.sharedwallet.utils.Colors
 import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import kotlin.properties.Delegates
 
 
 class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()) : Fragment() {
@@ -83,9 +80,6 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
-        /*MainScope().launch {
-            (requireActivity() as MainActivity).checkIfInvitation(user!!)
-        }*/
     }
 
 
@@ -117,6 +111,18 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
                 .plus(user?.firstName)
 
         overlay = Overlay(view)
+
+        // Getting SwipeContainerLayout
+        val swipe = view.findViewById<SwipeRefreshLayout>(R.id.swipeContainer)
+        // Adding Listener
+        swipe.setOnRefreshListener {
+            requireActivity().recreate()
+
+            // To keep animation for 4 seconds
+            Handler(Looper.getMainLooper()).postDelayed({ // Stop animation (This will be after 3 seconds)
+                swipe.isRefreshing = false
+            }, 1000) // Delay in millis
+        }
     }
 
 

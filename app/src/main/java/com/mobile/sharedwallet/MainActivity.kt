@@ -19,17 +19,22 @@ import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 
 class MainActivity : AppCompatActivity() {
 
     private val layout : Int = R.id.activityGlobalLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initialisation()
+
+
     }
+
 
     private fun initialisation() {
         val transaction : FragmentTransaction = supportFragmentManager
@@ -49,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     fun replaceFragment(fragment: Fragment, possibleReturn : Boolean = true) {
         val replace : FragmentTransaction = supportFragmentManager
             .beginTransaction()
@@ -61,6 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         replace.commit()
     }
+
 
     private fun clearFragmentManager() {
         for (i in 0 until supportFragmentManager.backStackEntryCount) {
