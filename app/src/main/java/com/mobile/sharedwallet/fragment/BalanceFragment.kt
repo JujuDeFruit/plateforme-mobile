@@ -9,15 +9,9 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mobile.sharedwallet.R
-import com.mobile.sharedwallet.dialog.AddUserToPotDialog
-import com.mobile.sharedwallet.dialog.NewSpendDialog
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.utils.Utils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.min
 

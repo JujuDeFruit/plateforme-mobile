@@ -1,19 +1,19 @@
 package com.mobile.sharedwallet.adapter
 
-import com.mobile.sharedwallet.R
 import android.content.Context
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.models.Tributaire
 import com.mobile.sharedwallet.utils.Utils.Companion.castParticipantToTributaire
 
-class SpinnerAdapter(private val participants : ArrayList<Participant>) : AdapterView.OnItemSelectedListener {
+class DropListAdapter(private val participants : ArrayList<Participant>) : AdapterView.OnItemSelectedListener {
 
     companion object {
-       var payeur : Tributaire? = null
+        var payeur : Tributaire? = null
     }
 
     fun generateSpinner (context : Context, view : View ){
