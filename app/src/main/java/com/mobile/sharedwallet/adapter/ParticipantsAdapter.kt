@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mobile.sharedwallet.R
@@ -18,7 +19,9 @@ class ParticipantsAdapter(private val dataSet: ArrayList<Participant>) :
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val checkbox : CheckBox = view.findViewById(R.id.check_box)
-        val textView: TextView = view.findViewById(R.id.textView)
+        val textView : TextView = view.findViewById(R.id.textView)
+        val inputText : EditText = view.findViewById(R.id.percentage_input)
+        val coutView : TextView = view.findViewById(R.id.coutView)
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -28,6 +31,7 @@ class ParticipantsAdapter(private val dataSet: ArrayList<Participant>) :
     @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textView.text = dataSet[position].name
+        //viewHolder.textView.text = dataSet[position].solde.toString()
         viewHolder.checkbox.isSelected = dataSet[position].selected
         viewHolder.checkbox.setOnCheckedChangeListener { _, b ->
             dataSet[position].selected = b
@@ -48,5 +52,4 @@ class ParticipantsAdapter(private val dataSet: ArrayList<Participant>) :
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
-
 }
