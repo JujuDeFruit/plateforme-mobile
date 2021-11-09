@@ -33,7 +33,7 @@ import kotlin.math.min
 
 class BalanceFragment: Fragment() {
 
-    private var participants : ArrayList<Participant>? = null
+    private var participantsForSolde : MutableList<Participant>? = (CagnotteFragment.pot.participants)?.toMutableList()
     private var partifForGraph : MutableList<Participant>? = (CagnotteFragment.pot.participants)?.toMutableList()
 
     class ChartXAxisFormatter() : ValueFormatter(), Parcelable {
@@ -103,14 +103,16 @@ class BalanceFragment: Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        participants = CagnotteFragment.pot.participants
-        quiDoitQuoi()
+        //participants = CagnotteFragment.pot.participants
+        participantsForSolde = (CagnotteFragment.pot.participants)?.toMutableList()
+        partifForGraph = (CagnotteFragment.pot.participants)?.toMutableList()
         DisplayGraph()
+        quiDoitQuoi()
     }
 
     private fun quiDoitQuoi(){
         //on trie la liste des participants par ordre croissant de cout
-        val sortedpaticipants = participants!!.sortedByDescending{it.solde}
+        val sortedpaticipants = participantsForSolde!!.sortedByDescending{it.solde}
 
         // on retire a toute la liste des participants le montant moyen
         var i = 0;
@@ -152,16 +154,16 @@ class BalanceFragment: Fragment() {
         var i = 0f
         partifForGraph?.forEach{
             entries.add(BarEntry(i, it.solde))
-            //axeAbs.names?.add(it.name)
             println(it.solde)
             println(it.name)
             i += 1.0f
         }
+        /*
         entries.clear()
         entries.add(BarEntry(0f, 85f))
         entries.add(BarEntry(1f, 10.5f))
         entries.add(BarEntry(2f, -24.6f))
-
+        */
         return entries
     }
 
