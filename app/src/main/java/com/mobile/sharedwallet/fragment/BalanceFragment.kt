@@ -22,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.dialog.AddUserToPotDialog
 import com.mobile.sharedwallet.dialog.NewSpendDialog
+import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.CoroutineScope
@@ -33,8 +34,8 @@ import kotlin.math.min
 
 class BalanceFragment: Fragment() {
 
-    private var participantsForSolde : MutableList<Participant>? = (CagnotteFragment.pot.participants)?.toMutableList()
-    private var partifForGraph : MutableList<Participant>? = (CagnotteFragment.pot.participants)?.toMutableList()
+    private var participantsForSolde : MutableList<Participant> = mutableListOf()
+    private var partifForGraph : MutableList<Participant> = mutableListOf()
 
     class ChartXAxisFormatter() : ValueFormatter(), Parcelable {
 
@@ -100,39 +101,44 @@ class BalanceFragment: Fragment() {
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
+
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //participants = CagnotteFragment.pot.participants
-        participantsForSolde = (CagnotteFragment.pot.participants)?.toMutableList()
-        partifForGraph = (CagnotteFragment.pot.participants)?.toMutableList()
-        DisplayGraph()
+        participantsForSolde.addAll(CagnotteFragment.pot.participants)
+        partifForGraph.addAll(CagnotteFragment.pot.participants)
+        displayGraph()
         quiDoitQuoi()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
     }
 
     private fun quiDoitQuoi(){
         //on trie la liste des participants par ordre croissant de cout
-        val sortedpaticipants = participantsForSolde!!.sortedByDescending{it.solde}
+        participantsForSolde.sortByDescending { it.solde }
 
         // on retire a toute la liste des participants le montant moyen
         var i = 0;
-        var j = sortedpaticipants.size - 1;
+        var j = participantsForSolde.size - 1;
         var debt : Float
 
         while (i < j) {
             debt = min(
-                abs(sortedpaticipants[i].solde),
-                abs(sortedpaticipants[j].solde)
+                abs(participantsForSolde[i].solde),
+                abs(participantsForSolde[j].solde)
             )
 
-            sortedpaticipants[i].solde = sortedpaticipants[i].solde - debt;
-            sortedpaticipants[j].solde = sortedpaticipants[j].solde + debt;
+            participantsForSolde[i].solde = participantsForSolde[i].solde - debt;
+            participantsForSolde[j].solde = participantsForSolde[j].solde + debt;
 
-            createTextView(sortedpaticipants[i].name.toString(), sortedpaticipants[j].name.toString(), debt.toString())
-            if (sortedpaticipants[i].solde == 0f) {
+            createTextView(participantsForSolde[i].name, participantsForSolde[j].name, debt.toString())
+            if (participantsForSolde[i].solde == 0f) {
                 i++;
             }
-            if (sortedpaticipants[j].solde == 0f) {
+            if (participantsForSolde[j].solde == 0f) {
                 j--;
             }
         }
@@ -145,17 +151,15 @@ class BalanceFragment: Fragment() {
         newTextView.setPadding(90, 50, 80, 50)
         newTextView.setTextColor(Color.BLACK)
         newTextView.textSize = 15f
-        newTextView.text = "$p2 owes $debt to $p1"
+        newTextView.text = " + $p2 owes $debt to $p1"
         liste?.addView(newTextView)
     }
 
-    private fun GatherInfo() : ArrayList<BarEntry>{
+    private fun gatherInfo() : ArrayList<BarEntry>{
         val entries: ArrayList<BarEntry> = ArrayList()
         var i = 0f
         partifForGraph?.forEach{
             entries.add(BarEntry(i, it.solde))
-            println(it.solde)
-            println(it.name)
             i += 1.0f
         }
         /*
@@ -167,8 +171,8 @@ class BalanceFragment: Fragment() {
         return entries
     }
 
-    private fun DisplayGraph(){
-        val entries = GatherInfo()
+    private fun displayGraph(){
+        val entries = gatherInfo()
         var names: ArrayList<String> = ArrayList()
         partifForGraph?.forEach {
             names.add(it.name)
