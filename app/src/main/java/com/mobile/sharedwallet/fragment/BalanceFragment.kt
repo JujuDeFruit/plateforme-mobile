@@ -19,6 +19,8 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.dialog.AddUserToPotDialog
 import com.mobile.sharedwallet.dialog.NewSpendDialog
@@ -34,9 +36,9 @@ import kotlin.math.min
 
 class BalanceFragment: Fragment() {
 
-    private var participantsForSolde : MutableList<Participant> = mutableListOf()
-    private var partifForGraph : MutableList<Participant> = mutableListOf()
+    private var participantListCopy : ArrayList<Participant> = ArrayList()
 
+    //Classe pour formatter l'axe X avec le noms des participants
     class ChartXAxisFormatter() : ValueFormatter(), Parcelable {
 
 
@@ -72,6 +74,7 @@ class BalanceFragment: Fragment() {
         }
     }
 
+    //Classe pour formatter l'axe Y
     class ChartYValueFormatter : ValueFormatter() {
 
         private val format = DecimalFormat("###.#")
@@ -105,40 +108,34 @@ class BalanceFragment: Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        participantsForSolde.addAll(CagnotteFragment.pot.participants)
-        partifForGraph.addAll(CagnotteFragment.pot.participants)
+        participantListCopy = toParticipantList(participantListToString(CagnotteFragment.pot.participants))
         displayGraph()
         quiDoitQuoi()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-    }
-
     private fun quiDoitQuoi(){
         //on trie la liste des participants par ordre croissant de cout
-        participantsForSolde.sortByDescending { it.solde }
+        participantListCopy.sortByDescending { it.solde }
 
         // on retire a toute la liste des participants le montant moyen
         var i = 0;
-        var j = participantsForSolde.size - 1;
+        var j = participantListCopy.size - 1;
         var debt : Float
 
         while (i < j) {
             debt = min(
-                abs(participantsForSolde[i].solde),
-                abs(participantsForSolde[j].solde)
+                abs(participantListCopy[i].solde),
+                abs(participantListCopy[j].solde)
             )
 
-            participantsForSolde[i].solde = participantsForSolde[i].solde - debt;
-            participantsForSolde[j].solde = participantsForSolde[j].solde + debt;
+            participantListCopy[i].solde = participantListCopy[i].solde - debt;
+            participantListCopy[j].solde = participantListCopy[j].solde + debt;
 
-            createTextView(participantsForSolde[i].name, participantsForSolde[j].name, debt.toString())
-            if (participantsForSolde[i].solde == 0f) {
+            createTextView(participantListCopy[i].name, participantListCopy[j].name, debt.toString())
+            if (participantListCopy[i].solde == 0f) {
                 i++;
             }
-            if (participantsForSolde[j].solde == 0f) {
+            if (participantListCopy[j].solde == 0f) {
                 j--;
             }
         }
@@ -155,26 +152,22 @@ class BalanceFragment: Fragment() {
         liste?.addView(newTextView)
     }
 
+    //Recupere les valeurs pour le graph
     private fun gatherInfo() : ArrayList<BarEntry>{
         val entries: ArrayList<BarEntry> = ArrayList()
         var i = 0f
-        partifForGraph?.forEach{
+        participantListCopy?.forEach{
             entries.add(BarEntry(i, it.solde))
             i += 1.0f
         }
-        /*
-        entries.clear()
-        entries.add(BarEntry(0f, 85f))
-        entries.add(BarEntry(1f, 10.5f))
-        entries.add(BarEntry(2f, -24.6f))
-        */
         return entries
     }
 
+    //Affiche le graph avec ses proprietes
     private fun displayGraph(){
         val entries = gatherInfo()
         var names: ArrayList<String> = ArrayList()
-        partifForGraph?.forEach {
+        participantListCopy?.forEach {
             names.add(it.name)
         }
 
@@ -210,5 +203,15 @@ class BalanceFragment: Fragment() {
             barChart.animateY(1000)
             barChart.invalidate()
         }
+    }
+    //Deserializer de la liste pour en faire une copie
+    private fun participantListToString(list: ArrayList<Participant>): String {
+        val type = object : TypeToken<ArrayList<Participant>>() {}.type
+        return Gson().toJson(list, type)
+    }
+    //Reserializer de la liste pour copie profonde
+    private fun toParticipantList(string: String): ArrayList<Participant> {
+        val itemType = object : TypeToken<ArrayList<Participant>>() {}.type
+        return Gson().fromJson<ArrayList<Participant>>(string, itemType)
     }
 }
