@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
@@ -64,21 +65,44 @@ class SpendFragment : Fragment() {
     }
 
 
-    private fun createTextViewClick(listDepenses: List<Depense>) {
+    private fun createTextViewClick(listDepenses: ArrayList<Depense>) {
         val liste = view?.findViewById<LinearLayout>(R.id.spends)
         for(depense in listDepenses){
             val inputText = depense.title
             val newTextView = TextView(activity)
-            newTextView.setPadding(90, 50, 80, 50)
+            newTextView.setPadding(30, 20,0, 0)
             newTextView.layoutParams = ActionBar.LayoutParams(
                 ActionBar.LayoutParams.WRAP_CONTENT,
                 ActionBar.LayoutParams.MATCH_PARENT
             )
             newTextView.setTextColor(Color.BLACK)
-            newTextView.textSize = 25f
+            newTextView.textSize = 20f
             newTextView.text = inputText
             newTextView.id = inputText.hashCode()
+
             liste?.addView(newTextView)
+
+            val newTextViewDetail = TextView(activity)
+            val detailText : String = "► " + depense.amountPaid.toString() + " paid by " + depense.whoPaid.name
+            newTextViewDetail.setPadding(30, 10, 0, 20)
+            newTextViewDetail.layoutParams = ActionBar.LayoutParams(
+                ActionBar.LayoutParams.WRAP_CONTENT,
+                ActionBar.LayoutParams.MATCH_PARENT
+            )
+            newTextViewDetail.setTextColor(Color.GRAY)
+            newTextViewDetail.textSize = 12f
+            newTextViewDetail.text = detailText
+            newTextViewDetail.id = inputText.hashCode()
+
+            liste?.addView(newTextViewDetail)
+
+            val separatorView = View(activity)
+            separatorView.layoutParams = ActionBar.LayoutParams(
+                ActionBar.LayoutParams.MATCH_PARENT,
+                2
+            )
+            separatorView.setBackgroundColor(Color.DKGRAY)
+            liste?.addView(separatorView)
         }
     }
 

@@ -8,7 +8,7 @@ data class Cagnotte(
     val uids : ArrayList<String>,
     val name: String,
     val creationDate: Timestamp,
-    val totalSpent: List<Depense>,
+    val totalSpent: ArrayList<Depense>,
     val participants: ArrayList<Participant>,
     ) : Model {
 
