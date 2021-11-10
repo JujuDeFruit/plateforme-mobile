@@ -46,7 +46,7 @@ class SpendFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<FloatingActionButton>(R.id.newSpendButton).setOnClickListener {
-            NewSpendDialog().show(parentFragmentManager, "NewSpendFragment")
+            NewSpendDialog(this).show(parentFragmentManager, "NewSpendFragment")
         }
 
         view.findViewById<FloatingActionButton>(R.id.addPerson).setOnClickListener {
@@ -55,7 +55,8 @@ class SpendFragment : Fragment() {
                 AddUserToPotDialog(cagnotte, usersEmails).show(parentFragmentManager, "AddUserToPotDialog")
             }
         }
-
+        println("--------")
+        println(cagnotte)
         cagnotte?.let { createTextViewClick(it.totalSpent) }
     }
 
@@ -68,7 +69,7 @@ class SpendFragment : Fragment() {
     private fun createTextViewClick(listDepenses: ArrayList<Depense>) {
         val liste = view?.findViewById<LinearLayout>(R.id.spends)
         for(depense in listDepenses){
-            val inputText = depense.title
+            val inputText : String = depense.title
             val newTextView = TextView(activity)
             newTextView.setPadding(30, 20,0, 0)
             newTextView.layoutParams = ActionBar.LayoutParams(
@@ -120,5 +121,11 @@ class SpendFragment : Fragment() {
                 return@withContext ArrayList<String>()
             }
         }
+    }
+
+    fun actualizeListDepenses(newDep : Depense) {
+        //cagnotte = CagnotteFragment.pot
+        CagnotteFragment.pot.totalSpent.add(newDep)
+        createTextViewClick(arrayListOf(newDep))
     }
 }
