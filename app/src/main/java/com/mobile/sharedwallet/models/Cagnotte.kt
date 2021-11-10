@@ -1,12 +1,14 @@
 package com.mobile.sharedwallet.models
 
 import com.google.firebase.Timestamp
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 data class Cagnotte(
     val uids : ArrayList<String>,
     val name: String,
     val creationDate: Timestamp,
-    val totalSpent: List<Depense>,
+    val totalSpent: ArrayList<Depense>,
     val participants: ArrayList<Participant>,
     ) : Model {
 
@@ -33,4 +35,5 @@ data class Cagnotte(
             Attributes.PARTICIPANTS.string to participants.map { it.toFirebase()}
         )
     }
+
 }
