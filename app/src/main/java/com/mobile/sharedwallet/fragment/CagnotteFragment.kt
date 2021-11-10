@@ -48,7 +48,7 @@ class CagnotteFragment : Fragment() {
 
         // Set up navigation bar & navigation controller
         val navController = (childFragmentManager.findFragmentById(R.id.fragmentPlace) as NavHostFragment).navController
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigationHome, R.id.navigationBalance))
+        val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigationHome, R.id.navigationBalance, R.id.navigationCategory))
         setupActionBarWithNavController(requireActivity() as MainActivity, navController, appBarConfiguration)
         setupWithNavController(view.findViewById<BottomNavigationView>(R.id.navView), navController)
     }
