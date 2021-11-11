@@ -17,4 +17,9 @@
     <color name="info">#2196F3</color>
     <color name="success">#4CAF50</color>
     <color name="warning">#FFC107</color>
+
+    <!-- New design -->
+    <color name="orange">#F57367</color>
+    <color name="blue_grey">#222832</color>
+
 </resources>
