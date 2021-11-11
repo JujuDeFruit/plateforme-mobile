@@ -48,7 +48,7 @@ class NewSpendDialog : DialogFragment() {
         val recyclerlistview = view.findViewById<RecyclerView>(R.id.recyclerListView)
         recyclerlistview.layoutManager = LinearLayoutManager(activity)
 
-        val particiantAdapter = ParticipantsAdapter(participants!!)
+        val particiantAdapter = ParticipantsAdapter(participants!!,view)
         recyclerlistview.adapter = particiantAdapter
 
         view.findViewById<FloatingActionButton>(R.id.saveButton).setOnClickListener {

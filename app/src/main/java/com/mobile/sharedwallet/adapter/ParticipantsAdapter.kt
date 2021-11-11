@@ -1,11 +1,14 @@
 package com.mobile.sharedwallet.adapter
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
@@ -13,7 +16,7 @@ import com.mobile.sharedwallet.models.Tributaire
 import com.mobile.sharedwallet.utils.Utils.Companion.castParticipantToTributaire
 
 
-class ParticipantsAdapter(private val dataSet: ArrayList<Participant>) :
+class ParticipantsAdapter(private val dataSet: ArrayList<Participant>,private val view : View) :
     RecyclerView.Adapter<ParticipantsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -34,10 +37,27 @@ class ParticipantsAdapter(private val dataSet: ArrayList<Participant>) :
         viewHolder.checkbox.setOnCheckedChangeListener { _, b ->
             dataSet[position].selected = b
             notifyDataSetChanged()
+            if (dataSet[position].selected) {
+                upadteCoutPeople(viewHolder)
+            }else{
+                viewHolder.coutView.text = ""
+                viewHolder.percentageInput.text = ""
+            }
         }
         viewHolder.textView.text = dataSet[position].name
-        viewHolder.coutView.text = "12.4"
-        viewHolder.percentageInput.text = "50"
+    }
+
+    fun upadteCoutPeople(viewHolder: ViewHolder){
+        var price  = view.findViewById<EditText>(R.id.montant).text.toString().toFloat()
+        var size =  0
+        for (k in dataSet) {
+            if (k.selected) {
+                size++
+            }
+        }
+        viewHolder.coutView.text = (price/size.toFloat()).toString()
+        viewHolder.percentageInput.text = (price/size.toFloat()).toString()
+
     }
 
     fun peopleSelected() : ArrayList<Tributaire>{
