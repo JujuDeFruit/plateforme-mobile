@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
@@ -55,11 +56,11 @@ class InvitationDialog(
             cagnotte?.let { view.findViewById<TextView>(R.id.invitationCardText).text = getString(R.string.have_been_invited).plus(getString(R.string.space)).plus(it.name) }
         }
 
-        view.findViewById<FloatingActionButton>(R.id.refuseInvitation).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.refuseInvitation).setOnClickListener {
             dismiss()
         }
 
-        view.findViewById<FloatingActionButton>(R.id.acceptInvitation).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.acceptInvitation).setOnClickListener {
             MainScope().launch {
                 accept()
             }

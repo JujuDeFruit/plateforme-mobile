@@ -34,36 +34,38 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:inputType="textEmailAddress"
+            android:text="julien.raynal@yahoo.fr"
             android:maxLines="1"
-            android:gravity="center"
-            />
+            android:gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/password"
-            />
+            android:text="@string/password" />
+
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:inputType="textPassword"
+            android:text="azerty"
             android:maxLines="1"
-            android:gravity="center"
-            />
+            android:gravity="center" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="75dp"
             android:id="@+id/login"
+            android:textColor="@color/white"
             android:text="@string/log_in" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/register"
+            android:textColor="@color/white"
             android:text="@string/register"
             android:layout_marginHorizontal="75dp" />
 
@@ -71,6 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/resetPassword"
+            android:textColor="@color/white"
             android:text="@string/reset_password"
             android:layout_marginHorizontal="75dp" />
 

@@ -48,7 +48,7 @@
     <string name="cagnotte">Cagnotte</string>
     <string name="balance">Balance</string>
     <string name="category">Category</string>
-    <string name="add_user">Add a new user</string>
+    <string name="add_user">Add new user</string>
     <string name="invite_enter_email">Please enter new user e-mail</string>
 
     <!-- New spend -->
