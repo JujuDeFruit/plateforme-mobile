@@ -1,17 +1,14 @@
 package com.mobile.sharedwallet.fragment
 
-import android.app.ActionBar
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.core.view.marginTop
+import android.widget.ListView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.dialog.AddUserToPotDialog
@@ -25,17 +22,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import com.mobile.sharedwallet.adapter.DepenseAdapter
+import com.mobile.sharedwallet.dialog.DepenseDialog
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class SpendFragment : Fragment() {
 
     private lateinit var store : FirebaseFirestore
     private var cagnotte : Cagnotte? = null
+    private lateinit var adapter : DepenseAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         store = FirebaseFirestore.getInstance()
         cagnotte = CagnotteFragment.pot
+
+        adapter = DepenseAdapter(requireContext(), cagnotte!!.totalSpent)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -55,56 +60,22 @@ class SpendFragment : Fragment() {
                 AddUserToPotDialog(cagnotte, usersEmails).show(parentFragmentManager, "AddUserToPotDialog")
             }
         }
-        println("--------")
-        println(cagnotte)
-        cagnotte?.let { createTextViewClick(it.totalSpent) }
+
+        val listViewDepense =  view.findViewById<ListView>(R.id.spends)
+        listViewDepense.adapter = adapter
+
+        listViewDepense.setOnItemClickListener { _, _, position, _ ->
+            adapter.getItem(position)?.let {
+                DepenseDialog(it).show(parentFragmentManager, "DialogFragment".plus(position))
+            }
+        }
+
+        cagnotte?.let { adapter.addAll(it.totalSpent) }
     }
 
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
-    }
-
-
-    private fun createTextViewClick(listDepenses: ArrayList<Depense>) {
-        val liste = view?.findViewById<LinearLayout>(R.id.spends)
-        for(depense in listDepenses){
-            val inputText : String = depense.title
-            val newTextView = TextView(activity)
-            newTextView.setPadding(30, 20,0, 0)
-            newTextView.layoutParams = ActionBar.LayoutParams(
-                ActionBar.LayoutParams.WRAP_CONTENT,
-                ActionBar.LayoutParams.MATCH_PARENT
-            )
-            newTextView.setTextColor(Color.BLACK)
-            newTextView.textSize = 20f
-            newTextView.text = inputText
-            newTextView.id = inputText.hashCode()
-
-            liste?.addView(newTextView)
-
-            val newTextViewDetail = TextView(activity)
-            val detailText : String = "► " + depense.amountPaid.toString() + " paid by " + depense.whoPaid.name
-            newTextViewDetail.setPadding(30, 10, 0, 20)
-            newTextViewDetail.layoutParams = ActionBar.LayoutParams(
-                ActionBar.LayoutParams.WRAP_CONTENT,
-                ActionBar.LayoutParams.MATCH_PARENT
-            )
-            newTextViewDetail.setTextColor(Color.GRAY)
-            newTextViewDetail.textSize = 12f
-            newTextViewDetail.text = detailText
-            newTextViewDetail.id = inputText.hashCode()
-
-            liste?.addView(newTextViewDetail)
-
-            val separatorView = View(activity)
-            separatorView.layoutParams = ActionBar.LayoutParams(
-                ActionBar.LayoutParams.MATCH_PARENT,
-                2
-            )
-            separatorView.setBackgroundColor(Color.DKGRAY)
-            liste?.addView(separatorView)
-        }
     }
 
     private suspend fun fetchUsersEmails() : ArrayList<String> {
@@ -124,8 +95,7 @@ class SpendFragment : Fragment() {
     }
 
     fun actualizeListDepenses(newDep : Depense) {
-        //cagnotte = CagnotteFragment.pot
         CagnotteFragment.pot.totalSpent.add(newDep)
-        createTextViewClick(arrayListOf(newDep))
+        adapter.add(newDep)
     }
 }

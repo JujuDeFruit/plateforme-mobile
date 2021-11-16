@@ -1,6 +1,8 @@
 package com.mobile.sharedwallet.fragment
 
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.chip.Chip
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Cagnotte
@@ -44,7 +47,9 @@ class CagnotteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<TextView>(R.id.cagnotteName).text = pot.name
+        val title : Chip = view.findViewById(R.id.cagnotteName)
+        title.text = pot.name
+        title.chipBackgroundColor = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(Color.parseColor(pot.color)))
 
         // Set up navigation bar & navigation controller
         val navController = (childFragmentManager.findFragmentById(R.id.fragmentPlace) as NavHostFragment).navController

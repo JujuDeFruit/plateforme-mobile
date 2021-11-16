@@ -13,66 +13,65 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        android:textSize="35sp"/>
+        android:textSize="35sp" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        >
+        android:gravity="center">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/email"
-            />
+            android:text="@string/email" />
 
         <EditText
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="test@yahoo.fr"
             android:inputType="textEmailAddress"
+            android:text="julien.raynal@yahoo.fr"
             android:maxLines="1"
-            android:gravity="center"
-            />
+            android:gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/password"
-            />
+            android:text="@string/password" />
+
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="azerty"
             android:inputType="textPassword"
+            android:text="azerty"
             android:maxLines="1"
-            android:gravity="center"
-            />
+            android:gravity="center" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="75dp"
             android:id="@+id/login"
+            android:textColor="@color/white"
             android:text="@string/log_in" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/register"
+            android:textColor="@color/white"
             android:text="@string/register"
             android:layout_marginHorizontal="75dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/resetPassword"
+            android:textColor="@color/white"
             android:text="@string/reset_password"
             android:layout_marginHorizontal="75dp" />
 

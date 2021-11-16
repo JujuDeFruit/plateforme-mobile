@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -45,11 +46,11 @@ class AddUserToPotDialog(private val cagnotte : Cagnotte?, private var usersEmai
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        view.findViewById<FloatingActionButton>(R.id.addNewUserSubmit).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.addNewUserSubmit).setOnClickListener {
             if (validateEmail() && userExists()) addMember()
         }
 
-        view.findViewById<FloatingActionButton>(R.id.addNewUserCancel).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.addNewUserCancel).setOnClickListener {
             dismiss()
         }
 
