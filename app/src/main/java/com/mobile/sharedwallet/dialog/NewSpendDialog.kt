@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -58,11 +59,11 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
         val particiantAdapter = ParticipantsAdapter(participants!!)
         recyclerlistview.adapter = particiantAdapter
 
-        view.findViewById<FloatingActionButton>(R.id.saveButton).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.saveButton).setOnClickListener {
             saveNewSpend(particiantAdapter)
         }
 
-        //Spinner Payeur
+        // Spinner Payeur
         var spinnerAdapter = SpinnerAdapter(participants!!)
         spinnerAdapter.generateSpinner(requireContext(),view)
 

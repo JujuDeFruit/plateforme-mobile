@@ -5,7 +5,7 @@ import java.util.*
 class Colors {
 
     companion object {
-        val palette = arrayListOf(
+        private val palette = arrayListOf(
             "#3da4ab", "#f6cd61", "#fe8a71", "#dec3c3", "#e7d3d3", "#f0e4e4", "#f9f4f4",
             "#051e3e", "#251e3e", "#451e3e", "#651e3e", "#851e3e", "#011f4b", "#03396c",
             "#005b96", "#6497b1", "#b3cde0", "#eee3e7", "#ead5dc", "#eec9d2", "#f4b6c2",

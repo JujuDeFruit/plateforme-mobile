@@ -14,6 +14,9 @@
 
     <string name="pot_name">Pot name</string>
 
+
+    <string name="content_description">Image</string>
+
     <!-- Invitation -->
     <string name="invitation">Invitation</string>
     <string name="invitation_accept_refuse">You can accept or refuse invitation</string>

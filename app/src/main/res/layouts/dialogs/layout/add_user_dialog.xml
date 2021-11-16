@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     app:strokeWidth="1dp"
-    app:strokeColor="@color/stroke_color"
+    app:strokeColor="@animator/stroke_color"
     app:cardElevation="0dp"
     android:layout_margin="8dp">
 
@@ -23,11 +23,26 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/add_user"
-                android:textAppearance="?attr/textAppearanceHeadline6" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_baseline_person_add_24"
+                    android:scaleType="center"
+                    android:padding="3dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_user"
+                    android:textAppearance="?attr/textAppearanceHeadline6" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"

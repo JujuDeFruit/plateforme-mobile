@@ -54,26 +54,30 @@ class Utils {
             )
         }
 
+        suspend fun fetchPhoto(uid : String) : Bitmap? {
+            return try {
+                val byteArray : ByteArray = FirebaseStorage
+                        .getInstance()
+                        .reference
+                        .child(buildPicturePathRef(uid))
+                        .getBytes(FirebaseConstants.MAX_PROFILE_PHOTO_SIZE)
+                        .await()
+
+                val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                Bitmap.createScaledBitmap(bitmap, bitmap.width, bitmap.height, false)
+
+            } catch (_ : Exception) {
+                // If exception is catched then file does not exist on Storage
+                null
+            }
+        }
+
         suspend fun createUserFromFirebaseUser(firebaseUser : FirebaseUser?, loadPhoto : Boolean = false) : User {
             return firebaseUser?.let {
                 val names : HashMap<String, String> = getFirstnameAndLastnameFromDisplayName(it.displayName)
                 var photo : Bitmap? = null
                 if(loadPhoto) {
-                    photo = try {
-                        val byteArray : ByteArray = FirebaseStorage
-                            .getInstance()
-                            .reference
-                            .child(buildPicturePathRef(it.uid))
-                            .getBytes(FirebaseConstants.MAX_PROFILE_PHOTO_SIZE)
-                            .await()
-
-                        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                        Bitmap.createScaledBitmap(bitmap, bitmap.width, bitmap.height, false)
-
-                    } catch (_ : Exception) {
-                        // If exception is catched then file does not exist on Storage
-                        null
-                    }
+                    photo = fetchPhoto(it.uid)
                 }
                 return@let User(
                     firebaseUser.uid,
