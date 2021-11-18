@@ -26,6 +26,7 @@ import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 import kotlin.math.abs
 import kotlin.math.min
 

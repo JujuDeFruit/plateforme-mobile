@@ -16,6 +16,10 @@ import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.models.User
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import com.mobile.sharedwallet.models.Tributaire as Tributaire
 
 class Utils {
@@ -98,7 +102,7 @@ class Utils {
 
         fun castUserToParticipant(user : User) : Participant {
             return user.uid?.let {
-                return@let Participant(user.firstName!!, it,0f)
+                return@let Participant(user.firstName!!, it,0f, false)
             } ?: Participant()
         }
 

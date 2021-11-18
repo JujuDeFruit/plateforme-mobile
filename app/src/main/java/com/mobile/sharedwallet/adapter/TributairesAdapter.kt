@@ -104,7 +104,7 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
                 //notifyItemChanged(i)
             }
         }
-        // notifyDataSetChanged()
+        notifyDataSetChanged()
     }
 
     fun peopleSelected() : ArrayList<Tributaire>{

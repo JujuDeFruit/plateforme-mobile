@@ -16,7 +16,7 @@ data class Participant(
         SOLDE("solde"),
     }
 
-    constructor() : this("","",0f)
+    constructor() : this("","",0f,false)
 
     override fun toFirebase(): HashMap<String, Any?> {
         return hashMapOf(
