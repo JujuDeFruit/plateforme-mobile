@@ -21,4 +21,8 @@ class Tributaire (
             Attributes.COUT.string to cout
         )
     }
+
+    override fun toString(): String {
+        return name
+    }
 }

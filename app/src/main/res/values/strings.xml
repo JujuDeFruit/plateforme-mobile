@@ -49,6 +49,8 @@
 
     <!-- Cagnotte -->
     <string name="cagnotte">Cagnotte</string>
+    <string name="cagnotte_name">Cagnotte name</string>
+    <string name="cagnotte_color">Cagnotte color</string>
     <string name="balance">Balance</string>
     <string name="category">Category</string>
     <string name="add_user">Add new user</string>
@@ -63,5 +65,11 @@
 
     <string name="euro_symbol">€</string>
 
+    <string name="creation_date">Creation date</string>
+    <string name="created_by">Created by</string>
+    <string name="paid_by">Paid by</string>
+    <string name="for_who">For who</string>
+
+    <string name="settings">Settings</string>
 
 </resources>

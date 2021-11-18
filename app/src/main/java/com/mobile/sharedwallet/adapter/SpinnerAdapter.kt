@@ -1,11 +1,11 @@
 package com.mobile.sharedwallet.adapter
 
-import com.mobile.sharedwallet.R
 import android.content.Context
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.models.Tributaire
 import com.mobile.sharedwallet.utils.Utils.Companion.castParticipantToTributaire

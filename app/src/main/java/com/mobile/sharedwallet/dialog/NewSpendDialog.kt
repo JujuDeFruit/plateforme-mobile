@@ -1,37 +1,31 @@
 package com.mobile.sharedwallet.dialog
 
-import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.annotation.RequiresApi
+import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.adapter.ParticipantsAdapter
+import com.mobile.sharedwallet.adapter.SpinnerAdapter
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.CagnotteFragment
+import com.mobile.sharedwallet.fragment.SpendFragment
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.Participant
-import com.mobile.sharedwallet.utils.Utils
-import com.mobile.sharedwallet.adapter.SpinnerAdapter
-import com.mobile.sharedwallet.fragment.SpendFragment
 import com.mobile.sharedwallet.models.Tributaire
-import java.lang.Float.min
+import com.mobile.sharedwallet.utils.Utils
 import java.math.BigDecimal
 import java.math.RoundingMode
-import kotlin.math.abs
 
 class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() {
 
@@ -117,7 +111,7 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
                 k.cout = BigDecimal(repartition(montant, selectedParticipant).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
             }
 
-            val depense = Depense(title, SpinnerAdapter.payeur ?: Tributaire(), montant, selectedParticipant)
+            val depense = Depense(title, SpinnerAdapter.payeur ?: Tributaire(), montant, selectedParticipant, Timestamp.now())
 
             store
                 .collection(FirebaseConstants.CollectionNames.Pot)

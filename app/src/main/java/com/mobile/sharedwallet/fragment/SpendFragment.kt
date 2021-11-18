@@ -8,10 +8,12 @@ import android.widget.ListView
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.adapter.DepenseAdapter
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.dialog.AddUserToPotDialog
+import com.mobile.sharedwallet.dialog.CagnotteSettingsDialog
+import com.mobile.sharedwallet.dialog.DepenseDialog
 import com.mobile.sharedwallet.dialog.NewSpendDialog
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
@@ -22,8 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import com.mobile.sharedwallet.adapter.DepenseAdapter
-import com.mobile.sharedwallet.dialog.DepenseDialog
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -61,6 +61,12 @@ class SpendFragment : Fragment() {
             }
         }
 
+        view.findViewById<FloatingActionButton>(R.id.cagnotteSettings).visibility = if(cagnotte?.createdBy == LoginFragment.user?.uid) View.VISIBLE else View.INVISIBLE
+
+        view.findViewById<FloatingActionButton>(R.id.cagnotteSettings).setOnClickListener {
+            CagnotteSettingsDialog().show(parentFragmentManager, "CagnotteSettingsDialog")
+        }
+
         val listViewDepense =  view.findViewById<ListView>(R.id.spends)
         listViewDepense.adapter = adapter
 
@@ -95,7 +101,6 @@ class SpendFragment : Fragment() {
     }
 
     fun actualizeListDepenses(newDep : Depense) {
-        CagnotteFragment.pot.totalSpent.add(newDep)
         adapter.add(newDep)
     }
 }

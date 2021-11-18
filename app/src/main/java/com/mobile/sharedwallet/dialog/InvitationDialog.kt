@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.MainActivity
