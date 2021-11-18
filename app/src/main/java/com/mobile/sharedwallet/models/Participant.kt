@@ -3,8 +3,7 @@ package com.mobile.sharedwallet.models
 data class Participant(
     val name : String,
     val uid : String,
-    var solde : Float,
-    var selected : Boolean
+    var solde : Float
     ) : Model {
 
     enum class Attributes(val string: String) {
@@ -13,7 +12,7 @@ data class Participant(
         SOLDE("solde"),
     }
 
-    constructor() : this("","",0f,false)
+    constructor() : this("","",0f)
 
     override fun toFirebase(): HashMap<String, Any?> {
         return hashMapOf(

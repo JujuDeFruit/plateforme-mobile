@@ -12,10 +12,10 @@ import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.LoginFragment
 import com.mobile.sharedwallet.models.Participant
-import com.mobile.sharedwallet.models.Tributaire
 import com.mobile.sharedwallet.models.User
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
+import com.mobile.sharedwallet.models.Tributaire as Tributaire
 
 class Utils {
 
@@ -93,12 +93,20 @@ class Utils {
 
         fun castUserToParticipant(user : User) : Participant {
             return user.uid?.let {
-                return@let Participant(user.firstName!!, it,0f, false)
+                return@let Participant(user.firstName!!, it,0f)
             } ?: Participant()
         }
 
-        fun castParticipantToTributaire(participant: Participant):Tributaire{
-            return Tributaire(participant.name,participant.uid,0f)
+        fun castParticipantToTributaire(participant: Participant): Tributaire {
+            return Tributaire(participant.name,participant.uid,0f,0f,false)
+        }
+
+        fun castParticipantListToTributaireList( participant : ArrayList<Participant>):  ArrayList<Tributaire> {
+            var tributaire  = ArrayList<Tributaire>()
+            for (element in participant){
+                tributaire.add(castParticipantToTributaire(element))
+            }
+            return tributaire
         }
 
         fun convertStringToRef(collectionName : String, ref : String) : DocumentReference {
