@@ -3,6 +3,7 @@ package com.mobile.sharedwallet.utils
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.fragment.app.FragmentActivity
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentReference
@@ -16,6 +17,9 @@ import com.mobile.sharedwallet.models.Tributaire
 import com.mobile.sharedwallet.models.User
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.HashMap
 
 class Utils {
 
@@ -111,6 +115,11 @@ class Utils {
 
         fun getLastRefFromRef(ref : String) : String {
             return ref.split("/").last()
+        }
+
+        fun dateFormatter(ts : Timestamp) : String {
+            val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.CANADA_FRENCH)
+            return formatter.format(ts.toDate()) ?: formatter.format(Date())
         }
     }
 }

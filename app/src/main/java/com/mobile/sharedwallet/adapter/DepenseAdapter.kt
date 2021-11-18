@@ -33,5 +33,9 @@ class DepenseAdapter(private val context_ : Context, private val dataSet : Array
         return depenseView
     }
 
-
+    override fun add(`object` : Depense?) {
+        dataSet.add(`object` ?: Depense())
+        dataSet.sortByDescending { it.creationDate }
+        notifyDataSetChanged()
+    }
 }

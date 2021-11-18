@@ -54,7 +54,6 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
                             .getInstance()
                             .collection(FirebaseConstants.CollectionNames.Pot)
                             .whereArrayContains(Cagnotte.Attributes.UIDS.string, user.uid!!)
-                            .orderBy(Cagnotte.Attributes.CREATION_DATE.string, Query.Direction.DESCENDING)
                             .get()
                             .await()
 
@@ -63,7 +62,7 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
                             val cagnotte : Cagnotte = document.toObject()
                             cagnottes[document.id] = cagnotte
                         }
-                        return@withContext cagnottes
+                        return@withContext cagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
                     } catch (e: Exception) {
                         return@withContext null
                     }
@@ -194,6 +193,7 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
     private fun loadCagnotteView(cagnotteRef : String) {
         overlay?.show()
         CagnotteFragment.pot = cagnottes[cagnotteRef]!!
+        CagnotteFragment.pot.totalSpent.sortByDescending { it.creationDate }
         CagnotteFragment.potRef = cagnotteRef
 
         MainScope().launch {
@@ -209,7 +209,7 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
     private fun addCagnotte(name: String){
         user?.let { user : User ->
             // Create a new cagnotte with a first and last name
-            val newCagnotte = Cagnotte(arrayListOf(user.uid!!), name, Colors.randomColor(), Timestamp.now(), ArrayList(), arrayListOf(Utils.castUserToParticipant(user)))
+            val newCagnotte = Cagnotte(arrayListOf(user.uid!!), name, Colors.randomColor(), Timestamp.now(), user.uid, ArrayList(), arrayListOf(Utils.castUserToParticipant(user)))
 
             // Add a new document with a generated ID
             store

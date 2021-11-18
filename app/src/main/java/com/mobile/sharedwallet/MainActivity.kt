@@ -19,7 +19,6 @@ import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 
 class MainActivity : AppCompatActivity() {
 
