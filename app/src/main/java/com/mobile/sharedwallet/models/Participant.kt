@@ -1,9 +1,13 @@
 package com.mobile.sharedwallet.models
 
+import android.graphics.Bitmap
+
 data class Participant(
     val name : String,
     val uid : String,
-    var solde : Float
+    var solde : Float,
+    var selected : Boolean,
+    var photo : Bitmap? = null
     ) : Model {
 
     enum class Attributes(val string: String) {

@@ -25,4 +25,8 @@ class Tributaire (
             Attributes.PERCENTAGE_COUT.string to percentageCout
         )
     }
+
+    override fun toString(): String {
+        return name
+    }
 }

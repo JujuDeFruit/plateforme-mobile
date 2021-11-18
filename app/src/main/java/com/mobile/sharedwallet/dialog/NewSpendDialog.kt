@@ -11,7 +11,8 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.button.MaterialButton
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mobile.sharedwallet.R
@@ -19,6 +20,7 @@ import com.mobile.sharedwallet.adapter.DropListAdapter
 import com.mobile.sharedwallet.adapter.TributairesAdapter
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.CagnotteFragment
+import com.mobile.sharedwallet.fragment.SpendFragment
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.Participant
@@ -28,7 +30,7 @@ import com.mobile.sharedwallet.utils.Utils.Companion.castParticipantListToTribut
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class NewSpendDialog : DialogFragment() {
+class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() {
 
     private lateinit var store : FirebaseFirestore;
     private var participants : ArrayList<Participant>? = null
@@ -61,7 +63,7 @@ class NewSpendDialog : DialogFragment() {
         val particiantAdapter = TributairesAdapter(castParticipantListToTributaireList(participants!!),view)
         recyclerlistview.adapter = particiantAdapter
 
-        view.findViewById<FloatingActionButton>(R.id.saveButton).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.saveButton).setOnClickListener {
             saveNewSpend(particiantAdapter)
         }
         //Spinner Payeur

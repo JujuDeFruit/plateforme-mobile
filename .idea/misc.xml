@@ -10,7 +10,10 @@
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_baseline_arrow_forward_24.xml" value="0.3255208333333333" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_baseline_change_circle_24.xml" value="0.3255208333333333" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.3255208333333333" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_baseline_widgets_24.xml" value="0.19322916666666667" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_launcher_background.xml" value="0.19322916666666667" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/ic_outline_cancel_24.xml" value="0.3255208333333333" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/drawable/scrollbar_thumbnail.xml" value="0.31296296296296294" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/fragments/layout/cagnotte_fragment.xml" value="0.1671875" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/fragments/layout/home_fragment.xml" value="0.1671875" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/fragments/layout/login_fragment.xml" value="0.1671875" />
@@ -27,13 +30,21 @@
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/login_fragment.xml" value="0.264" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/profile_fragment.xml" value="0.264" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layout/register_fragment.xml" value="0.264" />
-        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/add_user_dialog.xml" value="0.2586050724637681" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/drawable/divider.xml" value="0.3138888888888889" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/drawable/scrollbar_thumbnail.xml" value="0.325" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/font/raleway.xml" value="0.325" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/add_user_dialog.xml" value="0.2" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/autocomplete_row_item.xml" value="0.536" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/cagnotte_preview.xml" value="0.16354166666666667" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/cagnotte_settings_dialog.xml" value="0.4" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/category_fragment.xml" value="0.26992753623188404" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/change_password_dialog.xml" value="0.1671875" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/color_picker.xml" value="0.2667572463768116" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/depense_dialog.xml" value="0.4425981873111782" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/depense_row.xml" value="0.536" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/edit_profile_dialog.xml" value="0.25" />
-        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/invitation_dialog.xml" value="0.2504528985507246" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/for_who_textview.xml" value="0.17572463768115942" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/invitation_dialog.xml" value="0.6" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/overlay.xml" value="0.26268115942028986" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/reset_password_dialog.xml" value="0.4" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/dialogs/layout/simple_text_view.xml" value="0.18020833333333333" />
@@ -48,9 +59,17 @@
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/profile_fragment.xml" value="0.25" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/register_fragment.xml" value="0.2586050724637681" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/fragments/layout/spend_fragment.xml" value="0.1671875" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/others/depense_row.xml" value="0.15780141843971632" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/others/layout/autocomplete_row_item.xml" value="0.18206521739130435" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/others/layout/cagnotte_preview.xml" value="0.4461181923522596" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/others/layout/cagnotte_row.xml" value="0.536" />
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/others/layout/depense_row.xml" value="0.536" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/others/layout/overlay.xml" value="0.26268115942028986" />
         <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/layouts/others/layout/row_item.xml" value="0.536" />
+<<<<<<< HEAD
+=======
+        <entry key="..\:/Users/julie/AndroidStudioProjects/plateforme-mobile/app/src/main/res/menu/bottom_nav_menu.xml" value="0.32135416666666666" />
+>>>>>>> master
         <entry key="app/src/main/res/drawable/ic_baseline_account_balance_wallet_24.xml" value="0.3260416666666667" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.3260416666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19157608695652173" />
@@ -59,16 +78,25 @@
         <entry key="app/src/main/res/layouts/fragments/layout/balance_fragment.xml" value="0.31005732152162585" />
         <entry key="app/src/main/res/layouts/fragments/layout/cagnotte_fragment.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layouts/fragments/layout/home_fragment.xml" value="0.33274860334271406" />
+<<<<<<< HEAD
         <entry key="app/src/main/res/layouts/fragments/layout/login_fragment.xml" value="0.18432971014492755" />
         <entry key="app/src/main/res/layouts/fragments/layout/newspend_dialog.xml" value="0.10460992907801418" />
         <entry key="app/src/main/res/layouts/fragments/layout/spend_fragment.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layouts/others/layout/cagnotte_preview.xml" value="0.18432971014492755" />
+=======
+        <entry key="app/src/main/res/layouts/fragments/layout/newspend_dialog.xml" value="0.10460992907801418" />
+        <entry key="app/src/main/res/layouts/fragments/layout/spend_fragment.xml" value="0.16770833333333332" />
+>>>>>>> master
         <entry key="app/src/main/res/layouts/others/layout/row_item.xml" value="0.45" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3260416666666667" />
       </map>
     </option>
   </component>
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+=======
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+>>>>>>> master
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

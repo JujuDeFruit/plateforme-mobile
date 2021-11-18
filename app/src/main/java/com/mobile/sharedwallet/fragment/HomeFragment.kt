@@ -18,6 +18,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.MainActivity
@@ -31,6 +32,8 @@ import com.mobile.sharedwallet.utils.Colors
 import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -41,9 +44,7 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
     private var user : User? = null
     private var overlay : Overlay? = null
 
-
     companion object {
-
         suspend fun loadCagnotteList() : HashMap<String, Cagnotte> {
             // Load all pots current user is involved in
             return LoginFragment.user?.let { user : User ->
@@ -61,7 +62,7 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
                             val cagnotte : Cagnotte = document.toObject()
                             cagnottes[document.id] = cagnotte
                         }
-                        return@withContext cagnottes
+                        return@withContext cagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
                     } catch (e: Exception) {
                         return@withContext null
                     }
@@ -162,16 +163,16 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
     }
 
 
-    fun addCardToView(cagnotteRef : String) {
+    private fun addCardToView(cagnotteRef : String) {
         val cagnotte = cagnottes[cagnotteRef]!!
 
         val liste = view?.findViewById<LinearLayout>(R.id.listCagnotte)
 
         val container : ViewGroup = layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup
 
-        val cardView : View = LayoutInflater.from(requireContext()).inflate(R.layout.cagnotte_preview, container,false)
+        val cardView : View = LayoutInflater.from(requireContext()).inflate(R.layout.cagnotte_row, container,false)
 
-        cardView.findViewById<CardView>(R.id.cagnottePreview).setCardBackgroundColor(Color.parseColor(Colors.randomColor()))
+        cardView.findViewById<CardView>(R.id.cagnottePreview).setCardBackgroundColor(Color.parseColor(cagnotte.color))
         cardView.findViewById<TextView>(R.id.cardTextPreview).text = cagnotte.name
 
         val totalSpentAmountPreview = cardView.findViewById<TextView>(R.id.totalSpentAmountPreview)
@@ -190,16 +191,25 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
 
 
     private fun loadCagnotteView(cagnotteRef : String) {
+        overlay?.show()
         CagnotteFragment.pot = cagnottes[cagnotteRef]!!
+        CagnotteFragment.pot.totalSpent.sortByDescending { it.creationDate }
         CagnotteFragment.potRef = cagnotteRef
-        (requireActivity() as MainActivity).replaceFragment(CagnotteFragment())
+
+        MainScope().launch {
+            CagnotteFragment.pot.participants.forEach {
+                it.photo = Utils.fetchPhoto(it.uid)
+            }
+            overlay?.hide()
+            (requireActivity() as MainActivity).replaceFragment(CagnotteFragment())
+        }
     }
 
 
     private fun addCagnotte(name: String){
         user?.let { user : User ->
             // Create a new cagnotte with a first and last name
-            val newCagnotte = Cagnotte(arrayListOf(user.uid!!), name, Timestamp.now(), ArrayList(), arrayListOf(Utils.castUserToParticipant(user)))
+            val newCagnotte = Cagnotte(arrayListOf(user.uid!!), name, Colors.randomColor(), Timestamp.now(), user.uid, ArrayList(), arrayListOf(Utils.castUserToParticipant(user)))
 
             // Add a new document with a generated ID
             store
@@ -220,9 +230,4 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
                 }
         }
     }
-
-    /*override fun onDetach() {
-        super.onDetach()
-        cagnottes = HashMap()
-    }*/
 }
