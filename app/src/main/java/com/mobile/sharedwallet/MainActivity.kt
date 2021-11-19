@@ -96,7 +96,8 @@ class MainActivity : AppCompatActivity() {
                         .reversed()
                         .forEachIndexed { i, d -> d.show(supportFragmentManager, "InvitationDialog".plus(i)) }
                 } else {
-                    replaceFragment(HomeFragment(HomeFragment.loadCagnotteList()), false)
+                    HomeFragment.loadCagnotteList()
+                    replaceFragment(HomeFragment(/*HomeFragment.loadCagnotteList()*/), false)
                 }
             }
             catch (_ : Exception) {}

@@ -39,6 +39,30 @@
                     android:text="@string/settings"
                     android:fontFamily="@font/raleway_medium" />
 
+                <androidx.legacy.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="3dp"
+                    android:backgroundTint="@color/error"
+                    app:cardCornerRadius="10dp"
+                    android:layout_gravity="center"
+                    android:id="@+id/cagnotteSettingsDelete">
+
+                    <ImageView
+                        android:layout_gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        app:srcCompat="@drawable/ic_baseline_delete_24"
+                        android:scaleType="center" />
+
+                </androidx.cardview.widget.CardView>
+
+
             </LinearLayout>
 
             <LinearLayout
@@ -85,16 +109,44 @@
                         android:text="@string/cagnotte_color"
                         app:layout_flexBasisPercent="40%" />
 
-                    <TextView
+                    <com.google.android.material.chip.Chip
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         app:layout_flexBasisPercent="60%"
-                        android:background="@color/black"
                         android:id="@+id/cagnotteSettingsColorPreview"/>
 
                 </com.google.android.flexbox.FlexboxLayout>
 
             </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/cancel"
+                android:textColor="@color/error"
+                app:strokeColor="@color/error"
+                app:cornerRadius="20dp"
+                style="?attr/materialButtonOutlinedStyle"
+                android:id="@+id/cancelSettings" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/submit"
+                android:textColor="@color/success"
+                app:strokeColor="@color/success"
+                app:cornerRadius="20dp"
+                style="?attr/materialButtonOutlinedStyle"
+                android:id="@+id/submitSettings" />
 
         </LinearLayout>
 

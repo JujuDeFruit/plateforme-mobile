@@ -13,6 +13,7 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -38,36 +39,40 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 
-class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()) : Fragment() {
+class HomeFragment(/*private val cagnottes : HashMap<String, Cagnotte> = HashMap()*/) : Fragment() {
 
     private lateinit var store : FirebaseFirestore
     private var user : User? = null
     private var overlay : Overlay? = null
 
     companion object {
-        suspend fun loadCagnotteList() : HashMap<String, Cagnotte> {
-            // Load all pots current user is involved in
-            return LoginFragment.user?.let { user : User ->
-                return@let withContext(Dispatchers.Main) {
-                    try {
-                        val result: QuerySnapshot = FirebaseFirestore
-                            .getInstance()
-                            .collection(FirebaseConstants.CollectionNames.Pot)
-                            .whereArrayContains(Cagnotte.Attributes.UIDS.string, user.uid!!)
-                            .get()
-                            .await()
+        var cagnottes : HashMap<String, Cagnotte> = HashMap()
 
-                        val cagnottes: HashMap<String, Cagnotte> = HashMap()
-                        for (document in result) {
-                            val cagnotte : Cagnotte = document.toObject()
-                            cagnottes[document.id] = cagnotte
-                        }
-                        return@withContext cagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
-                    } catch (e: Exception) {
-                        return@withContext null
+        suspend fun loadCagnotteList() /*: HashMap<String, Cagnotte>*/ {
+            // Load all pots current user is involved in
+            /*return*/ LoginFragment.user?.let { user : User ->
+                /*return@let */withContext(Dispatchers.Main) {
+                try {
+                    val result: QuerySnapshot = FirebaseFirestore
+                        .getInstance()
+                        .collection(FirebaseConstants.CollectionNames.Pot)
+                        .whereArrayContains(Cagnotte.Attributes.UIDS.string, user.uid!!)
+                        .get()
+                        .await()
+
+                    val lCagnottes: HashMap<String, Cagnotte> = HashMap()
+                    for (document in result) {
+                        val cagnotte : Cagnotte = document.toObject()
+                        lCagnottes[document.id] = cagnotte
                     }
+                    cagnottes = lCagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
+                    //return@withContext cagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
+                } catch (e: Exception) {
+                    cagnottes = HashMap()
+                    //return@withContext null
                 }
-            } ?: HashMap()
+            }
+            } /*?: HashMap()*/
         }
     }
 
@@ -90,8 +95,6 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        cagnottes.forEach { addCardToView(it.key) }
 
         view.findViewById<FloatingActionButton>(R.id.createButton).setOnClickListener{
             if (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) openDialog()
@@ -124,6 +127,12 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
                 swipe.isRefreshing = false
             }, 1000) // Delay in millis
         }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        cagnottes.forEach { addCardToView(it.key) }
     }
 
 
@@ -172,7 +181,7 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
 
         val cardView : View = LayoutInflater.from(requireContext()).inflate(R.layout.cagnotte_row, container,false)
 
-        cardView.findViewById<CardView>(R.id.cagnottePreview).setCardBackgroundColor(Color.parseColor(cagnotte.color))
+        cardView.findViewById<MaterialCardView>(R.id.cagnottePreview).setCardBackgroundColor(Color.parseColor(cagnotte.color))
         cardView.findViewById<TextView>(R.id.cardTextPreview).text = cagnotte.name
 
         val totalSpentAmountPreview = cardView.findViewById<TextView>(R.id.totalSpentAmountPreview)
@@ -185,6 +194,8 @@ class HomeFragment(private val cagnottes : HashMap<String, Cagnotte> = HashMap()
         cardView.setOnClickListener{
             loadCagnotteView(cagnotteRef)
         }
+
+        cardView.id = cagnotteRef.hashCode()
 
         liste?.addView(cardView)
     }

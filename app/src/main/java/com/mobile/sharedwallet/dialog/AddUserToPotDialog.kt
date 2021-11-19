@@ -102,7 +102,7 @@ class AddUserToPotDialog(private val cagnotte : Cagnotte?, private var usersEmai
                     else {
                         val dialog = MessageDialog(requireActivity())
                         dialog
-                            .create(getString(R.string.message_warning_particpant_already_pot))
+                            .create(getString(R.string.message_warning_participant_already_pot))
                             .show()
                     }
                 }

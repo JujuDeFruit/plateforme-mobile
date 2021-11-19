@@ -9,8 +9,7 @@
     android:layout_marginHorizontal="10dp"
     app:cardCornerRadius="10dp"
     app:strokeWidth="3dp"
-    app:strokeColor="@color/black"
-    >
+    app:strokeColor="@color/black">
 
         <TextView
             android:id="@+id/cardTextPreview"

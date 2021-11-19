@@ -18,6 +18,7 @@ import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.utils.Utils
+import kotlin.properties.Delegates
 
 class CagnotteFragment : Fragment() {
 
@@ -30,8 +31,14 @@ class CagnotteFragment : Fragment() {
                 return field
             }
         var potRef : String = ""
+        var cagnotteFragment : CagnotteFragment? = null
     }
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        cagnotteFragment = this
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.cagnotte_fragment, container, false)
@@ -55,5 +62,18 @@ class CagnotteFragment : Fragment() {
         val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigationHome, R.id.navigationBalance, R.id.navigationCategory))
         setupActionBarWithNavController(requireActivity() as MainActivity, navController, appBarConfiguration)
         setupWithNavController(view.findViewById<BottomNavigationView>(R.id.navView), navController)
+    }
+
+
+    fun update(color : String? = null, name : String? = null) {
+        view?.let { v : View ->
+            val title : Chip = v.findViewById(R.id.cagnotteName)
+            color?.let { c : String ->
+                title.chipBackgroundColor = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(Color.parseColor(c)))
+            }
+            name?.let { n : String ->
+                title.text = n
+            }
+        }
     }
 }
