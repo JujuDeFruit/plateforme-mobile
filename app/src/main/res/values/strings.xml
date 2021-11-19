@@ -51,6 +51,7 @@
     <string name="cagnotte">Cagnotte</string>
     <string name="cagnotte_name">Cagnotte name</string>
     <string name="cagnotte_color">Cagnotte color</string>
+    <string name="delete">Delete</string>
     <string name="balance">Balance</string>
     <string name="category">Category</string>
     <string name="add_user">Add new user</string>

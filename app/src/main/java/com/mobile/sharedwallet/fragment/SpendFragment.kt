@@ -43,9 +43,11 @@ class SpendFragment : Fragment() {
         adapter = DepenseAdapter(requireContext(), cagnotte!!.totalSpent)
     }
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.spend_fragment, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,10 +81,12 @@ class SpendFragment : Fragment() {
         cagnotte?.let { adapter.addAll(it.totalSpent) }
     }
 
+
     override fun onStart() {
         super.onStart()
         Utils.checkLoggedIn(requireActivity())
     }
+
 
     private suspend fun fetchUsersEmails() : ArrayList<String> {
         return withContext(Dispatchers.Main) {
@@ -99,6 +103,7 @@ class SpendFragment : Fragment() {
             }
         }
     }
+
 
     fun actualizeListDepenses(newDep : Depense) {
         adapter.add(newDep)

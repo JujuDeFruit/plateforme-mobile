@@ -4,8 +4,8 @@ import com.google.firebase.Timestamp
 
 data class Cagnotte(
     val uids : ArrayList<String>,
-    val name: String,
-    val color : String,
+    var name: String,
+    var color : String,
     val creationDate: Timestamp,
     val createdBy : String,
     val totalSpent: ArrayList<Depense>,
@@ -17,7 +17,7 @@ data class Cagnotte(
         NAME("name"),
         COLOR("color"),
         CREATION_DATE("creationDate"),
-        CREATED_BY("creationBy"),
+        CREATED_BY("createdBy"),
         TOTAL_SPENT("totalSpent"),
         PARTICIPANTS("participants")
     }

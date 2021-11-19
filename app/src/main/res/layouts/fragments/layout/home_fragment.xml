@@ -17,49 +17,20 @@
         android:paddingHorizontal="20dp"
         android:textSize="25sp" />
 
-    <!--<ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/welcome"
-        android:layout_marginTop="15dp"
-        android:paddingHorizontal="15dp">
-
-        <LinearLayout
-            android:id="@+id/listCagnotte"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-    </ScrollView>-->
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/welcome"
-            android:layout_marginTop="15dp"
-            android:paddingHorizontal="15dp"
-            android:scrollbarThumbVertical="@drawable/scrollbar_thumbnail">
-
-            <LinearLayout
-                android:id="@+id/listCagnotte"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-
-        </ScrollView>
-
-        <!--<ListView
+        <ListView
             android:id="@+id/listCagnotte"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
-            android:scrollbarThumbVertical="@drawable/scrollbar_thumbnail" />-->
+            android:layout_marginTop="15dp"
+            android:paddingHorizontal="15dp"
+            android:scrollbarThumbVertical="@drawable/scrollbar_thumbnail" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
