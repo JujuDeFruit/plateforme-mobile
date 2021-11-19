@@ -13,7 +13,6 @@ import androidx.fragment.app.DialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.CagnotteFragment

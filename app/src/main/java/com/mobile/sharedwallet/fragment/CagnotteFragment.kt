@@ -18,7 +18,6 @@ import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.utils.Utils
-import kotlin.properties.Delegates
 
 class CagnotteFragment : Fragment() {
 

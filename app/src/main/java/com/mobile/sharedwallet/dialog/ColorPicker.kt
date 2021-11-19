@@ -2,13 +2,11 @@ package com.mobile.sharedwallet.dialog
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.button.MaterialButton
@@ -16,7 +14,6 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.slider.Slider
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.fragment.CagnotteFragment
-import com.mobile.sharedwallet.models.Cagnotte
 
 class ColorPicker(private val parentFragment: CagnotteSettingsDialog) : DialogFragment() {
 
