@@ -1,5 +1,6 @@
 package com.mobile.sharedwallet.dialog
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -34,6 +35,7 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
 
     private lateinit var store : FirebaseFirestore;
     private var participants : ArrayList<Participant>? = null
+    private var price = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +59,26 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
         recyclerlistview.adapter = particiantAdapter
 
         view.findViewById<MaterialButton>(R.id.saveButton).setOnClickListener {
-            saveNewSpend(particiantAdapter)
+            if ((price != 0f) && (particiantAdapter.peopleSelected().size != 0)){
+                saveNewSpend(particiantAdapter)
+            }else if((price == 0f) && (particiantAdapter.peopleSelected().size != 0)) {
+                val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+                builder1.setMessage("You have not entered any price")
+                builder1.setCancelable(true)
+                builder1.create().show()
+            }else if((particiantAdapter.peopleSelected().size == 0) && (price != 0f)) {
+                val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+                builder1.setMessage("You have not entered any person")
+                builder1.setCancelable(true)
+                builder1.create().show()
+            }else if ((price == 0f) && (particiantAdapter.peopleSelected().size == 0)) {
+                val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
+                builder1.setMessage("You have not entered any person and any people")
+                builder1.setCancelable(true)
+                builder1.create().show()
+            }
         }
+
         //Spinner Payeur
         var spinnerAdapter = DropListAdapter(participants!!)
         spinnerAdapter.generateSpinner(requireContext(),view)
@@ -68,9 +88,11 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                var price: Float
                 if (view.findViewById<EditText>(R.id.montant).text.toString() != "") {
                     price = view.findViewById<EditText>(R.id.montant).text.toString().toFloat()
+                    particiantAdapter.updatePrice(price)
+                }else{
+                    price = 0f
                     particiantAdapter.updatePrice(price)
                 }
             }
@@ -121,21 +143,20 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
     private fun saveNewSpend(adapter: TributairesAdapter) {
         view?.let {
             val title : String = it.findViewById<EditText>(R.id.title).text.toString()
-            val montant = it.findViewById<EditText>(R.id.montant).text.toString().toFloat()
             val selectedTributaire = adapter.peopleSelected()
 
             for (k in selectedTributaire){
-                k.cout = BigDecimal(repartition(montant, selectedTributaire).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
+                k.cout = BigDecimal(repartition(price, selectedTributaire).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
             }
 
-            val depense = Depense(title, DropListAdapter.payeur ?: Tributaire(), montant, selectedTributaire, Timestamp.now())
+            val depense = Depense(title, DropListAdapter.payeur ?: Tributaire(), price, selectedTributaire, Timestamp.now())
 
             store
                 .collection(FirebaseConstants.CollectionNames.Pot)
                 .document(CagnotteFragment.potRef)
                 .update(Cagnotte.Attributes.TOTAL_SPENT.string, FieldValue.arrayUnion(depense.toFirebase()))
                 .addOnSuccessListener {
-                    updateAllSoldes(montant, selectedTributaire)
+                    updateAllSoldes(price, selectedTributaire)
                     dismiss()
                 }
                 .addOnFailureListener {
