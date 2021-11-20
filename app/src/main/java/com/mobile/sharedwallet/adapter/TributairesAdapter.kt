@@ -39,9 +39,9 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(viewHolder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+        viewHolder.textView.text = dataSet[position].name
+        viewHolder.checkbox.isSelected = dataSet[position].selected
         if (dataSet[position].selected) {
-            viewHolder.textView.text = dataSet[position].name
-            viewHolder.checkbox.isSelected = dataSet[position].selected
             viewHolder.percentageInput.text = dataSet[position].percentageCout.toString()
             viewHolder.coutView .text = dataSet[position].cout.toString()
         }
