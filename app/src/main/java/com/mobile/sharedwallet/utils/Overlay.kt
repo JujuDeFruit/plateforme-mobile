@@ -2,15 +2,16 @@ package com.mobile.sharedwallet.utils
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.app.Activity
 import android.view.View
 import com.mobile.sharedwallet.R
 
-class Overlay(private val view : View) {
+class Overlay(private val act : Activity) {
 
     private var visibility : Int = View.GONE
 
     private fun  switchVisibility() {
-        val overlay : View? = view.findViewById(R.id.overlay)
+        val overlay : View? = act.findViewById(R.id.overlay)
 
         overlay?.let { ov : View ->
             if (visibility == View.VISIBLE) {
