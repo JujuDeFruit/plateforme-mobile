@@ -22,6 +22,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -100,7 +101,7 @@ class BalanceFragment: Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        participantListCopy = toParticipantList(participantListToString(CagnotteFragment.pot.participants))
+        participantListCopy = toParticipantList(participantListToString(Shared.pot.participants))
         displayGraph()
         quiDoitQuoi()
     }

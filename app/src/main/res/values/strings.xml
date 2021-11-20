@@ -33,6 +33,7 @@
     <string name="password">Password</string>
     <string name="repeat_password">Repeat password</string>
     <string name="reset_password">Reset password</string>
+    <string name="reset_password_question"><u>Reset password ?</u></string>
     <string name="create_account">Create account</string>
 
     <!-- Profile -->

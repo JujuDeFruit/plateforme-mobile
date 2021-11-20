@@ -15,9 +15,8 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.fragment.CagnotteFragment
-import com.mobile.sharedwallet.fragment.LoginFragment
 import com.mobile.sharedwallet.models.*
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
 import com.mobile.sharedwallet.utils.Validate
 import kotlinx.coroutines.*
@@ -63,7 +62,7 @@ class AddUserToPotDialog(private val cagnotte : Cagnotte?, private var usersEmai
     private fun validateEmail() : Boolean {
         return view?.let {
             val email = it.findViewById<AutoCompleteTextView>(R.id.newUserEmail).text.toString()
-            if (email == LoginFragment.user?.email) {
+            if (email == Shared.user?.email) {
                 Toast.makeText(requireContext(), getString(R.string.message_warning_add_yourself), Toast.LENGTH_SHORT).show()
                 return@let false
             } else if (!usersEmails.contains(email)) {
@@ -83,7 +82,7 @@ class AddUserToPotDialog(private val cagnotte : Cagnotte?, private var usersEmai
 
     private fun notAlreadyInPot(uid : String) : Boolean {
         return view?.let {
-            if(CagnotteFragment.pot.participants.map { it.uid }.contains(uid)) {
+            if(Shared.pot.participants.map { it.uid }.contains(uid)) {
                 return@let false
             }
             return@let true
@@ -135,7 +134,7 @@ class AddUserToPotDialog(private val cagnotte : Cagnotte?, private var usersEmai
         cagnotte?.let { cagnotte : Cagnotte ->
             store
                 .collection(FirebaseConstants.CollectionNames.WaitingPot)
-                .whereEqualTo(WaitingPot.Attributes.POT_REF.string, Utils.convertStringToRef(FirebaseConstants.CollectionNames.Pot, CagnotteFragment.potRef))
+                .whereEqualTo(WaitingPot.Attributes.POT_REF.string, Utils.convertStringToRef(FirebaseConstants.CollectionNames.Pot, Shared.potRef))
                 .limit(1)
                 .get()
                 .addOnSuccessListener {
@@ -152,7 +151,7 @@ class AddUserToPotDialog(private val cagnotte : Cagnotte?, private var usersEmai
                                 WaitingPot.Attributes.WAITING_UID.string,
                                 FieldValue.arrayUnion(participant.uid)
                             )
-                        CagnotteFragment.pot.participants.add(participant)
+                        Shared.pot.participants.add(participant)
                         Toast.makeText(requireContext(), getString(R.string.message_invitation_send).plus(getString(R.string.space)).plus(participant.name), Toast.LENGTH_SHORT).show()
                         dismiss()
                     }

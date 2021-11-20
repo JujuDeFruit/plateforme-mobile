@@ -8,8 +8,8 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.mobile.sharedwallet.R
-import com.mobile.sharedwallet.fragment.CagnotteFragment
 import com.mobile.sharedwallet.models.Depense
+import com.mobile.sharedwallet.utils.Shared
 
 class DepenseAdapter(context : Context, private val dataSet : ArrayList<Depense>) : ArrayAdapter<Depense>(context, R.layout.depense_row) {
 
@@ -20,7 +20,7 @@ class DepenseAdapter(context : Context, private val dataSet : ArrayList<Depense>
 
         // Fetch Tributaire photo
         depenseView.findViewById<ImageView>(R.id.depensePurchaserPhoto).setImageBitmap(
-            CagnotteFragment.pot.participants.first { it.uid == depense.whoPaid.uid }.photo
+            Shared.pot.participants.first { it.uid == depense.whoPaid.uid }.photo
         )
         depenseView.findViewById<TextView>(R.id.depenseTitle).text = depense.title
         depenseView.findViewById<TextView>(R.id.depenseDescription).text = "► ".plus("Category")

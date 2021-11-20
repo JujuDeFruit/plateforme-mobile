@@ -23,6 +23,7 @@ import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
 import com.mobile.sharedwallet.utils.Validate
 import kotlinx.coroutines.CoroutineScope
@@ -45,7 +46,7 @@ class ProfileFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         storageRef = FirebaseStorage.getInstance().reference
-        user = LoginFragment.user
+        user = Shared.user
 
         isEmailVerified = FirebaseAuth.getInstance().currentUser?.isEmailVerified ?: false
 
@@ -74,7 +75,7 @@ class ProfileFragment : Fragment() {
 
         view.findViewById<FloatingActionButton>(R.id.logoutProfile).setOnClickListener {
             logout()
-            (requireActivity() as MainActivity).replaceFragment(LoginFragment(), false)
+            (requireActivity() as MainActivity).replaceFragment(PortalFragment(), false)
         }
 
         view.findViewById<FloatingActionButton>(R.id.editProfile).setOnClickListener {

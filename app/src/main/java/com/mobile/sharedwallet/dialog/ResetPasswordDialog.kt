@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.mobile.sharedwallet.R
-import com.mobile.sharedwallet.fragment.LoginFragment
+import com.mobile.sharedwallet.fragment.PortalFragment
 import com.mobile.sharedwallet.utils.Validate
 
 class ResetPasswordDialog : DialogFragment() {
@@ -20,8 +20,6 @@ class ResetPasswordDialog : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-
 
         view.findViewById<Button>(R.id.resetPasswordButton).setOnClickListener {
             resetPassword()
@@ -38,7 +36,7 @@ class ResetPasswordDialog : DialogFragment() {
                 .sendPasswordResetEmail(email)
                 .addOnSuccessListener {
                     val dialog = MessageDialog(requireActivity())
-                        .navigateTo(LoginFragment(), false)
+                        .navigateTo(PortalFragment(), false)
                         .create(getString(R.string.message_reset_password_email_sent))
                     dialog.show()
                 }

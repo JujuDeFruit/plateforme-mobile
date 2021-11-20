@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
@@ -18,6 +18,7 @@ import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Overlay
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
 import com.mobile.sharedwallet.utils.Validate
 import kotlinx.coroutines.MainScope
@@ -27,13 +28,14 @@ class RegisterFragment: Fragment() {
 
     private lateinit var auth : FirebaseAuth
     private var user : FirebaseUser? = null
-    private var overlay : Overlay? = null
 
     private var firstName : String? = null
     private var lastName : String? = null
     private var email : String? = null
     private var password1 : String? = null
     private var password2 : String? = null
+
+    private var overlay : Overlay? = Shared.overlay
 
     /**
      * Affect firebase
@@ -54,13 +56,11 @@ class RegisterFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<FloatingActionButton>(R.id.createAccount).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.createAccount).setOnClickListener {
             if (validate()) {
                 createAccount()
             }
         }
-
-        overlay = Overlay(requireView())
     }
 
     /**
@@ -158,7 +158,7 @@ class RegisterFragment: Fragment() {
             MainScope().launch {
                 val myUser : User = Utils.createUserFromFirebaseUser(user, false)
 
-                LoginFragment.user = myUser
+                Shared.user = myUser
 
                 FirebaseFirestore
                     .getInstance()
