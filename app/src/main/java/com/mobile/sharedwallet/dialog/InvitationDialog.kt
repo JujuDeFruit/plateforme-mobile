@@ -136,7 +136,8 @@ class InvitationDialog(
     private fun quit() {
         if (isLast) {
             MainScope().launch {
-                activity.replaceFragment(HomeFragment(HomeFragment.loadCagnotteList()), false)
+                HomeFragment.loadCagnotteList()
+                activity.replaceFragment(HomeFragment(/*HomeFragment.loadCagnotteList()*/), false)
             }
         }
     }

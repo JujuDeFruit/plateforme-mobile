@@ -8,10 +8,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 class MessageDialog (
     private val activity: Activity,
-    private val callback: (() -> Any)? = null) {
+    private val callback: (suspend () -> Any)? = null) {
 
     private var navigateToFragment : Fragment? = null
     private var addToStackBack : Boolean? = null
@@ -26,8 +28,10 @@ class MessageDialog (
         val builder = AlertDialog.Builder(activity)
         builder.setMessage(message)
             .setPositiveButton(activity.getString(R.string.ok)) { _, _ ->
-                callback?.invoke()
-                navigate()
+                MainScope().launch {
+                    callback?.invoke()
+                    navigate()
+                }
             }
         // Create the AlertDialog object and return it
         builder.create()
