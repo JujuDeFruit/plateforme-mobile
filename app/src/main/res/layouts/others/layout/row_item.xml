@@ -18,7 +18,7 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/check_box" />
 
-        <EditText
+        <TextView
             android:id="@+id/coutView"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
@@ -26,11 +26,11 @@
             android:layout_toEndOf="@+id/textView"
             android:gravity="center"
             android:inputType="numberDecimal"
-            android:textSize="10sp" />
+            android:textSize="12sp" />
 
         <EditText
             android:id="@+id/percentage_input"
-            android:layout_width="30dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="0dp"
