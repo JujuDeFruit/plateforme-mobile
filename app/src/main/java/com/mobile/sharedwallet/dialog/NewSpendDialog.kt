@@ -149,7 +149,7 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
                 k.cout = BigDecimal(repartition(price, selectedTributaire).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
             }
 
-            val depense = Depense(title, Shared.payeur ?: Tributaire(), montant, selectedParticipant, Timestamp.now())
+            val depense = Depense(title, Shared.payeur ?: Tributaire(), price, selectedTributaire, Timestamp.now())
 
             store
                 .collection(FirebaseConstants.CollectionNames.Pot)

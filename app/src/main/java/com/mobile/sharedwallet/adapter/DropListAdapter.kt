@@ -8,13 +8,10 @@ import android.widget.Spinner
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.models.Tributaire
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils.Companion.castParticipantToTributaire
 
 class DropListAdapter(private val participants : ArrayList<Participant>) : AdapterView.OnItemSelectedListener {
-
-    companion object {
-        var payeur : Tributaire? = null
-    }
 
     fun generateSpinner (context : Context, view : View ){
         val spinner:Spinner= view.findViewById(R.id.spinnerPayeur)
@@ -29,12 +26,10 @@ class DropListAdapter(private val participants : ArrayList<Participant>) : Adapt
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        println("name : "+participants[p2]+"id : "+participants[p2].uid)
-        payeur = castParticipantToTributaire(participants[p2])
+        Shared.payeur = castParticipantToTributaire(participants[p2])
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-        payeur = castParticipantToTributaire(participants[0])
-        println("rien n'a été cliqué")
+        Shared.payeur = castParticipantToTributaire(participants[0])
     }
 }
