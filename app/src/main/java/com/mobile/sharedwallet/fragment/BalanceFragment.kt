@@ -24,6 +24,9 @@ import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import kotlin.math.abs
 import kotlin.math.min

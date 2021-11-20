@@ -7,12 +7,13 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
+import com.mobile.sharedwallet.models.Tributaire
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils.Companion.castParticipantToTributaire
 
-class SpinnerAdapter(private val participants : ArrayList<Participant>) : AdapterView.OnItemSelectedListener {
+class DropListAdapter(private val participants : ArrayList<Participant>) : AdapterView.OnItemSelectedListener {
 
-    fun generateSpinner (context : Context, view : View) {
+    fun generateSpinner (context : Context, view : View ){
         val spinner:Spinner= view.findViewById(R.id.spinnerPayeur)
         val spinnerArrayAdapter:ArrayAdapter<Participant> = ArrayAdapter(
             context,
