@@ -39,9 +39,12 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(viewHolder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
-        var size : Int
-        viewHolder.textView.text = dataSet[position].name
-        viewHolder.checkbox.isSelected = dataSet[position].selected
+        if (dataSet[position].selected) {
+            viewHolder.textView.text = dataSet[position].name
+            viewHolder.checkbox.isSelected = dataSet[position].selected
+            viewHolder.percentageInput.text = dataSet[position].percentageCout.toString()
+            viewHolder.coutView .text = dataSet[position].cout.toString()
+        }
 
         viewHolder.checkbox.setOnCheckedChangeListener { _, b ->
             dataSet[position].selected = b
@@ -50,21 +53,12 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
                 viewHolder.percentageInput.text = ""
                 listItemManual.remove(position)
             }
-            size = peopleSelected().size
-            updateCoutPeople(price, size)
-        }
-
-        if (dataSet[position].selected) {
-            viewHolder.percentageInput.text = dataSet[position].percentageCout.toString()
-            viewHolder.coutView .text = dataSet[position].cout.toString()
+            updateCoutPeople(price, peopleSelected().size)
         }
 
         viewHolder.percentageInput.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
                 listItemManual[position] = viewHolder.percentageInput.text.toString().toFloat()
-                if(listItemManual.size >= peopleSelected().size) {
-                    listItemManual.remove(listItemManual.keys.last())
-                }
                 updateCoutPeople(price, peopleSelected().size)
                 true
             }
@@ -73,7 +67,10 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
     }
 
     private fun updateCoutPeople(price: Float, size : Int) {
-        for (i in 0 until dataSet.size - 1) {
+        if((listItemManual.isNotEmpty()) &&(listItemManual.size >= peopleSelected().size)){
+            listItemManual.remove(listItemManual.keys.last())
+        }
+        for (i in 0 until dataSet.size) {
             if (dataSet[i].selected) {
                 if ((price != 0f) && (size != 0)) {
                     if (listItemManual.isEmpty()) {
@@ -101,10 +98,9 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
                     dataSet[i].percentageCout = 1f / size.toFloat() * 100
                     dataSet[i].cout = 0f
                 }
-                //notifyItemChanged(i)
+                notifyItemChanged(i)
             }
         }
-        notifyDataSetChanged()
     }
 
     fun peopleSelected() : ArrayList<Tributaire>{
