@@ -1,20 +1,14 @@
 package com.mobile.sharedwallet.adapter
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.mobile.sharedwallet.R
-import com.mobile.sharedwallet.dialog.NewSpendDialog.Companion.price
 import com.mobile.sharedwallet.models.Tributaire
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -24,6 +18,7 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
     RecyclerView.Adapter<TributairesAdapter.ViewHolder>() {
 
     private var listItemManual = mutableMapOf<Int,Float>()
+    private var price = 0f
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val checkbox : CheckBox = view.findViewById(R.id.check_box)
@@ -37,10 +32,10 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
         return ViewHolder(LayoutInflater.from(viewGroup.context).inflate(R.layout.row_item, viewGroup, false))
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onBindViewHolder(viewHolder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textView.text = dataSet[position].name
-        viewHolder.checkbox.isSelected = dataSet[position].selected
+        viewHolder.checkbox.isChecked = dataSet[position].selected
+
         if (dataSet[position].selected) {
             viewHolder.percentageInput.text = dataSet[position].percentageCout.toString()
             viewHolder.coutView .text = dataSet[position].cout.toString()
@@ -56,13 +51,14 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
             updateCoutPeople(price, peopleSelected().size)
         }
 
+
         viewHolder.percentageInput.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
                 listItemManual[position] = viewHolder.percentageInput.text.toString().toFloat()
                 updateCoutPeople(price, peopleSelected().size)
                 true
             }
-            else false
+            false
         }
     }
 
@@ -72,7 +68,7 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
         }
         for (i in 0 until dataSet.size) {
             if (dataSet[i].selected) {
-                if ((price != 0f) && (size != 0)) {
+                if ((price != 0f) && (size != 0) ) {
                     if (listItemManual.isEmpty()) {
                         dataSet[i].percentageCout = 1f / size.toFloat() * 100f
                         dataSet[i].cout = BigDecimal(
@@ -115,4 +111,11 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updatePrice(price: Float) {
+        this.price = price
+        updateCoutPeople(price, peopleSelected().size)
+        notifyDataSetChanged()
+    }
 }

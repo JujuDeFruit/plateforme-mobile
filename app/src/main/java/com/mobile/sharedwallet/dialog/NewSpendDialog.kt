@@ -35,13 +35,6 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
     private lateinit var store : FirebaseFirestore;
     private var participants : ArrayList<Participant>? = null
 
-    companion object {
-        var price : Float = 0f
-            get() {
-                return field
-            }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = FirebaseFirestore.getInstance()
@@ -75,10 +68,10 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (view.findViewById<EditText>(R.id.montant).text.toString()==""){
-                    price =0f
-                }else{
-                    price  = view.findViewById<EditText>(R.id.montant).text.toString().toFloat()
+                var price: Float
+                if (view.findViewById<EditText>(R.id.montant).text.toString() != "") {
+                    price = view.findViewById<EditText>(R.id.montant).text.toString().toFloat()
+                    particiantAdapter.updatePrice(price)
                 }
             }
         })
