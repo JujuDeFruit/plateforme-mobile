@@ -11,6 +11,7 @@ class Overlay(private val act : Activity) {
     private var visibility : Int = View.GONE
 
     private fun  switchVisibility() {
+
         val overlay : View? = act.findViewById(R.id.overlay)
 
         overlay?.let { ov : View ->

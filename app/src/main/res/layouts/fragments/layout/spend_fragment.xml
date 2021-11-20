@@ -5,13 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/spends"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/spendFragmentSwipeContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5dp"
         app:layout_constraintTop_toTopOf="parent"
-        android:scrollbarThumbVertical="@drawable/scrollbar_thumbnail" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/spends"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+
+            android:scrollbarThumbVertical="@drawable/scrollbar_thumbnail" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"

@@ -59,7 +59,6 @@ class HomeFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         view.findViewById<FloatingActionButton>(R.id.createButton).setOnClickListener{
             if (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) openDialog()
             else {
