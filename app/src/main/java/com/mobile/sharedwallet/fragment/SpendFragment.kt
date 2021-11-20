@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.adapter.DepenseAdapter
 import com.mobile.sharedwallet.constants.FirebaseConstants
@@ -18,13 +20,11 @@ import com.mobile.sharedwallet.dialog.NewSpendDialog
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -34,6 +34,7 @@ class SpendFragment : Fragment() {
     private lateinit var store : FirebaseFirestore
     private var cagnotte : Cagnotte? = null
     private lateinit var adapter : DepenseAdapter
+    private val overlay : Overlay? = Shared.overlay
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +81,19 @@ class SpendFragment : Fragment() {
         }
 
         cagnotte?.let { adapter.addAll(it.totalSpent) }
+
+        // Getting SwipeContainerLayout
+        val swipe = view.findViewById<SwipeRefreshLayout>(R.id.spendFragmentSwipeContainer)
+
+        // Adding Listener
+        swipe.setOnRefreshListener {
+            overlay?.show()
+            MainScope().launch {
+                loadDepense()
+                swipe.isRefreshing = false
+                overlay?.hide()
+            }
+        }
     }
 
 
@@ -108,5 +122,23 @@ class SpendFragment : Fragment() {
 
     fun actualizeListDepenses(newDep : Depense) {
         adapter.add(newDep)
+    }
+
+
+    suspend fun loadDepense() {
+        Shared.pot = try {
+            store
+                .collection(FirebaseConstants.CollectionNames.Pot)
+                .document(Shared.potRef)
+                .get()
+                .await()
+                .toObject<Cagnotte>() ?: Cagnotte()
+        } catch (e : Exception) { Cagnotte() }
+
+        Shared.pot.totalSpent.sortByDescending { it.creationDate }
+
+        Shared.pot.participants.forEach {
+            it.photo = Utils.fetchPhoto(it.uid)
+        }
     }
 }
