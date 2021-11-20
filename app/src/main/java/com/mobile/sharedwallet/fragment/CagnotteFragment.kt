@@ -16,27 +16,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
-import com.mobile.sharedwallet.models.Cagnotte
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
 
 class CagnotteFragment : Fragment() {
 
-    companion object {
-        var pot : Cagnotte = Cagnotte()
-            get() {
-                if (field.isEmpty()) {
-                    field = Cagnotte()
-                }
-                return field
-            }
-        var potRef : String = ""
-        var cagnotteFragment : CagnotteFragment? = null
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cagnotteFragment = this
+        Shared.cagnotteFragment = this
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -53,8 +40,8 @@ class CagnotteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val title : Chip = view.findViewById(R.id.cagnotteName)
-        title.text = pot.name
-        title.chipBackgroundColor = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(Color.parseColor(pot.color)))
+        title.text = Shared.pot.name
+        title.chipBackgroundColor = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(Color.parseColor(Shared.pot.color)))
 
         // Set up navigation bar & navigation controller
         val navController = (childFragmentManager.findFragmentById(R.id.fragmentPlace) as NavHostFragment).navController

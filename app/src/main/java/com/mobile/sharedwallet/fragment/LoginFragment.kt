@@ -5,32 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.dialog.ResetPasswordDialog
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.utils.Overlay
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
 import com.mobile.sharedwallet.utils.Validate
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-class LoginFragment(): Fragment() {
+class LoginFragment : Fragment() {
 
-    private var overlay : Overlay? = null
-
-    companion object {
-        var user : User? = null
-            get() {
-                if (field == null || field!!.isNullOrEmpty())
-                    return User()
-                return field
-            }
-    }
+    private var overlay : Overlay? = Shared.overlay
 
     private var email : String = String()
 
@@ -45,22 +38,16 @@ class LoginFragment(): Fragment() {
             if (validate()) login()
         }
 
-        view.findViewById<Button>(R.id.register).setOnClickListener{
-            (activity as MainActivity).replaceFragment(RegisterFragment(), true)
-        }
-
-        view.findViewById<Button>(R.id.resetPassword).setOnClickListener{
+        view.findViewById<MaterialTextView>(R.id.resetPassword).setOnClickListener{
             ResetPasswordDialog().show(parentFragmentManager, "ResetPasswordDialog")
         }
-
-        overlay = Overlay(requireView())
     }
 
     /**
      * Email validation
      */
     private fun validate() : Boolean {
-        email = view?.findViewById<EditText>(R.id.email)?.text.toString()
+        email = view?.findViewById<TextInputEditText>(R.id.email)?.text.toString()
         return Validate.checkEmailConditions(requireContext(), email)
     }
 
@@ -70,15 +57,15 @@ class LoginFragment(): Fragment() {
     private fun login() {
         view?.let { view : View ->
             overlay?.show()
-            val password = view.findViewById<EditText>(R.id.password).text.toString()
+            val password = view.findViewById<TextInputEditText>(R.id.password).text.toString()
             FirebaseAuth
                 .getInstance()
                 .signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     MainScope().launch {
-                        user = Utils.createUserFromFirebaseUser(it.user, true)
+                        Shared.user = Utils.createUserFromFirebaseUser(it.user, true)
                         overlay?.hide()
-                        user?.let { u : User -> (requireActivity() as MainActivity).checkIfInvitation(u) }
+                        Shared.user?.let { u : User -> (requireActivity() as MainActivity).checkIfInvitation(u) }
                     }
                 }
                 .addOnFailureListener {

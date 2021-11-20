@@ -17,12 +17,12 @@ import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.adapter.ParticipantsAdapter
 import com.mobile.sharedwallet.adapter.SpinnerAdapter
 import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.fragment.CagnotteFragment
 import com.mobile.sharedwallet.fragment.SpendFragment
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.models.Tributaire
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -35,7 +35,7 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = FirebaseFirestore.getInstance()
-        participants = CagnotteFragment.pot.participants
+        participants = Shared.pot.participants
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -70,7 +70,7 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
     }
 
     private fun updateAllSoldes(montant: Float, tributaireSelected: ArrayList<Tributaire>) {
-        val payeur : Tributaire = SpinnerAdapter.payeur ?: Tributaire()
+        val payeur : Tributaire = Shared.payeur ?: Tributaire()
         val moy : Float = montant / tributaireSelected.size.toFloat()
         val updatedSolde = participants ?: ArrayList()
         for (soldes in updatedSolde) {
@@ -90,7 +90,7 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
 
         store
             .collection(FirebaseConstants.CollectionNames.Pot)
-            .document(CagnotteFragment.potRef)
+            .document(Shared.potRef)
             .update(Cagnotte.Attributes.PARTICIPANTS.string, updatedSolde.map { it.toFirebase() })
             .addOnFailureListener {
                 Toast.makeText(requireActivity(), getString(R.string.message_error_update_balances), Toast.LENGTH_SHORT).show()
@@ -111,11 +111,11 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
                 k.cout = BigDecimal(repartition(montant, selectedParticipant).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
             }
 
-            val depense = Depense(title, SpinnerAdapter.payeur ?: Tributaire(), montant, selectedParticipant, Timestamp.now())
+            val depense = Depense(title, Shared.payeur ?: Tributaire(), montant, selectedParticipant, Timestamp.now())
 
             store
                 .collection(FirebaseConstants.CollectionNames.Pot)
-                .document(CagnotteFragment.potRef)
+                .document(Shared.potRef)
                 .update(Cagnotte.Attributes.TOTAL_SPENT.string, FieldValue.arrayUnion(depense.toFirebase()))
                 .addOnSuccessListener {
                     updateAllSoldes(montant, selectedParticipant)

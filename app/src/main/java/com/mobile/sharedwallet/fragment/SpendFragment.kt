@@ -18,6 +18,7 @@ import com.mobile.sharedwallet.dialog.NewSpendDialog
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.User
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +39,7 @@ class SpendFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         store = FirebaseFirestore.getInstance()
-        cagnotte = CagnotteFragment.pot
+        cagnotte = Shared.pot
 
         adapter = DepenseAdapter(requireContext(), cagnotte!!.totalSpent)
     }
@@ -63,7 +64,7 @@ class SpendFragment : Fragment() {
             }
         }
 
-        view.findViewById<FloatingActionButton>(R.id.cagnotteSettings).visibility = if(cagnotte?.createdBy == LoginFragment.user?.uid) View.VISIBLE else View.INVISIBLE
+        view.findViewById<FloatingActionButton>(R.id.cagnotteSettings).visibility = if(cagnotte?.createdBy == Shared.user?.uid) View.VISIBLE else View.INVISIBLE
 
         view.findViewById<FloatingActionButton>(R.id.cagnotteSettings).setOnClickListener {
             CagnotteSettingsDialog().show(parentFragmentManager, "CagnotteSettingsDialog")

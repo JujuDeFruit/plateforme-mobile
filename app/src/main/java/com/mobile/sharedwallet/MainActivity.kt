@@ -12,9 +12,11 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.dialog.InvitationDialog
 import com.mobile.sharedwallet.fragment.HomeFragment
-import com.mobile.sharedwallet.fragment.LoginFragment
+import com.mobile.sharedwallet.fragment.PortalFragment
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.models.WaitingPot
+import com.mobile.sharedwallet.utils.Overlay
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,10 +26,11 @@ class MainActivity : AppCompatActivity() {
 
     private val layout : Int = R.id.activityGlobalLayout
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Shared.overlay = Overlay(this)
 
         initialisation()
     }
@@ -41,12 +44,12 @@ class MainActivity : AppCompatActivity() {
         val user : FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
         if(user == null) {
-            transaction.add(layout, LoginFragment())
+            transaction.add(layout, PortalFragment())
             transaction.commit()
         } else {
             GlobalScope.launch {
-                LoginFragment.user = Utils.createUserFromFirebaseUser(user, true)
-                checkIfInvitation(LoginFragment.user!!)
+                Shared.user = Utils.createUserFromFirebaseUser(user, true)
+                checkIfInvitation(Shared.user!!)
             }
         }
     }
@@ -96,8 +99,8 @@ class MainActivity : AppCompatActivity() {
                         .reversed()
                         .forEachIndexed { i, d -> d.show(supportFragmentManager, "InvitationDialog".plus(i)) }
                 } else {
-                    HomeFragment.loadCagnotteList()
-                    replaceFragment(HomeFragment(/*HomeFragment.loadCagnotteList()*/), false)
+                    Utils.loadCagnotteList()
+                    replaceFragment(HomeFragment(), false)
                 }
             }
             catch (_ : Exception) {}

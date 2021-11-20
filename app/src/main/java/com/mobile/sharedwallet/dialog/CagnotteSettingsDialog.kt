@@ -15,9 +15,9 @@ import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.fragment.CagnotteFragment
 import com.mobile.sharedwallet.fragment.HomeFragment
 import com.mobile.sharedwallet.models.Cagnotte
+import com.mobile.sharedwallet.utils.Shared
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -31,7 +31,7 @@ class CagnotteSettingsDialog : DialogFragment() {
         super.onCreate(savedInstanceState)
 
         store = FirebaseFirestore.getInstance()
-        color = CagnotteFragment.pot.color
+        color = Shared.pot.color
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,11 +46,11 @@ class CagnotteSettingsDialog : DialogFragment() {
 
         view.findViewById<MaterialButton>(R.id.cancelSettings).setOnClickListener { dismiss() }
 
-        view.findViewById<TextView>(R.id.cagnotteSettingsCagnotteName).text = CagnotteFragment.pot.name
+        view.findViewById<TextView>(R.id.cagnotteSettingsCagnotteName).text = Shared.pot.name
 
         val colorPreview = view.findViewById<Chip>(R.id.cagnotteSettingsColorPreview)
 
-        colorPreview.chipBackgroundColor = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(Color.parseColor(CagnotteFragment.pot.color)))
+        colorPreview.chipBackgroundColor = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(Color.parseColor(Shared.pot.color)))
 
         colorPreview.setOnClickListener {
             ColorPicker(this).show(parentFragmentManager, "ColorPicker")
@@ -61,11 +61,11 @@ class CagnotteSettingsDialog : DialogFragment() {
                 try {
                     store
                         .collection(FirebaseConstants.CollectionNames.Pot)
-                        .document(CagnotteFragment.potRef)
+                        .document(Shared.potRef)
                         .delete()
                         .await()
 
-                    HomeFragment.cagnottes.remove(CagnotteFragment.potRef) as Any
+                    Shared.cagnottes.remove(Shared.potRef) as Any
                 } catch (e : Exception) {}
             }
                 .navigateTo(HomeFragment(), false)
@@ -87,9 +87,9 @@ class CagnotteSettingsDialog : DialogFragment() {
             val uName : Boolean = updateName()
             val uColor : Boolean = updateColor()
 
-            CagnotteFragment.cagnotteFragment?.update(
-                if(uColor) CagnotteFragment.pot.color else null,
-                if(uName) CagnotteFragment.pot.name else null
+            Shared.cagnotteFragment?.update(
+                if(uColor) Shared.pot.color else null,
+                if(uName) Shared.pot.name else null
             )
         }
     }
@@ -97,15 +97,15 @@ class CagnotteSettingsDialog : DialogFragment() {
     private suspend fun updateName() : Boolean {
         return view?.let { v : View ->
             val newName = v.findViewById<TextView>(R.id.cagnotteSettingsCagnotteName).text.toString()
-            return@let if (CagnotteFragment.pot.name != newName && newName.isNotEmpty()) {
+            return@let if (Shared.pot.name != newName && newName.isNotEmpty()) {
                 try {
                     store
                         .collection(FirebaseConstants.CollectionNames.Pot)
-                        .document(CagnotteFragment.potRef)
+                        .document(Shared.potRef)
                         .update(Cagnotte.Attributes.NAME.string, newName)
                         .await()
 
-                    CagnotteFragment.pot.name = newName
+                    Shared.pot.name = newName
                     true
                 } catch (e : Exception) { false }
             } else false
@@ -113,15 +113,15 @@ class CagnotteSettingsDialog : DialogFragment() {
     }
 
     private suspend fun updateColor() : Boolean {
-        return if (CagnotteFragment.pot.color != color && color.isNotEmpty()) {
+        return if (Shared.pot.color != color && color.isNotEmpty()) {
             try {
                 store
                     .collection(FirebaseConstants.CollectionNames.Pot)
-                    .document(CagnotteFragment.potRef)
+                    .document(Shared.potRef)
                     .update(Cagnotte.Attributes.COLOR.string, color)
                     .await()
 
-                CagnotteFragment.pot.color = color
+                Shared.pot.color = color
                 true
             } catch (e : Exception) { false }
         } else false

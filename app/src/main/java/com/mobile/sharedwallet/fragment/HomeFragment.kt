@@ -1,10 +1,7 @@
 package com.mobile.sharedwallet.fragment
 
 import android.app.AlertDialog
-import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -12,76 +9,41 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.MainActivity
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.adapter.CagnotteAdapter
 import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.dialog.CagnotteSettingsDialog
 import com.mobile.sharedwallet.dialog.MessageDialog
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.models.WaitingPot
 import com.mobile.sharedwallet.utils.Colors
 import com.mobile.sharedwallet.utils.Overlay
+import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 
 class HomeFragment : Fragment() {
 
     private lateinit var store : FirebaseFirestore
     private var user : User? = null
-    private var overlay : Overlay? = null
+    private var overlay : Overlay? = Shared.overlay
     private lateinit var adapter : CagnotteAdapter
-
-    companion object {
-        var cagnottes : HashMap<String, Cagnotte> = HashMap()
-
-        suspend fun loadCagnotteList() {
-            // Load all pots current user is involved in
-            LoginFragment.user?.let { user : User ->
-                withContext(Dispatchers.Main) {
-                    try {
-                        val result: QuerySnapshot = FirebaseFirestore
-                            .getInstance()
-                            .collection(FirebaseConstants.CollectionNames.Pot)
-                            .whereArrayContains(Cagnotte.Attributes.UIDS.string, user.uid!!)
-                            .get()
-                            .await()
-
-                        val lCagnottes: HashMap<String, Cagnotte> = HashMap()
-                        for (document in result) {
-                            val cagnotte : Cagnotte = document.toObject()
-                            lCagnottes[document.id] = cagnotte
-                        }
-                        cagnottes = lCagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
-                    } catch (e: Exception) {
-                        cagnottes = HashMap()
-                    }
-                }
-            }
-        }
-    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = FirebaseFirestore.getInstance()
-        user = LoginFragment.user
+        user = Shared.user
 
-        adapter = CagnotteAdapter(cagnottes, ::loadCagnotteView)
+        adapter = CagnotteAdapter(Shared.cagnottes, ::loadCagnotteView)
     }
 
 
@@ -116,27 +78,20 @@ class HomeFragment : Fragment() {
                 .plus(getString(R.string.space))
                 .plus(user?.firstName)
 
-        overlay = Overlay(view)
-
         // Getting SwipeContainerLayout
         val swipe = view.findViewById<SwipeRefreshLayout>(R.id.swipeContainer)
+
         // Adding Listener
         swipe.setOnRefreshListener {
-            requireActivity().recreate()
-
-            // To keep animation for 4 seconds
-            Handler(Looper.getMainLooper()).postDelayed({ // Stop animation (This will be after 3 seconds)
+            overlay?.show()
+            MainScope().launch {
+                Utils.loadCagnotteList()
                 swipe.isRefreshing = false
-            }, 1000) // Delay in millis
+                overlay?.hide()
+            }
         }
 
         view.findViewById<ListView>(R.id.listCagnotte).adapter = adapter
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        // cagnottes.forEach { addCardToView(it.key) }
     }
 
 
@@ -160,7 +115,7 @@ class HomeFragment : Fragment() {
             // Here you get get input text from the Edittext
             val mText = input.text.toString()
             if(mText != "") {
-                if(!ArrayList(cagnottes.values.map { it.name }).contains(mText)) {
+                if(!ArrayList(Shared.cagnottes.values.map { it.name }).contains(mText)) {
                     addCagnotte(mText)
                 } else {
                     Toast.makeText(requireActivity(), getString(R.string.message_pot_name_already_exists), Toast.LENGTH_SHORT).show()
@@ -176,41 +131,14 @@ class HomeFragment : Fragment() {
     }
 
 
-    /*private fun addCardToView(cagnotteRef : String) {
-        val cagnotte = cagnottes[cagnotteRef]!!
-
-        val liste = view?.findViewById<LinearLayout>(R.id.listCagnotte)
-
-        val container : ViewGroup = layoutInflater.inflate(R.layout.activity_main, null) as ViewGroup
-
-        val cardView : View = LayoutInflater.from(requireContext()).inflate(R.layout.cagnotte_row, container,false)
-
-        cardView.findViewById<MaterialCardView>(R.id.cagnottePreview).setCardBackgroundColor(Color.parseColor(cagnotte.color))
-        cardView.findViewById<TextView>(R.id.cardTextPreview).text = cagnotte.name
-
-        val totalSpentAmountPreview = cardView.findViewById<TextView>(R.id.totalSpentAmountPreview)
-
-        var sum = 0f
-        cagnotte.totalSpent.forEach { sum += it.amountPaid }
-
-        totalSpentAmountPreview?.text = sum.toString().plus(getString(R.string.space)).plus(getString(R.string.euro_symbol))
-
-        cardView.setOnClickListener{
-            loadCagnotteView(cagnotteRef)
-        }
-
-        liste?.addView(cardView)
-    }*/
-
-
     private fun loadCagnotteView(cagnotteRef : String) {
         overlay?.show()
-        CagnotteFragment.pot = cagnottes[cagnotteRef]!!
-        CagnotteFragment.pot.totalSpent.sortByDescending { it.creationDate }
-        CagnotteFragment.potRef = cagnotteRef
+        Shared.pot = Shared.cagnottes[cagnotteRef]!!
+        Shared.pot.totalSpent.sortByDescending { it.creationDate }
+        Shared.potRef = cagnotteRef
 
         MainScope().launch {
-            CagnotteFragment.pot.participants.forEach {
+            Shared.pot.participants.forEach {
                 it.photo = Utils.fetchPhoto(it.uid)
             }
             overlay?.hide()
@@ -234,8 +162,7 @@ class HomeFragment : Fragment() {
                         .add(WaitingPot(docRef, ArrayList()).toFirebase())
                         .addOnSuccessListener { _ ->
                             val id = docRef.id
-                            cagnottes[id] = newCagnotte
-                            // addCardToView(id)
+                            Shared.cagnottes[id] = newCagnotte
                             adapter.add(Pair(id, newCagnotte))
                         }
                 }
