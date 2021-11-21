@@ -85,6 +85,7 @@ class HomeFragment : Fragment() {
             overlay?.show()
             MainScope().launch {
                 Utils.loadCagnotteList()
+                adapter.notifyDataSetChanged()
                 swipe.isRefreshing = false
                 overlay?.hide()
             }

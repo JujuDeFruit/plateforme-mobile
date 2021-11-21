@@ -151,7 +151,8 @@ class Utils {
                             val cagnotte : Cagnotte = document.toObject()
                             lCagnottes[document.id] = cagnotte
                         }
-                        lCagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
+                        if (lCagnottes.size > 1) lCagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
+                        else lCagnottes
                     } catch (e: Exception) {
                         HashMap()
                     }

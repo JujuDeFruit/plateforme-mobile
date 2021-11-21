@@ -61,10 +61,10 @@ class CagnotteAdapter(private var dataSet : HashMap<String, Cagnotte>, private v
 
     fun add(data : Pair<String, Cagnotte>) {
         dataSet[data.first] = data.second
-        if(count > 1) {
+        if(dataSet.size > 1) {
             dataSet = dataSet.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
-            mKeys.clear()
         }
+        mKeys.clear()
         mKeys.addAll(dataSet.keys)
         notifyDataSetChanged()
     }
