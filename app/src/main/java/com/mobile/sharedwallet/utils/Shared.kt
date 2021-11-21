@@ -10,6 +10,8 @@ class Shared {
     companion object {
         var overlay : Overlay? = null
 
+        var cache = CachePhoto()
+
         var user : User? = null
             get() {
                 if (field == null || field!!.isNullOrEmpty())
