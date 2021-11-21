@@ -1,22 +1,27 @@
 package com.mobile.sharedwallet.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
+import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.utils.Shared
 
-class DepenseAdapter(context : Context, private val dataSet : ArrayList<Depense>) : ArrayAdapter<Depense>(context, R.layout.depense_row) {
+class DepenseAdapter(private var dataSet : ArrayList<Depense>) : BaseAdapter() {
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val depense : Depense = dataSet[position]
+    override fun getCount(): Int = dataSet.size
 
-        val depenseView : View = convertView ?: LayoutInflater.from(context).inflate(R.layout.depense_row, parent,false)
+    override fun getItem(position: Int): Depense = dataSet[position]
+
+    override fun getItemId(p0: Int): Long = getItem(p0).title.hashCode().toLong()
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup) : View {
+        val depense : Depense = getItem(position)
+
+        val depenseView : View = convertView ?: LayoutInflater.from(parent.context).inflate(R.layout.depense_row, parent,false)
 
         // Fetch Tributaire photo
         depenseView.findViewById<ImageView>(R.id.depensePurchaserPhoto).setImageBitmap(
@@ -25,18 +30,14 @@ class DepenseAdapter(context : Context, private val dataSet : ArrayList<Depense>
         depenseView.findViewById<TextView>(R.id.depenseTitle).text = depense.title
         depenseView.findViewById<TextView>(R.id.depenseDescription).text = "► ".plus("Category")
         depenseView.findViewById<TextView>(R.id.depenseMetaText).text = depense.amountPaid.toString()
-            .plus(context.getString(R.string.space))
-            .plus(context.getString(R.string.euro_symbol))
+            .plus(parent.context.getString(R.string.space))
+            .plus(parent.context.getString(R.string.euro_symbol))
 
         return depenseView
-
     }
 
-    override fun add(`object` : Depense?) {
-        dataSet.add(`object` ?: Depense())
-        if (dataSet.size > 1) {
-            dataSet.sortByDescending { it.creationDate }
-        }
+    fun add(`object`: Depense?) {
+        dataSet.add(0, `object` ?: Depense())
         notifyDataSetChanged()
     }
 }

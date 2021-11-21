@@ -17,7 +17,9 @@ import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.HomeFragment
 import com.mobile.sharedwallet.models.Cagnotte
+import com.mobile.sharedwallet.models.WaitingPot
 import com.mobile.sharedwallet.utils.Shared
+import com.mobile.sharedwallet.utils.Utils
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -64,6 +66,19 @@ class CagnotteSettingsDialog : DialogFragment() {
                         .document(Shared.potRef)
                         .delete()
                         .await()
+
+                    store
+                        .collection(FirebaseConstants.CollectionNames.WaitingPot)
+                        .whereEqualTo(WaitingPot.Attributes.POT_REF.string, Utils.convertStringToRef(FirebaseConstants.CollectionNames.Pot, Shared.potRef))
+                        .get()
+                        .await()
+                        .forEach { doc ->
+                            store
+                                .collection(FirebaseConstants.CollectionNames.WaitingPot)
+                                .document(doc.id)
+                                .delete()
+                        }
+
 
                     Shared.cagnottes.remove(Shared.potRef) as Any
                 } catch (e : Exception) {}
