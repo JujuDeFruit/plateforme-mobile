@@ -68,7 +68,7 @@ class TributairesAdapter(private val dataSet: ArrayList<Tributaire>, private val
         }
         for (i in 0 until dataSet.size) {
             if (dataSet[i].selected) {
-                if ((price != 0f) && (size != 0) ) {
+                if (price != 0f && size != 0) {
                     if (listItemManual.isEmpty()) {
                         dataSet[i].percentageCout = 1f / size.toFloat() * 100f
                         dataSet[i].cout = BigDecimal(

@@ -26,10 +26,10 @@ class DropListAdapter(private val participants : ArrayList<Participant>) : Adapt
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        Shared.payeur = castParticipantToTributaire(participants[p2])
+        Shared.payeur = participants[p2]
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-        Shared.payeur = castParticipantToTributaire(participants[0])
+        Shared.payeur = participants[0]
     }
 }

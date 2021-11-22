@@ -80,7 +80,6 @@ class SpendFragment : Fragment() {
             }
         }
 
-        // cagnotte?.let { adapter.addAll(it.totalSpent) }
 
         // Getting SwipeContainerLayout
         val swipe = view.findViewById<SwipeRefreshLayout>(R.id.spendFragmentSwipeContainer)

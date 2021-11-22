@@ -108,25 +108,23 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
 
     }
 
-    private fun updateAllSoldes(montant: Float, tributaireSelected: ArrayList<Tributaire>) {
-        val payeur : Tributaire = Shared.payeur ?: Tributaire()
-        val moy : Float = montant / tributaireSelected.size.toFloat()
+    private fun updateAllSoldes(tributaireSelected: ArrayList<Tributaire>) {
+        val payeur : Participant = Shared.payeur ?: Participant()
         val updatedSolde = participants ?: ArrayList()
+        var sum = 0.0
         for (soldes in updatedSolde) {
-            if (soldes.uid == payeur.uid) {
-                if (tributaireSelected.map { it.uid }.contains(payeur.uid)){
-                    soldes.solde += BigDecimal((moy * (tributaireSelected.size - 1).toFloat()).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
-                }else{
-                    soldes.solde += BigDecimal((moy * tributaireSelected.size.toFloat()).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
-                }
-            }
             for (tributaire in tributaireSelected) {
                 if (soldes.uid == tributaire.uid && tributaire.uid!=payeur.uid) {
-                    soldes.solde -= BigDecimal(moy.toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
+                    sum += tributaire.cout.toDouble()
+                    soldes.solde -= BigDecimal(tributaire.cout.toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
                 }
             }
         }
-
+        updatedSolde.forEach { soldes ->
+            if (soldes.uid == payeur.uid) {
+                soldes.solde += BigDecimal(sum).setScale(2, RoundingMode.HALF_UP).toFloat()
+            }
+        }
         store
             .collection(FirebaseConstants.CollectionNames.Pot)
             .document(Shared.potRef)
@@ -136,27 +134,19 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
             }
     }
 
-    private fun repartition(float: Float, participantSelected: ArrayList<Tributaire>) : Float{
-        return float / participantSelected.size.toFloat()
-    }
 
     private fun saveNewSpend(adapter: TributairesAdapter) {
         view?.let {
             val title : String = it.findViewById<EditText>(R.id.title).text.toString()
             val selectedTributaire = adapter.peopleSelected()
-
-            for (k in selectedTributaire){
-                k.cout = BigDecimal(repartition(price, selectedTributaire).toDouble()).setScale(2, RoundingMode.HALF_UP).toFloat()
-            }
-
-            val depense = Depense(title, Shared.payeur ?: Tributaire(), price, selectedTributaire, Timestamp.now())
+            val depense = Depense(title, Shared.payeur ?: Participant(), price, selectedTributaire, Timestamp.now())
 
             store
                 .collection(FirebaseConstants.CollectionNames.Pot)
                 .document(Shared.potRef)
                 .update(Cagnotte.Attributes.TOTAL_SPENT.string, FieldValue.arrayUnion(depense.toFirebase()))
                 .addOnSuccessListener {
-                    updateAllSoldes(price, selectedTributaire)
+                    updateAllSoldes(selectedTributaire)
                     parentFrag.actualizeListDepenses(depense)
                     dismiss()
                 }
