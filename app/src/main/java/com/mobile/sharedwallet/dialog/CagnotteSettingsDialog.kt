@@ -4,14 +4,17 @@ import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
@@ -55,8 +58,10 @@ class CagnotteSettingsDialog : DialogFragment() {
         colorPreview.chipBackgroundColor = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(Color.parseColor(Shared.pot.color)))
 
         colorPreview.setOnClickListener {
-            ColorPicker(this).show(parentFragmentManager, "ColorPicker")
+            ColorPickerDialog(this).show(parentFragmentManager, "ColorPicker")
         }
+
+        view.findViewById<TextInputEditText>(R.id.cagnotteSettingsDescription).text = SpannableStringBuilder(Shared.pot.description)
 
         view.findViewById<CardView>(R.id.cagnotteSettingsDelete).setOnClickListener {
             MessageDialog(requireActivity()) {
@@ -84,7 +89,7 @@ class CagnotteSettingsDialog : DialogFragment() {
                 } catch (e : Exception) {}
             }
                 .navigateTo(HomeFragment(), false)
-                .create(getString(R.string.message_warning_delete_cagnotte))
+                .create(getString(R.string.message_warning_delete))
                 .setNeutralButton(getString(R.string.cancel), DialogInterface.OnClickListener { _, _ ->
                     dismiss()
                 })
@@ -97,15 +102,19 @@ class CagnotteSettingsDialog : DialogFragment() {
         view?.findViewById<Chip>(R.id.cagnotteSettingsColorPreview)?.chipBackgroundColor = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(Color.parseColor(color_)))
     }
 
+
     private fun updateCagnotte() {
+        Shared.overlay?.show()
         MainScope().launch {
             val uName : Boolean = updateName()
             val uColor : Boolean = updateColor()
+            updateDescription()
 
             Shared.cagnotteFragment?.update(
                 if(uColor) Shared.pot.color else null,
                 if(uName) Shared.pot.name else null
             )
+            Shared.overlay?.hide()
         }
     }
 
@@ -140,5 +149,24 @@ class CagnotteSettingsDialog : DialogFragment() {
                 true
             } catch (e : Exception) { false }
         } else false
+    }
+
+
+    private suspend fun updateDescription() {
+        view?.let { view ->
+            val desc = view.findViewById<TextInputEditText>(R.id.cagnotteSettingsDescription).text.toString()
+
+            if (Shared.pot.description != desc) {
+                try {
+                    store
+                        .collection(FirebaseConstants.CollectionNames.Pot)
+                        .document(Shared.potRef)
+                        .update(Cagnotte.Attributes.DESCRIPTION.string, desc)
+                        .await()
+
+                    Shared.pot.description = desc
+                } catch (e : Exception) { }
+            }
+        }
     }
 }

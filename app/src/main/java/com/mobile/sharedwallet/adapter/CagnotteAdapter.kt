@@ -39,8 +39,11 @@ class CagnotteAdapter(private var dataSet : HashMap<String, Cagnotte>, private v
 
         val cagnotte = getItem(position)
 
+
         cagnotteView.findViewById<MaterialCardView>(R.id.cagnottePreview).setCardBackgroundColor(Color.parseColor(cagnotte.color))
         cagnotteView.findViewById<TextView>(R.id.cardTextPreview).text = cagnotte.name
+
+        cagnotteView.findViewById<TextView>(R.id.cardTextDescription).text = cagnotte.description
 
         val totalSpentAmountPreview = cagnotteView.findViewById<TextView>(R.id.totalSpentAmountPreview)
 

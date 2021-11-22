@@ -52,6 +52,7 @@
     <string name="cagnotte">Cagnotte</string>
     <string name="cagnotte_name">Cagnotte name</string>
     <string name="cagnotte_color">Cagnotte color</string>
+    <string name="description">Description</string>
     <string name="delete">Delete</string>
     <string name="balance">Balance</string>
     <string name="category">Category</string>
@@ -73,5 +74,7 @@
     <string name="for_who">For who</string>
 
     <string name="settings">Settings</string>
+    <string name="equilibration">Equilibration</string>
+    <string name="graphs">Graphs</string>
 
 </resources>
