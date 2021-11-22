@@ -24,7 +24,7 @@ data class Depense (
     override fun toFirebase() : HashMap<String, Any?> {
         return hashMapOf(
             Attributes.TITLE.string to title,
-            Attributes.WHO_PAID.string to whoPaid,
+            Attributes.WHO_PAID.string to whoPaid.toFirebase(),
             Attributes.AMOUNT_PAID.string to amountPaid,
             Attributes.FOR_WHO.string to forWho.map { it.toFirebase() },
             Attributes.CREATION_DATE.string to creationDate

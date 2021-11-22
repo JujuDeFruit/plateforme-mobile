@@ -13,7 +13,7 @@ import com.google.android.material.slider.Slider
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.utils.Shared
 
-class ColorPicker(private val parentFragment: CagnotteSettingsDialog) : DialogFragment() {
+class ColorPickerDialog(private val parentFragment: CagnotteSettingsDialog) : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.color_picker, container, false)

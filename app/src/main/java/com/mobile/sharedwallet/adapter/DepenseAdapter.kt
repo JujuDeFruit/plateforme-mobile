@@ -1,16 +1,20 @@
 package com.mobile.sharedwallet.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.behavior.SwipeDismissBehavior
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.utils.Shared
+import kotlin.math.abs
 
-class DepenseAdapter(private var dataSet : ArrayList<Depense>) : BaseAdapter() {
+
+class DepenseAdapter(private var dataSet : ArrayList<Depense>, private val listView: ListView) : BaseAdapter() {
 
     override fun getCount(): Int = dataSet.size
 
@@ -18,6 +22,7 @@ class DepenseAdapter(private var dataSet : ArrayList<Depense>) : BaseAdapter() {
 
     override fun getItemId(p0: Int): Long = getItem(p0).title.hashCode().toLong()
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup) : View {
         val depense : Depense = getItem(position)
 
@@ -40,4 +45,10 @@ class DepenseAdapter(private var dataSet : ArrayList<Depense>) : BaseAdapter() {
         dataSet.add(0, `object` ?: Depense())
         notifyDataSetChanged()
     }
+
+    fun delete(dep : Depense) {
+        dataSet.remove(dep)
+        notifyDataSetChanged()
+    }
+
 }

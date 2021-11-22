@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.BarChart
@@ -21,6 +22,7 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.adapter.EquilibrationAdapter
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
@@ -34,6 +36,7 @@ import kotlin.math.min
 class BalanceFragment: Fragment() {
 
     private var participantListCopy : ArrayList<Participant> = ArrayList()
+    private lateinit var adapter : EquilibrationAdapter
 
     //Classe pour formatter l'axe X avec le noms des participants
     class ChartXAxisFormatter() : ValueFormatter(), Parcelable {
@@ -87,10 +90,12 @@ class BalanceFragment: Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        adapter = EquilibrationAdapter()
+    }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.balance_fragment, container, false)
     }
 
@@ -104,6 +109,7 @@ class BalanceFragment: Fragment() {
         participantListCopy = toParticipantList(participantListToString(Shared.pot.participants))
         displayGraph()
         quiDoitQuoi()
+        view.findViewById<ListView>(R.id.remboursement).adapter = adapter
     }
 
     private fun quiDoitQuoi(){
@@ -124,7 +130,7 @@ class BalanceFragment: Fragment() {
             participantListCopy[i].solde = participantListCopy[i].solde - debt;
             participantListCopy[j].solde = participantListCopy[j].solde + debt;
 
-            createTextView(participantListCopy[i].name, participantListCopy[j].name, debt.toString())
+            adapter.add(arrayListOf(participantListCopy[j].uid, participantListCopy[i].uid, debt.toString()))
             if (participantListCopy[i].solde == 0f) {
                 i++;
             }
@@ -132,17 +138,6 @@ class BalanceFragment: Fragment() {
                 j--;
             }
         }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun createTextView(p1: String, p2: String, debt: String) {
-        val liste = view?.findViewById<LinearLayout>(R.id.remboursement)
-        val newTextView = TextView(requireContext())
-        newTextView.setPadding(90, 50, 80, 50)
-        newTextView.setTextColor(Color.BLACK)
-        newTextView.textSize = 15f
-        newTextView.text = " + $p2 owes $debt to $p1"
-        liste?.addView(newTextView)
     }
 
     //Recupere les valeurs pour le graph

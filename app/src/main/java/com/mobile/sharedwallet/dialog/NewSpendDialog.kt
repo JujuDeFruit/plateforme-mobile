@@ -157,7 +157,7 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
                 .update(Cagnotte.Attributes.TOTAL_SPENT.string, FieldValue.arrayUnion(depense.toFirebase()))
                 .addOnSuccessListener {
                     updateAllSoldes(price, selectedTributaire)
-                    parentFrag.actualizeListDepenses(depense)
+                    parentFrag.actualizeListDepenses(depense, true)
                     dismiss()
                 }
                 .addOnFailureListener {

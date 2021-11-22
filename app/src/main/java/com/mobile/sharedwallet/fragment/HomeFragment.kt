@@ -150,7 +150,7 @@ class HomeFragment : Fragment() {
     private fun addCagnotte(name: String) {
         user?.let { user : User ->
             // Create a new cagnotte with a first and last name
-            val newCagnotte = Cagnotte(arrayListOf(user.uid!!), name, Colors.randomColor(), Timestamp.now(), user.uid, ArrayList(), arrayListOf(Utils.castUserToParticipant(user)))
+            val newCagnotte = Cagnotte(arrayListOf(user.uid!!), name, Colors.randomColor(), "", Timestamp.now(), user.uid, ArrayList(), arrayListOf(Utils.castUserToParticipant(user)))
 
             // Add a new document with a generated ID
             store

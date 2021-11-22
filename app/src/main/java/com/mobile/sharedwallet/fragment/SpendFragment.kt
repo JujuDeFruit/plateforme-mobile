@@ -42,7 +42,7 @@ class SpendFragment : Fragment() {
         store = FirebaseFirestore.getInstance()
         cagnotte = Shared.pot
 
-        adapter = DepenseAdapter(cagnotte!!.totalSpent)
+        //adapter = DepenseAdapter(cagnotte!!.totalSpent)
     }
 
 
@@ -72,6 +72,7 @@ class SpendFragment : Fragment() {
         }
 
         val listViewDepense =  view.findViewById<ListView>(R.id.spends)
+        adapter = DepenseAdapter(cagnotte!!.totalSpent, listViewDepense)
         listViewDepense.adapter = adapter
 
         listViewDepense.setOnItemClickListener { _, _, position, _ ->
@@ -121,8 +122,9 @@ class SpendFragment : Fragment() {
     }
 
 
-    fun actualizeListDepenses(newDep : Depense) {
-        adapter.add(newDep)
+    fun actualizeListDepenses(dep : Depense, add : Boolean) {
+        if (add) adapter.add(dep)
+        else adapter.delete(dep)
     }
 
 
