@@ -159,7 +159,7 @@ class BalanceFragment: Fragment() {
         val entries = gatherInfo()
         var names: ArrayList<String> = ArrayList()
         participantListCopy?.forEach {
-            names.add(it.name)
+            names.add("→   " + it.name + ", " +it.solde.toString())
         }
 
         var axeAbs = ChartXAxisFormatter(names)
@@ -171,7 +171,7 @@ class BalanceFragment: Fragment() {
         var barChart = view?.findViewById<HorizontalBarChart>(R.id.barChart)
         val data = BarData(barDataSet)
         data.barWidth = 0.5f
-        data.setValueTextSize(15.0f)
+        data.setValueTextSize(12.0f)
         if (barChart != null) {
             barChart.data = data
 
