@@ -42,7 +42,7 @@ class SpendFragment : Fragment() {
         store = FirebaseFirestore.getInstance()
         cagnotte = Shared.pot
 
-        adapter = DepenseAdapter(requireContext(), cagnotte!!.totalSpent)
+        adapter = DepenseAdapter(cagnotte!!.totalSpent)
     }
 
 
@@ -75,12 +75,12 @@ class SpendFragment : Fragment() {
         listViewDepense.adapter = adapter
 
         listViewDepense.setOnItemClickListener { _, _, position, _ ->
-            adapter.getItem(position)?.let {
+            adapter.getItem(position).let {
                 DepenseDialog(it).show(parentFragmentManager, "DialogFragment".plus(position))
             }
         }
 
-        cagnotte?.let { adapter.addAll(it.totalSpent) }
+        // cagnotte?.let { adapter.addAll(it.totalSpent) }
 
         // Getting SwipeContainerLayout
         val swipe = view.findViewById<SwipeRefreshLayout>(R.id.spendFragmentSwipeContainer)
@@ -90,6 +90,7 @@ class SpendFragment : Fragment() {
             overlay?.show()
             MainScope().launch {
                 loadDepense()
+                adapter.notifyDataSetChanged()
                 swipe.isRefreshing = false
                 overlay?.hide()
             }

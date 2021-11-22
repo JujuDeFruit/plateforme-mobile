@@ -15,6 +15,7 @@ import com.mobile.sharedwallet.fragment.HomeFragment
 import com.mobile.sharedwallet.fragment.PortalFragment
 import com.mobile.sharedwallet.models.User
 import com.mobile.sharedwallet.models.WaitingPot
+import com.mobile.sharedwallet.utils.CachePhoto
 import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
@@ -37,6 +38,9 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initialisation() {
+
+        Shared.cache = CachePhoto()
+
         val transaction : FragmentTransaction = supportFragmentManager
             .beginTransaction()
             .disallowAddToBackStack()

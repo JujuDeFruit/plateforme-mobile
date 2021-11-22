@@ -63,6 +63,9 @@ class Utils {
         }
 
         suspend fun fetchPhoto(uid : String) : Bitmap? {
+            val photoInCache : Bitmap? = Shared.cache.get(uid)
+            if(photoInCache != null) return photoInCache
+
             return try {
                 val byteArray : ByteArray = FirebaseStorage
                         .getInstance()
@@ -72,8 +75,9 @@ class Utils {
                         .await()
 
                 val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                Bitmap.createScaledBitmap(bitmap, bitmap.width, bitmap.height, false)
-
+                val photo = Bitmap.createScaledBitmap(bitmap, bitmap.width, bitmap.height, false)
+                Shared.cache.put(uid, photo)
+                photo
             } catch (_ : Exception) {
                 // If exception is catched then file does not exist on Storage
                 null
@@ -151,7 +155,8 @@ class Utils {
                             val cagnotte : Cagnotte = document.toObject()
                             lCagnottes[document.id] = cagnotte
                         }
-                        lCagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
+                        if (lCagnottes.size > 1) lCagnottes.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
+                        else lCagnottes
                     } catch (e: Exception) {
                         HashMap()
                     }

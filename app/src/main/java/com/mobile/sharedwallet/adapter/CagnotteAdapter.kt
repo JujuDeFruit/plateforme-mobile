@@ -21,7 +21,7 @@ class CagnotteAdapter(private var dataSet : HashMap<String, Cagnotte>, private v
 
 
     override fun getCount(): Int {
-        return mKeys.size
+        return dataSet.size
     }
 
     override fun getItem(p0: Int): Cagnotte {
@@ -61,7 +61,9 @@ class CagnotteAdapter(private var dataSet : HashMap<String, Cagnotte>, private v
 
     fun add(data : Pair<String, Cagnotte>) {
         dataSet[data.first] = data.second
-        dataSet = dataSet.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
+        if(dataSet.size > 1) {
+            dataSet = dataSet.toList().sortedByDescending { (_, v) -> v.creationDate }.toMap() as HashMap<String, Cagnotte>
+        }
         mKeys.clear()
         mKeys.addAll(dataSet.keys)
         notifyDataSetChanged()
