@@ -5,7 +5,7 @@ import com.google.firebase.Timestamp
 // Users are stored with their uID, that is why there are strings
 data class Depense (
     val title : String,
-    val whoPaid : Tributaire,
+    val whoPaid : Participant,
     val amountPaid : Float,
     val forWho : List<Tributaire>,
     val creationDate : Timestamp
@@ -19,7 +19,7 @@ data class Depense (
         CREATION_DATE("creationDate")
     }
 
-    constructor() : this("", Tributaire(), 0.0f, ArrayList<Tributaire>(), Timestamp(0, 0))
+    constructor() : this("", Participant(), 0.0f, ArrayList<Tributaire>(), Timestamp(0, 0))
 
     override fun toFirebase() : HashMap<String, Any?> {
         return hashMapOf(

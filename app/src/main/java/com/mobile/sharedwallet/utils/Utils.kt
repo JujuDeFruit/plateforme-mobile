@@ -109,7 +109,7 @@ class Utils {
 
         fun castUserToParticipant(user : User) : Participant {
             return user.uid?.let {
-                return@let Participant(user.firstName!!, it,0f, false)
+                return@let Participant(user.firstName!!, it,0f )
             } ?: Participant()
         }
 

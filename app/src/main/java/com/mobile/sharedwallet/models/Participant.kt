@@ -6,7 +6,6 @@ data class Participant(
     val name : String,
     val uid : String,
     var solde : Float,
-    var selected : Boolean,
     var photo : Bitmap? = null
     ) : Model {
 
@@ -16,7 +15,7 @@ data class Participant(
         SOLDE("solde"),
     }
 
-    constructor() : this("","",0f,false)
+    constructor() : this("","",0f)
 
     override fun toFirebase(): HashMap<String, Any?> {
         return hashMapOf(

@@ -2,6 +2,7 @@ package com.mobile.sharedwallet.utils
 
 import com.mobile.sharedwallet.fragment.CagnotteFragment
 import com.mobile.sharedwallet.models.Cagnotte
+import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.models.Tributaire
 import com.mobile.sharedwallet.models.User
 
@@ -33,6 +34,6 @@ class Shared {
 
         var cagnotteFragment : CagnotteFragment? = null
 
-        var payeur : Tributaire? = null
+        var payeur : Participant? = null
     }
 }
