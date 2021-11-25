@@ -43,6 +43,6 @@
     <string name="message_error_add_participant">An error occurred while adding a participant to the pot, please retry.</string>
     <string name="message_error_create_profile">An error occurred while creating your profile, please retry.</string>
 
-    <string name="message_warning_delete_cagnotte">This action cannot be undone. Are you sure ?</string>
+    <string name="message_warning_delete">This action cannot be undone. Are you sure ?</string>
 
 </resources>

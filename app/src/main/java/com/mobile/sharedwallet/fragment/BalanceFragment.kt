@@ -9,10 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
@@ -21,6 +25,7 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mobile.sharedwallet.R
+import com.mobile.sharedwallet.adapter.EquilibrationAdapter
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
@@ -34,15 +39,16 @@ import kotlin.math.min
 class BalanceFragment: Fragment() {
 
     private var participantListCopy : ArrayList<Participant> = ArrayList()
+    private lateinit var adapter : EquilibrationAdapter
 
     //Classe pour formatter l'axe X avec le noms des participants
     class ChartXAxisFormatter() : ValueFormatter(), Parcelable {
 
+        private var names = arrayOf("Julien", "Robin", "Remi")
 
         constructor(a:ArrayList<String>) :this(){
             names = a.toTypedArray()
         }
-        private var names = arrayOf("Julien", "Robin", "Remi")
 
         constructor(parcel: Parcel) : this() {
             names = parcel.createStringArray() as Array<String>
@@ -87,10 +93,12 @@ class BalanceFragment: Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        adapter = EquilibrationAdapter()
+    }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.balance_fragment, container, false)
     }
 
@@ -104,6 +112,7 @@ class BalanceFragment: Fragment() {
         participantListCopy = toParticipantList(participantListToString(Shared.pot.participants))
         displayGraph()
         quiDoitQuoi()
+        view.findViewById<ListView>(R.id.remboursement).adapter = adapter
     }
 
     private fun quiDoitQuoi(){
@@ -124,7 +133,7 @@ class BalanceFragment: Fragment() {
             participantListCopy[i].solde = participantListCopy[i].solde - debt;
             participantListCopy[j].solde = participantListCopy[j].solde + debt;
 
-            createTextView(participantListCopy[i].name, participantListCopy[j].name, debt.toString())
+            adapter.add(arrayListOf(participantListCopy[j].uid, participantListCopy[i].uid, debt.toString()))
             if (participantListCopy[i].solde == 0f) {
                 i++;
             }
@@ -132,17 +141,6 @@ class BalanceFragment: Fragment() {
                 j--;
             }
         }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun createTextView(p1: String, p2: String, debt: String) {
-        val liste = view?.findViewById<LinearLayout>(R.id.remboursement)
-        val newTextView = TextView(requireContext())
-        newTextView.setPadding(90, 50, 80, 50)
-        newTextView.setTextColor(Color.BLACK)
-        newTextView.textSize = 15f
-        newTextView.text = " + $p2 owes $debt to $p1"
-        liste?.addView(newTextView)
     }
 
     //Recupere les valeurs pour le graph
@@ -161,40 +159,49 @@ class BalanceFragment: Fragment() {
         val entries = gatherInfo()
         var names: ArrayList<String> = ArrayList()
         participantListCopy?.forEach {
-            names.add(it.name)
+            names.add("→   " + it.name + ", " +it.solde.toString())
         }
 
         var axeAbs = ChartXAxisFormatter(names)
         var axeOrd = ChartYValueFormatter()
 
         val barDataSet = BarDataSet(entries, "Graph of the costs")
-        barDataSet.setColors(*ColorTemplate.COLORFUL_COLORS)
+        barDataSet.setColors(*ColorTemplate.PASTEL_COLORS)
 
-        var barChart = view?.findViewById<BarChart>(R.id.barChart)
+        var barChart = view?.findViewById<HorizontalBarChart>(R.id.barChart)
         val data = BarData(barDataSet)
+        data.barWidth = 0.5f
+        data.setValueTextSize(12.0f)
         if (barChart != null) {
             barChart.data = data
-        }
-        else {
-            println("barchart null")
-        }
 
-        if (barChart != null) {
+            // affiche le repere du graph toutes les dizaines
             barChart.axisLeft.setDrawGridLines(false)
-            barChart.xAxis.setDrawGridLines(false)
+            //trace un trait d'axe au milieu de chaque entree
+            barChart.xAxis.setDrawGridLines(true)
+            //
             barChart.xAxis.setDrawAxisLine(false)
             barChart.xAxis.granularity = 1.0f
             barChart.xAxis.valueFormatter = axeAbs
             barChart.axisLeft.valueFormatter = axeOrd
-            //remove right y-axis
+            //taille du texte des participants
+            barChart.xAxis.textSize = 15.0f
+            barChart.axisLeft.textSize = 8.0f
+            //Inverser la position labels/graph
+            //barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+
+            //axe y de droite
             barChart.axisRight.isEnabled = false
-            //remove legend
             barChart.legend.isEnabled = false
-            //remove description label
             barChart.description.isEnabled = false
-            //add animation
-            barChart.animateY(1000)
+            barChart.setDrawValueAboveBar(true)
+
+            //duree de l'anim
+            barChart.animateY(500)
             barChart.invalidate()
+        }
+        else {
+            println("barchart not found !")
         }
     }
     //Deserializer de la liste pour en faire une copie
