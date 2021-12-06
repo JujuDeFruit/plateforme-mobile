@@ -153,7 +153,6 @@ class RegisterFragment: Fragment() {
     }
 
     private fun createUser() {
-
         user?.let {
             MainScope().launch {
                 val myUser : User = Utils.createUserFromFirebaseUser(user, false)

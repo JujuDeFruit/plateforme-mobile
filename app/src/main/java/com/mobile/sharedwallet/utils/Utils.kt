@@ -1,17 +1,21 @@
 package com.mobile.sharedwallet.utils
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.fragment.app.FragmentActivity
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.mobile.sharedwallet.MainActivity
+import com.mobile.sharedwallet.activity.GoogleSignInActivity
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.PortalFragment
 import com.mobile.sharedwallet.models.Cagnotte
@@ -49,9 +53,12 @@ class Utils {
                 .plus(lN)
         }
 
-        private fun getFirstnameAndLastnameFromDisplayName(displayName: String?) : HashMap<String, String> {
+        private fun getFirstnameAndLastnameFromDisplayName(displayName: String?, googleAuth : Boolean = false) : HashMap<String, String> {
             return if (!displayName.isNullOrEmpty()) {
-                val fNAndLN : List<String> = displayName.split(FirebaseConstants.String.DisplayNameSeparator)
+                val fNAndLN : List<String> = displayName.split(
+                    if (!googleAuth) FirebaseConstants.String.DisplayNameSeparator
+                    else " "
+                )
                 hashMapOf(
                     User.Attributes.FIRST_NAME.string to fNAndLN.first(),
                     User.Attributes.LAST_NAME.string to fNAndLN.last()
@@ -86,7 +93,7 @@ class Utils {
 
         suspend fun createUserFromFirebaseUser(firebaseUser : FirebaseUser?, loadPhoto : Boolean = false) : User {
             return firebaseUser?.let {
-                val names : HashMap<String, String> = getFirstnameAndLastnameFromDisplayName(it.displayName)
+                val names : HashMap<String, String> = getFirstnameAndLastnameFromDisplayName(it.displayName, it.zzf() == "google.com")
                 var photo : Bitmap? = null
                 if(loadPhoto) {
                     photo = fetchPhoto(it.uid)
@@ -118,7 +125,7 @@ class Utils {
         }
 
         fun castParticipantListToTributaireList( participant : ArrayList<Participant>):  ArrayList<Tributaire> {
-            var tributaire  = ArrayList<Tributaire>()
+            val tributaire  = ArrayList<Tributaire>()
             for (element in participant){
                 tributaire.add(castParticipantToTributaire(element))
             }
@@ -127,10 +134,6 @@ class Utils {
 
         fun convertStringToRef(collectionName : String, ref : String) : DocumentReference {
             return FirebaseFirestore.getInstance().collection(collectionName).document(ref)
-        }
-
-        fun getLastRefFromRef(ref : String) : String {
-            return ref.split("/").last()
         }
 
         fun dateFormatter(ts : Timestamp) : String {
@@ -160,6 +163,19 @@ class Utils {
                     } catch (e: Exception) {
                         HashMap()
                     }
+                }
+            }
+        }
+
+        fun updateUser(act: Activity, user : FirebaseUser?) {
+            user?.let {
+                MainScope().launch {
+                    Shared.user = createUserFromFirebaseUser(it, true)
+                    if (act !is MainActivity) {
+                        act.finish()
+                    }
+                    Shared.user?.let { u : User -> (act as MainActivity).checkIfInvitation(u) }
+                    Shared.overlay?.hide()
                 }
             }
         }

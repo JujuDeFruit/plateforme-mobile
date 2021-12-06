@@ -61,7 +61,7 @@ class CagnotteSettingsDialog : DialogFragment() {
             ColorPickerDialog(this).show(parentFragmentManager, "ColorPicker")
         }
 
-        view.findViewById<TextInputEditText>(R.id.cagnotteSettingsDescription).text = SpannableStringBuilder(Shared.pot.description)
+        view.findViewById<EditText>(R.id.cagnotteSettingsDescription).text = SpannableStringBuilder(Shared.pot.description)
 
         view.findViewById<CardView>(R.id.cagnotteSettingsDelete).setOnClickListener {
             MessageDialog(requireActivity()) {
@@ -154,7 +154,7 @@ class CagnotteSettingsDialog : DialogFragment() {
 
     private suspend fun updateDescription() {
         view?.let { view ->
-            val desc = view.findViewById<TextInputEditText>(R.id.cagnotteSettingsDescription).text.toString()
+            val desc = view.findViewById<EditText>(R.id.cagnotteSettingsDescription).text.toString()
 
             if (Shared.pot.description != desc) {
                 try {

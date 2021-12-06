@@ -115,16 +115,39 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/save"
-            android:textColor="@color/primary"
-            app:strokeColor="@color/primary"
-            app:cornerRadius="20dp"
-            style="?attr/materialButtonOutlinedStyle"
-            android:id="@+id/saveButton"
-            android:layout_margin="8dp" />
+            android:orientation="horizontal"
+            android:layout_margin="8dp">
+
+            <androidx.legacy.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textColor="@color/error"
+                app:strokeColor="@color/error"
+                app:cornerRadius="20dp"
+                android:layout_marginEnd="8dp"
+                style="?attr/materialButtonOutlinedStyle"
+                android:id="@+id/newSpendDialogCancel" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                android:textColor="@color/primary"
+                app:strokeColor="@color/primary"
+                app:cornerRadius="20dp"
+                style="?attr/materialButtonOutlinedStyle"
+                android:id="@+id/saveButton" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
