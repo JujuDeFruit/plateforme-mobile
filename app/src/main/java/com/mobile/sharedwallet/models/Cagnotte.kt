@@ -9,7 +9,7 @@ data class Cagnotte(
     var description : String,
     val creationDate: Timestamp,
     val createdBy : String,
-    val totalSpent: ArrayList<Depense>,
+    var totalSpent: ArrayList<Depense>,
     val participants: ArrayList<Participant>,
     ) : Model {
 

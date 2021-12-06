@@ -1,6 +1,7 @@
 package com.mobile.sharedwallet.fragment
 
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,15 +9,14 @@ import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.transition.MaterialFade
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.adapter.DepenseAdapter
 import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.dialog.AddUserToPotDialog
-import com.mobile.sharedwallet.dialog.CagnotteSettingsDialog
-import com.mobile.sharedwallet.dialog.DepenseDialog
-import com.mobile.sharedwallet.dialog.NewSpendDialog
+import com.mobile.sharedwallet.dialog.*
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.models.User
@@ -41,8 +41,6 @@ class SpendFragment : Fragment() {
 
         store = FirebaseFirestore.getInstance()
         cagnotte = Shared.pot
-
-        //adapter = DepenseAdapter(cagnotte!!.totalSpent)
     }
 
 
@@ -55,13 +53,27 @@ class SpendFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<FloatingActionButton>(R.id.newSpendButton).setOnClickListener {
-            NewSpendDialog(this).show(parentFragmentManager, "NewSpendFragment")
+            if (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) {
+                NewSpendDialog(this).show(parentFragmentManager, "NewSpendFragment")
+            }
+            else {
+                val dialog = MessageDialog(requireActivity())
+                    .verifyAccountDialog()
+                dialog.show()
+            }
         }
 
         view.findViewById<FloatingActionButton>(R.id.addPerson).setOnClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
-                val usersEmails = fetchUsersEmails()
-                AddUserToPotDialog(cagnotte, usersEmails).show(parentFragmentManager, "AddUserToPotDialog")
+            if (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val usersEmails = fetchUsersEmails()
+                    AddUserToPotDialog(cagnotte, usersEmails).show(parentFragmentManager, "AddUserToPotDialog")
+                }
+            }
+            else {
+                val dialog = MessageDialog(requireActivity())
+                    .verifyAccountDialog()
+                dialog.show()
             }
         }
 
@@ -89,7 +101,7 @@ class SpendFragment : Fragment() {
         swipe.setOnRefreshListener {
             overlay?.show()
             MainScope().launch {
-                loadDepense()
+                reloadDepense()
                 adapter.notifyDataSetChanged()
                 swipe.isRefreshing = false
                 overlay?.hide()
@@ -127,20 +139,23 @@ class SpendFragment : Fragment() {
     }
 
 
-    suspend fun loadDepense() {
-        Shared.pot = try {
-            store
+    private suspend fun reloadDepense() {
+        val cagnotte : Cagnotte = try {
+            val data = store
                 .collection(FirebaseConstants.CollectionNames.Pot)
                 .document(Shared.potRef)
                 .get()
                 .await()
                 .toObject<Cagnotte>() ?: Cagnotte()
+            Shared.pot = data
+            data
         } catch (e : Exception) { Cagnotte() }
 
-        Shared.pot.totalSpent.sortByDescending { it.creationDate }
+        cagnotte.totalSpent.sortByDescending { it.creationDate }
 
         Shared.pot.participants.forEach {
             it.photo = Utils.fetchPhoto(it.uid)
         }
+        adapter.refresh(cagnotte.totalSpent)
     }
 }

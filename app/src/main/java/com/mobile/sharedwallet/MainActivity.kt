@@ -31,13 +31,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Shared.overlay = Overlay(this)
-
         initialisation()
     }
 
 
     private fun initialisation() {
+
+        Shared.overlay = Overlay(this)
 
         Shared.cache = CachePhoto()
 
@@ -51,10 +51,7 @@ class MainActivity : AppCompatActivity() {
             transaction.add(layout, PortalFragment())
             transaction.commit()
         } else {
-            GlobalScope.launch {
-                Shared.user = Utils.createUserFromFirebaseUser(user, true)
-                checkIfInvitation(Shared.user!!)
-            }
+            Utils.updateUser(this, user)
         }
     }
 

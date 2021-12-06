@@ -81,7 +81,7 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
 
         //Spinner Payeur
         var spinnerAdapter = DropListAdapter(participants!!)
-        spinnerAdapter.generateSpinner(requireContext(),view)
+        spinnerAdapter.generateSpinner(requireContext(), view)
 
         //Price real time
         view.findViewById<EditText>(R.id.montant).addTextChangedListener(object : TextWatcher {
@@ -99,7 +99,7 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
         })
 
 
-
+        view.findViewById<MaterialButton>(R.id.newSpendDialogCancel).setOnClickListener { dismiss() }
     }
 
     override fun onStart() {

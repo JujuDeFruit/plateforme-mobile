@@ -24,6 +24,7 @@
 
     <!-- Log -->
     <string name="log_in">Log in</string>
+    <string name="google">Google</string>
     <string name="register">Register</string>
 
     <!-- Register -->

@@ -155,24 +155,29 @@
                     android:layout_height="match_parent"
                     app:layout_flexBasisPercent="60%"
                     app:flexDirection="row"
-                    app:alignItems="center">
+                    app:alignItems="center"
+                    app:justifyContent="space_between">
 
                     <TextView
                         android:id="@+id/isEmailVerified"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
+                        app:layout_flexBasisPercent="50%"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginStart="10dp"
                         android:textAppearance="?attr/textAppearanceBody2" />
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
+                        android:layout_width="0dp"
+                        app:layout_flexBasisPercent="50%"
+                        android:layout_height="wrap_content"
                         android:id="@+id/reSendEmailEditProfile"
                         app:srcCompat="@drawable/ic_baseline_email_24"
                         android:backgroundTint="@color/warning"
                         app:tint="@color/black"
                         app:borderWidth="0dp"
-                        android:tooltipText="@string/re_send_email"/>
+
+                        android:contentDescription="@string/email"
+                        android:tooltipText="@string/re_send_email" />
 
                 </com.google.android.flexbox.FlexboxLayout>
 
@@ -197,7 +202,8 @@
                 android:clickable="true"
                 app:borderWidth="0dp"
                 app:srcCompat="@drawable/ic_outline_cancel_24"
-                android:focusable="true" />
+                android:focusable="true"
+                android:contentDescription="@string/cancel"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:layout_width="wrap_content"
@@ -206,6 +212,7 @@
                 android:backgroundTint="@color/info"
                 app:tint="@color/black"
                 android:tooltipText="@string/submit"
+                android:contentDescription="@string/submit"
                 android:clickable="true"
                 app:borderWidth="0dp"
                 app:srcCompat="@drawable/ic_baseline_arrow_forward_24"
