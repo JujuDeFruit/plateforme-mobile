@@ -38,7 +38,7 @@ class DepenseAdapter(private var dataSet : ArrayList<Depense>, private val listV
             }
         )
         depenseView.findViewById<TextView>(R.id.depenseTitle).text = depense.title
-        depenseView.findViewById<TextView>(R.id.depenseDescription).text = "► ".plus("Category")
+        depenseView.findViewById<TextView>(R.id.depenseDescription).text = depense.depCategory
         depenseView.findViewById<TextView>(R.id.depenseMetaText).text = depense.amountPaid.toString()
             .plus(parent.context.getString(R.string.space))
             .plus(parent.context.getString(R.string.euro_symbol))

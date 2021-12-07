@@ -35,7 +35,7 @@ class DepenseDialog(private val depense : Depense) : DialogFragment() {
 
         view.findViewById<TextView>(R.id.depenseDialogTitle).text = depense.title
         view.findViewById<TextView>(R.id.depenseDialogCreationDate).text = Utils.dateFormatter(depense.creationDate)
-        view.findViewById<TextView>(R.id.depenseDialogCategory).text = "Category"
+        view.findViewById<TextView>(R.id.depenseDialogCategory).text = depense.depCategory
         view.findViewById<TextView>(R.id.depenseDialogPayedBy).text = depense.whoPaid.name
         view.findViewById<TextView>(R.id.depenseDialogAmountPaid).text = depense.amountPaid.toString().plus(getString(R.string.euro_symbol))
         view.findViewById<ListView>(R.id.depenseDialogForWho).adapter = ArrayAdapter(requireContext(), R.layout.for_who_textview, depense.forWho)

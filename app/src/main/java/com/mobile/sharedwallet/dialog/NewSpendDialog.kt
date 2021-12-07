@@ -7,7 +7,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -138,8 +140,9 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
     private fun saveNewSpend(adapter: TributairesAdapter) {
         view?.let {
             val title : String = it.findViewById<EditText>(R.id.title).text.toString()
+            val categ : String = it.findViewById<Spinner>(R.id.spinnerCategory).selectedItem.toString()
             val selectedTributaire = adapter.peopleSelected()
-            val depense = Depense(title, Shared.payeur ?: Participant(), price, selectedTributaire, Timestamp.now())
+            val depense = Depense(title, Shared.payeur ?: Participant(), price, selectedTributaire, Timestamp.now(),categ)
 
             store
                 .collection(FirebaseConstants.CollectionNames.Pot)

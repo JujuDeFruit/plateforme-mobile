@@ -35,6 +35,10 @@ import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import kotlin.math.abs
 import kotlin.math.min
+import com.github.mikephil.charting.components.LimitLine
+
+
+
 
 class BalanceFragment: Fragment() {
 
@@ -164,14 +168,16 @@ class BalanceFragment: Fragment() {
 
         var axeAbs = ChartXAxisFormatter(names)
         var axeOrd = ChartYValueFormatter()
+        val ll1 = LimitLine(0f, "")
+        ll1.lineWidth = 2f;
 
         val barDataSet = BarDataSet(entries, "Graph of the costs")
         barDataSet.setColors(*ColorTemplate.PASTEL_COLORS)
 
         var barChart = view?.findViewById<HorizontalBarChart>(R.id.barChart)
         val data = BarData(barDataSet)
-        data.barWidth = 0.5f
-        data.setValueTextSize(12.0f)
+        data.barWidth = 0.3f
+        data.setValueTextSize(10.0f)
         if (barChart != null) {
             barChart.data = data
 
@@ -187,6 +193,7 @@ class BalanceFragment: Fragment() {
             //taille du texte des participants
             barChart.xAxis.textSize = 15.0f
             barChart.axisLeft.textSize = 8.0f
+            barChart.axisLeft.addLimitLine(ll1)
             //Inverser la position labels/graph
             //barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
 
