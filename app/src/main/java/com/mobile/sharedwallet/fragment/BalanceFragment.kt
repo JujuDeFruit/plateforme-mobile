@@ -1,22 +1,16 @@
 package com.mobile.sharedwallet.fragment
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.ListView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
@@ -29,15 +23,9 @@ import com.mobile.sharedwallet.adapter.EquilibrationAdapter
 import com.mobile.sharedwallet.models.Participant
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import kotlin.math.abs
 import kotlin.math.min
-import com.github.mikephil.charting.components.LimitLine
-
-
 
 
 class BalanceFragment: Fragment() {
@@ -124,8 +112,8 @@ class BalanceFragment: Fragment() {
         participantListCopy.sortByDescending { it.solde }
 
         // on retire a toute la liste des participants le montant moyen
-        var i = 0;
-        var j = participantListCopy.size - 1;
+        var i = 0
+        var j = participantListCopy.size - 1
         var debt : Float
 
         while (i < j) {
@@ -134,15 +122,15 @@ class BalanceFragment: Fragment() {
                 abs(participantListCopy[j].solde)
             )
 
-            participantListCopy[i].solde = participantListCopy[i].solde - debt;
-            participantListCopy[j].solde = participantListCopy[j].solde + debt;
+            participantListCopy[i].solde = participantListCopy[i].solde - debt
+            participantListCopy[j].solde = participantListCopy[j].solde + debt
 
             adapter.add(arrayListOf(participantListCopy[j].uid, participantListCopy[i].uid, debt.toString()))
             if (participantListCopy[i].solde == 0f) {
-                i++;
+                i++
             }
             if (participantListCopy[j].solde == 0f) {
-                j--;
+                j--
             }
         }
     }
@@ -151,7 +139,7 @@ class BalanceFragment: Fragment() {
     private fun gatherInfo() : ArrayList<BarEntry>{
         val entries: ArrayList<BarEntry> = ArrayList()
         var i = 0f
-        participantListCopy?.forEach{
+        participantListCopy.forEach{
             entries.add(BarEntry(i, it.solde))
             i += 1.0f
         }
@@ -161,20 +149,21 @@ class BalanceFragment: Fragment() {
     //Affiche le graph avec ses proprietes
     private fun displayGraph(){
         val entries = gatherInfo()
-        var names: ArrayList<String> = ArrayList()
-        participantListCopy?.forEach {
-            names.add("→   " + it.name + ", " +it.solde.toString())
+        val names: ArrayList<String> = ArrayList()
+        participantListCopy.forEach {
+            val amount = (it.solde).toString().plus(" €")
+            names.add("→  " + it.name + " : " + amount)
         }
 
-        var axeAbs = ChartXAxisFormatter(names)
-        var axeOrd = ChartYValueFormatter()
+        val axeAbs = ChartXAxisFormatter(names)
+        val axeOrd = ChartYValueFormatter()
         val ll1 = LimitLine(0f, "")
-        ll1.lineWidth = 2f;
+        ll1.lineWidth = 2f
 
         val barDataSet = BarDataSet(entries, "Graph of the costs")
         barDataSet.setColors(*ColorTemplate.PASTEL_COLORS)
 
-        var barChart = view?.findViewById<HorizontalBarChart>(R.id.barChart)
+        val barChart = view?.findViewById<HorizontalBarChart>(R.id.barChart)
         val data = BarData(barDataSet)
         data.barWidth = 0.3f
         data.setValueTextSize(10.0f)
@@ -219,6 +208,6 @@ class BalanceFragment: Fragment() {
     //Reserializer de la liste pour copie profonde
     private fun toParticipantList(string: String): ArrayList<Participant> {
         val itemType = object : TypeToken<ArrayList<Participant>>() {}.type
-        return Gson().fromJson<ArrayList<Participant>>(string, itemType)
+        return Gson().fromJson(string, itemType)
     }
 }

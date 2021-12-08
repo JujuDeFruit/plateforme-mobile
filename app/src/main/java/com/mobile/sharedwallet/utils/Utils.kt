@@ -4,22 +4,20 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.fragment.app.FragmentActivity
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.mobile.sharedwallet.MainActivity
-import com.mobile.sharedwallet.activity.GoogleSignInActivity
 import com.mobile.sharedwallet.constants.FirebaseConstants
 import com.mobile.sharedwallet.fragment.PortalFragment
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Participant
+import com.mobile.sharedwallet.models.Tributaire
 import com.mobile.sharedwallet.models.User
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
@@ -27,7 +25,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import com.mobile.sharedwallet.models.Tributaire as Tributaire
 
 class Utils {
 

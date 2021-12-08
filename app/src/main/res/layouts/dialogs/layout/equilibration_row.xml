@@ -35,7 +35,6 @@
         android:textColor="@color/black" />
 
     <ImageView
-        android:id="@+id/equilibrationRowArrow"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -32,10 +32,8 @@
     <string name="email_sent">"E-mail sent"</string>
     <string name="re_send_email">Re-send e-mail</string>
     <string name="password">Password</string>
-    <string name="repeat_password">Repeat password</string>
     <string name="reset_password">Reset password</string>
     <string name="reset_password_question"><u>Reset password ?</u></string>
-    <string name="create_account">Create account</string>
 
     <!-- Profile -->
     <string name="my_profile">My profile</string>
@@ -54,7 +52,6 @@
     <string name="cagnotte_name">Cagnotte name</string>
     <string name="cagnotte_color">Cagnotte color</string>
     <string name="description">Description</string>
-    <string name="delete">Delete</string>
     <string name="balance">Balance</string>
     <string name="category">Category</string>
     <string name="add_user">Add new user</string>
@@ -70,7 +67,6 @@
     <string name="euro_symbol">€</string>
 
     <string name="creation_date">Creation date</string>
-    <string name="created_by">Created by</string>
     <string name="paid_by">Paid by</string>
     <string name="for_who">For who</string>
 

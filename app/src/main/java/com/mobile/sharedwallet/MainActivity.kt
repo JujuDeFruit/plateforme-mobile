@@ -19,8 +19,6 @@ import com.mobile.sharedwallet.utils.CachePhoto
 import com.mobile.sharedwallet.utils.Overlay
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class MainActivity : AppCompatActivity() {

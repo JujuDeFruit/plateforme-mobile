@@ -34,13 +34,10 @@
 
     <string name="message_profile_successfully_updated">Your profile has been successfully updated !</string>
 
-    <string name="message_error_fetch_photo">An error occurred while fetching picture profile. Please retry !</string>
     <string name="message_error_update_photo">An error occurred while updating profile picture, please retry.</string>
     <string name="message_error_update_profile">An error occurred while updating profile, please retry.</string>
-    <string name="message_error_fetch_cagnottes">An error occurred while getting pots, please retry.</string>
     <string name="message_error_add_new_spend">An error occurred while adding new spend, please retry.</string>
     <string name="message_error_update_balances">An error occurred while updating balance, please retry.</string>
-    <string name="message_error_add_participant">An error occurred while adding a participant to the pot, please retry.</string>
     <string name="message_error_create_profile">An error occurred while creating your profile, please retry.</string>
 
     <string name="message_warning_delete">This action cannot be undone. Are you sure ?</string>

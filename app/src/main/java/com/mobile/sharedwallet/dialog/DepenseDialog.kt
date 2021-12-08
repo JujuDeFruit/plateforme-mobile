@@ -2,7 +2,6 @@ package com.mobile.sharedwallet.dialog
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,19 +10,13 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.DialogFragment
-import com.google.android.material.transition.MaterialFadeThrough
-import com.google.android.material.transition.MaterialSharedAxis
-import com.google.android.material.transition.SlideDistanceProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.constants.FirebaseConstants
-import com.mobile.sharedwallet.fragment.HomeFragment
 import com.mobile.sharedwallet.models.Cagnotte
 import com.mobile.sharedwallet.models.Depense
-import com.mobile.sharedwallet.models.WaitingPot
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
-import kotlinx.coroutines.tasks.await
 
 class DepenseDialog(private val depense : Depense) : DialogFragment() {
 
