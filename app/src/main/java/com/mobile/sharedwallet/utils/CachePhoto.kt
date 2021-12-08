@@ -1,7 +1,7 @@
 package com.mobile.sharedwallet.utils
 
 import android.graphics.Bitmap
-import java.util.HashMap
+import java.util.*
 
 class CachePhoto {
 

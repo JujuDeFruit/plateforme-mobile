@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
@@ -65,17 +64,17 @@ class NewSpendDialog(private val parentFrag : SpendFragment) : DialogFragment() 
                 saveNewSpend(particiantAdapter)
             }else if((price == 0f) && (particiantAdapter.peopleSelected().size != 0)) {
                 val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
-                builder1.setMessage("You have not entered any price")
+                builder1.setMessage("You have not entered any amount")
                 builder1.setCancelable(true)
                 builder1.create().show()
             }else if((particiantAdapter.peopleSelected().size == 0) && (price != 0f)) {
                 val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
-                builder1.setMessage("You have not entered any person")
+                builder1.setMessage("You have not entered any people")
                 builder1.setCancelable(true)
                 builder1.create().show()
             }else if ((price == 0f) && (particiantAdapter.peopleSelected().size == 0)) {
                 val builder1: AlertDialog.Builder = AlertDialog.Builder(context)
-                builder1.setMessage("You have not entered any person and any people")
+                builder1.setMessage("You have not entered any amount and any people")
                 builder1.setCancelable(true)
                 builder1.create().show()
             }

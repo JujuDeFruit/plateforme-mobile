@@ -7,9 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Participant
-import com.mobile.sharedwallet.models.Tributaire
 import com.mobile.sharedwallet.utils.Shared
-import com.mobile.sharedwallet.utils.Utils.Companion.castParticipantToTributaire
 
 class DropListAdapter(private val participants : ArrayList<Participant>) : AdapterView.OnItemSelectedListener {
 

@@ -1,17 +1,17 @@
 package com.mobile.sharedwallet.adapter
 
 import android.annotation.SuppressLint
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseAdapter
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
 import androidx.core.graphics.drawable.toBitmap
-import com.google.android.material.behavior.SwipeDismissBehavior
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.utils.Shared
-import kotlin.math.abs
 
 
 class DepenseAdapter(private var dataSet : ArrayList<Depense>, private val listView: ListView) : BaseAdapter() {

@@ -1,29 +1,18 @@
 package com.mobile.sharedwallet.fragment
 
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import androidx.fragment.app.Fragment
-import com.github.mikephil.charting.charts.HorizontalBarChart
-import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mobile.sharedwallet.R
 import com.mobile.sharedwallet.adapter.CategoryAdapter
-import com.mobile.sharedwallet.adapter.DepenseAdapter
 import com.mobile.sharedwallet.models.Depense
 import com.mobile.sharedwallet.utils.Shared
 import com.mobile.sharedwallet.utils.Utils
-import java.text.DecimalFormat
 
 class CategoryFragment : Fragment() {
     private var depenseListCopy : ArrayList<Depense> = ArrayList()
