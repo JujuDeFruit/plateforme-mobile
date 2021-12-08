@@ -90,7 +90,7 @@ class Utils {
 
         suspend fun createUserFromFirebaseUser(firebaseUser : FirebaseUser?, loadPhoto : Boolean = false) : User {
             return firebaseUser?.let {
-                val names : HashMap<String, String> = getFirstnameAndLastnameFromDisplayName(it.displayName, it.zzf() == "google.com")
+                val names : HashMap<String, String> = getFirstnameAndLastnameFromDisplayName(it.displayName, it.providerData[1].providerId == "google.com")
                 var photo : Bitmap? = null
                 if(loadPhoto) {
                     photo = fetchPhoto(it.uid)
@@ -117,7 +117,7 @@ class Utils {
             } ?: Participant()
         }
 
-        fun castParticipantToTributaire(participant: Participant): Tributaire {
+        private fun castParticipantToTributaire(participant: Participant): Tributaire {
             return Tributaire(participant.name,participant.uid,0f,0f,false)
         }
 

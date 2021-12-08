@@ -65,8 +65,6 @@ class GoogleSignInActivity : Activity() {
                     }
                 }
             } catch (e: Exception) {
-                // Google Sign In failed, update UI appropriately
-                // Log.w(TAG, "Google sign in failed", e)
                 print(e.message)
             }
         }
